@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-cosmic: #060814;
+    --accent-blue: #00d2ff;
+    --accent-gold: #ffd700;
+    --accent-crimson: #ff0055;
+    --accent-purple: #9d4edd;
+  }
+
+  body {
+    background-color: #060814;
+    color: #e2e8f0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom glow and sci-fi aesthetic utilities */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+}
+
+.glow-crimson {
+  box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 10px rgba(0, 210, 255, 0.8);
+}
+
+.glow-text-gold {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+/* Custom scrollbars for stream chat */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.6);
+}
