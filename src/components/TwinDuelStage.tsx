@@ -17,6 +17,7 @@ import {
 import { executeOpponentAITurn } from '../utils/aiOpponent';
 import { SABOTAGE_ACTIONS } from '../data/sabotage';
 import { solanaService, getSolanaExplorerUrl } from '../utils/solanaService';
+import { audio } from '../utils/audioService';
 import { CombatCanvas } from './CombatCanvas';
 import { CombatHUD } from './CombatHUD';
 import {
@@ -120,6 +121,7 @@ export const TwinDuelStage: React.FC<Props> = ({
   // Spectator Tipping Handlers
   const handleTipPlayer1 = async () => {
     const tipAmount = 0.001;
+    audio.playCoinJingle();
     setTipsA((prev) => parseFloat((prev + tipAmount).toFixed(4)));
     addFloatingTextA('+0.001 SOL TIP!', '#10b981');
     onTipSent(tipAmount);
@@ -138,6 +140,7 @@ export const TwinDuelStage: React.FC<Props> = ({
 
   const handleTipPlayer2 = async () => {
     const tipAmount = 0.001;
+    audio.playCoinJingle();
     setTipsB((prev) => parseFloat((prev + tipAmount).toFixed(4)));
     addFloatingTextB('+0.001 SOL TIP!', '#10b981');
     onTipSent(tipAmount);
@@ -159,6 +162,8 @@ export const TwinDuelStage: React.FC<Props> = ({
     const sab = SABOTAGE_ACTIONS.find((s) => s.id === sabotageId);
     if (!sab) return;
     if (combatA.sabotageEnergy < sab.cost) return;
+
+    audio.playAlarmSiren();
 
     // Deduct cost from Player 1
     setCombatA((prev) => ({
@@ -187,6 +192,18 @@ export const TwinDuelStage: React.FC<Props> = ({
   // Player 1 Plays a Skill
   const handlePlaySkillA = (skillId: string) => {
     setActionStateA('attacking');
+    const skill = combatA.activeHand.find((s) => s.id === skillId);
+    if (skill) {
+      if (skill.isStigma) {
+        audio.playStigmaCast();
+      } else if (skill.category === 'tactical') {
+        if (skill.id === 'kinetic_deflector') audio.playParryClang();
+        else audio.playDodgeWoosh();
+      } else {
+        audio.playBladeSlash();
+      }
+    }
+
     const result = executePlayerSkill(skillId, combatA, bossA, arenaA, player1Loadout);
     setCombatA(result.combatState);
     setBossA(result.bossState);
@@ -204,6 +221,14 @@ export const TwinDuelStage: React.FC<Props> = ({
   const handleCounterA = (action: CounterAction) => {
     setActionStateA(action === 'jump' ? 'jumping' : action === 'crouch' ? 'crouching' : 'parrying');
     const result = executeCounterAction(action, combatA, bossA);
+
+    if (result.success) {
+      if (action === 'parry') audio.playParryClang();
+      else audio.playDodgeWoosh();
+    } else {
+      audio.playCosmicBacklash();
+    }
+
     setCombatA(result.combatState);
     setBossA(result.bossState);
 
@@ -213,6 +238,12 @@ export const TwinDuelStage: React.FC<Props> = ({
   // Player 1 Ends Turn
   const handleEndTurnA = () => {
     const turnResultA = resolveTurnCycle(combatA, bossA, arenaA);
+    if (turnResultA.bossState.activeTelegraph) {
+      audio.playAlarmSiren();
+    }
+    if (turnResultA.combatState.probabilityHeat >= 100) {
+      audio.playCosmicBacklash();
+    }
     setCombatA(turnResultA.combatState);
     setBossA(turnResultA.bossState);
     setArenaA(turnResultA.arena);
@@ -266,6 +297,7 @@ export const TwinDuelStage: React.FC<Props> = ({
     if (isMatchOver) {
       setMatchSettlementTx(solanaService.generateTxSignature());
       if (isPlayer1Win) {
+        audio.playVictoryFanfare();
         confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
       }
     }

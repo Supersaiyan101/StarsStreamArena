@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Send, Coins, ExternalLink, MessageSquare } from 'lucide-react';
 import type { StarStreamChatMessage, SpectatorConstellation } from '../types/game';
 import { solanaService } from '../utils/solanaService';
+import { audio } from '../utils/audioService';
 
 interface Props {
   constellation: SpectatorConstellation;
@@ -73,11 +74,13 @@ export const StreamChat: React.FC<Props> = ({
 
     // Trigger parent tip
     if (tipAmount > 0) {
+      audio.playCoinJingle();
       await onSendTip(tipAmount, msgText);
     }
   };
 
   const handleQuickTip = async (amount: number, cheerText: string) => {
+    audio.playCoinJingle();
     setSelectedTipAmount(amount);
     const tx = await solanaService.sendTipTransaction(
       constellation.walletAddress,

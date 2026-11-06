@@ -14,6 +14,7 @@ import {
   resolveTurnCycle,
   triggerInteractiveProp,
 } from '../utils/combatEngine';
+import { audio } from '../utils/audioService';
 import { CombatCanvas } from './CombatCanvas';
 import { CombatHUD } from './CombatHUD';
 import { StreamChat } from './StreamChat';
@@ -77,6 +78,21 @@ export const CombatStage: React.FC<Props> = ({
   // Play Skill Handler
   const handlePlaySkill = (skillId: string) => {
     setPlayerActionState('attacking');
+    const skill = combatState.activeHand.find((s) => s.id === skillId);
+    if (skill) {
+      if (skill.isStigma) {
+        audio.playStigmaCast();
+      } else if (skill.category === 'tactical') {
+        if (skill.id === 'kinetic_deflector') {
+          audio.playParryClang();
+        } else {
+          audio.playDodgeWoosh();
+        }
+      } else {
+        audio.playBladeSlash();
+      }
+    }
+
     const result = executePlayerSkill(skillId, combatState, boss, arena, loadout);
 
     setCombatState(result.combatState);
@@ -84,7 +100,6 @@ export const CombatStage: React.FC<Props> = ({
     setArena(result.arena);
 
     // Trigger visual hit effect
-    const skill = combatState.activeHand.find((s) => s.id === skillId);
     if (skill && skill.baseDamage > 0) {
       addFloatingText(`-${skill.baseDamage} DMG`, '#f43f5e', skill.baseDamage > 40);
       setScreenShake(true);
@@ -95,6 +110,7 @@ export const CombatStage: React.FC<Props> = ({
 
     // Check Victory
     if (result.bossState.currentHp <= 0) {
+      audio.playVictoryFanfare();
       confetti({
         particleCount: 120,
         spread: 80,
@@ -112,8 +128,14 @@ export const CombatStage: React.FC<Props> = ({
     setBoss(result.bossState);
 
     if (result.success) {
+      if (action === 'parry') {
+        audio.playParryClang();
+      } else {
+        audio.playDodgeWoosh();
+      }
       addFloatingText(action === 'parry' ? 'PARRIED! +500 PTS' : 'COUNTER EVADED!', '#10b981');
     } else {
+      audio.playCosmicBacklash();
       setPlayerActionState('hurt');
       setScreenShake(true);
       setTimeout(() => setScreenShake(false), 300);
@@ -125,6 +147,12 @@ export const CombatStage: React.FC<Props> = ({
   // End Turn Cycle
   const handleEndTurn = () => {
     const result = resolveTurnCycle(combatState, boss, arena);
+    if (result.bossState.activeTelegraph) {
+      audio.playAlarmSiren();
+    }
+    if (result.combatState.probabilityHeat >= 100) {
+      audio.playCosmicBacklash();
+    }
     setCombatState(result.combatState);
     setBoss(result.bossState);
     setArena(result.arena);

@@ -4,6 +4,8 @@ import { Armory } from './components/Armory';
 import { CombatStage } from './components/CombatStage';
 import { TwinDuelStage } from './components/TwinDuelStage';
 import { solanaService } from './utils/solanaService';
+import { audio } from './utils/audioService';
+import { Volume2, VolumeX } from 'lucide-react';
 
 export interface ActiveDeploymentConfig {
   loadout: PlayerLoadout;
@@ -25,6 +27,16 @@ export function App() {
     avatarColor: 'cyan',
     totalTippedSol: 0.008,
   });
+
+  const [isMuted, setIsMuted] = useState(audio.isMuted());
+
+  const toggleAudio = () => {
+    const newMuted = audio.toggleMute();
+    setIsMuted(newMuted);
+    if (!newMuted) {
+      audio.playCoinJingle();
+    }
+  };
 
   // Connect wallet on launch
   useEffect(() => {
@@ -93,6 +105,22 @@ export function App() {
           onTipReceived={handleTipSent}
         />
       )}
+
+      {/* Floating Audio Controller */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          onClick={toggleAudio}
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-xs font-mono text-cyan-400 shadow-xl backdrop-blur transition-all cursor-pointer"
+          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+        >
+          {isMuted ? (
+            <VolumeX className="w-4 h-4 text-rose-400" />
+          ) : (
+            <Volume2 className="w-4 h-4 text-emerald-400" />
+          )}
+          <span className="hidden sm:inline">{isMuted ? 'SFX MUTED' : 'SFX ACTIVE'}</span>
+        </button>
+      </div>
     </div>
   );
 }
