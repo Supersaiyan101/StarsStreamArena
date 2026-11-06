@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { PlayerLoadout, Arena } from './types/game';
 import { Armory } from './components/Armory';
 import { CombatStage } from './components/CombatStage';
+import { TwinDuelStage } from './components/TwinDuelStage';
 
 export interface ActiveDeploymentConfig {
   loadout: PlayerLoadout;
@@ -32,6 +33,14 @@ export function App() {
           onDeploy={handleDeploy}
           walletBalanceSol={walletBalanceSol}
           walletAddress={walletAddress}
+        />
+      ) : activeDeployment.mode === 'duel' ? (
+        <TwinDuelStage
+          loadout={activeDeployment.loadout}
+          arena={activeDeployment.arena}
+          circuitTier={activeDeployment.circuitTier}
+          stakeAmountSol={activeDeployment.stakeAmountSol}
+          onExit={handleExitCombat}
         />
       ) : (
         <CombatStage

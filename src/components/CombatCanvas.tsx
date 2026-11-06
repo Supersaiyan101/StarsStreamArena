@@ -423,3 +423,4 @@ export const CombatCanvas: React.FC<Props> = ({
     </div>
   );
 };
+
