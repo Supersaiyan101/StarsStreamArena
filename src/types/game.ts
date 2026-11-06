@@ -178,3 +178,4 @@ export interface MirroredDuelState {
   isMatchOver: boolean;
   activeSpectatorFocus: 'split' | 'channelA' | 'channelB';
 }
+
