@@ -5,6 +5,7 @@ import type {
   ActiveCombatState,
   PlayerLoadout,
   CounterAction,
+  SpectatorConstellation,
 } from '../types/game';
 import {
   initializeCombatState,
@@ -15,7 +16,8 @@ import {
 } from '../utils/combatEngine';
 import { CombatCanvas } from './CombatCanvas';
 import { CombatHUD } from './CombatHUD';
-import { Trophy, Skull, ArrowLeft, ScrollText } from 'lucide-react';
+import { StreamChat } from './StreamChat';
+import { Trophy, Skull, ArrowLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface Props {
@@ -24,7 +26,9 @@ interface Props {
   circuitTier: 'bronze' | 'silver' | 'gold';
   stakeAmountSol: number;
   mode: 'solo' | 'duel';
+  constellation: SpectatorConstellation;
   onExit: () => void;
+  onTipReceived: (amountSol: number) => void;
 }
 
 export const CombatStage: React.FC<Props> = ({
@@ -33,7 +37,9 @@ export const CombatStage: React.FC<Props> = ({
   circuitTier,
   stakeAmountSol,
   mode,
+  constellation,
   onExit,
+  onTipReceived,
 }) => {
   const [arena, setArena] = useState<Arena>({ ...initialArena });
   const [boss, setBoss] = useState<Boss>({ ...initialArena.boss });
@@ -198,37 +204,23 @@ export const CombatStage: React.FC<Props> = ({
           />
         </div>
 
-        {/* Right 4 Cols: Live Star Stream Feed & System Notices */}
-        <div className="lg:col-span-4 flex flex-col gap-4">
-          {/* Overseer System Feed */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl flex flex-col h-[560px]">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-              <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-1.5 uppercase">
-                <ScrollText className="w-3.5 h-3.5" />
-                Live Star Stream Broadcast
-              </span>
-              <span className="text-[10px] text-emerald-400 font-mono">CHANNEL #BI-7623</span>
-            </div>
-
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-xs">
-              {combatState.combatLogs.map((log, index) => (
-                <div
-                  key={index}
-                  className={`p-2 rounded-lg leading-relaxed ${
-                    log.includes('CRITICAL') || log.includes('STAGGER BREAK')
-                      ? 'bg-amber-950/40 text-amber-300 border border-amber-500/30 font-bold'
-                      : log.includes('TELEGRAPH WARNING')
-                      ? 'bg-rose-950/40 text-rose-300 border border-rose-500/30 animate-pulse'
-                      : log.includes('COUNTER SUCCESS')
-                      ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/30'
-                      : 'bg-slate-950/50 text-slate-300 border border-slate-800/80'
-                  }`}
-                >
-                  {log}
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Right 4 Cols: Live Star Stream Feed & Spectator Tipping */}
+        <div className="lg:col-span-4 flex flex-col gap-4 h-full">
+          <StreamChat
+            constellation={constellation}
+            targetPlayerName={loadout.name}
+            onSendTip={async (amountSol, msg) => {
+              onTipReceived(amountSol);
+              addFloatingText(`+${amountSol} SOL TIP!`, '#10b981');
+              setCombatState((prev) => ({
+                ...prev,
+                combatLogs: [
+                  ...prev.combatLogs,
+                  `[LIVE SPONSORSHIP: ${constellation.customTitle} tipped +${amountSol} SOL: "${msg || 'Cheering!'}"!]`,
+                ],
+              }));
+            }}
+          />
         </div>
       </div>
 

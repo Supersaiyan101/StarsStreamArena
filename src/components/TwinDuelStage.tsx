@@ -5,6 +5,7 @@ import type {
   ActiveCombatState,
   PlayerLoadout,
   CounterAction,
+  SpectatorConstellation,
 } from '../types/game';
 import {
   initializeCombatState,
@@ -15,6 +16,7 @@ import {
 } from '../utils/combatEngine';
 import { executeOpponentAITurn } from '../utils/aiOpponent';
 import { SABOTAGE_ACTIONS } from '../data/sabotage';
+import { solanaService, getSolanaExplorerUrl } from '../utils/solanaService';
 import { CombatCanvas } from './CombatCanvas';
 import { CombatHUD } from './CombatHUD';
 import {
@@ -25,6 +27,7 @@ import {
   Radio,
   Swords,
   ScrollText,
+  ExternalLink,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -33,7 +36,9 @@ interface Props {
   arena: Arena;
   circuitTier: 'bronze' | 'silver' | 'gold';
   stakeAmountSol: number;
+  constellation: SpectatorConstellation;
   onExit: () => void;
+  onTipSent: (amountSol: number) => void;
 }
 
 export const TwinDuelStage: React.FC<Props> = ({
@@ -41,8 +46,11 @@ export const TwinDuelStage: React.FC<Props> = ({
   arena: baseArena,
   circuitTier,
   stakeAmountSol,
+  constellation,
   onExit,
+  onTipSent,
 }) => {
+  const [matchSettlementTx, setMatchSettlementTx] = useState<string | null>(null);
   // Opponent Loadout (Mirror Challenger)
   const opponentLoadout: PlayerLoadout = {
     name: 'Challenger Ren',
@@ -110,28 +118,38 @@ export const TwinDuelStage: React.FC<Props> = ({
   };
 
   // Spectator Tipping Handlers
-  const handleTipPlayer1 = () => {
+  const handleTipPlayer1 = async () => {
     const tipAmount = 0.001;
     setTipsA((prev) => parseFloat((prev + tipAmount).toFixed(4)));
     addFloatingTextA('+0.001 SOL TIP!', '#10b981');
+    onTipSent(tipAmount);
+
+    const tx = await solanaService.sendTipTransaction(constellation.walletAddress, '7xKt...89Jq', tipAmount);
+
     setCombatA((prev) => ({
       ...prev,
       combatLogs: [
         ...prev.combatLogs,
-        `[SPECTATOR CHEER: Constellation sponsored +${tipAmount} SOL to Channel A!]`,
+        `[SOLANA DEVNET: ${constellation.customTitle} tipped +${tipAmount} SOL to Channel A!]`,
+        `[EXPLORER CONFIRMED: ${tx.signature.slice(0, 16)}...]`,
       ],
     }));
   };
 
-  const handleTipPlayer2 = () => {
+  const handleTipPlayer2 = async () => {
     const tipAmount = 0.001;
     setTipsB((prev) => parseFloat((prev + tipAmount).toFixed(4)));
     addFloatingTextB('+0.001 SOL TIP!', '#10b981');
+    onTipSent(tipAmount);
+
+    const tx = await solanaService.sendTipTransaction(constellation.walletAddress, '3mPx...72La', tipAmount);
+
     setCombatB((prev) => ({
       ...prev,
       combatLogs: [
         ...prev.combatLogs,
-        `[SPECTATOR CHEER: Constellation sponsored +${tipAmount} SOL to Channel B!]`,
+        `[SOLANA DEVNET: ${constellation.customTitle} tipped +${tipAmount} SOL to Channel B!]`,
+        `[EXPLORER CONFIRMED: ${tx.signature.slice(0, 16)}...]`,
       ],
     }));
   };
@@ -244,9 +262,14 @@ export const TwinDuelStage: React.FC<Props> = ({
   const isOpponentWin = bossB.currentHp <= 0 || combatA.playerHp <= 0;
   const isMatchOver = isPlayer1Win || isOpponentWin;
 
-  if (isMatchOver && isPlayer1Win) {
-    confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
-  }
+  React.useEffect(() => {
+    if (isMatchOver) {
+      setMatchSettlementTx(solanaService.generateTxSignature());
+      if (isPlayer1Win) {
+        confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
+      }
+    }
+  }, [isMatchOver, isPlayer1Win]);
 
   const matchPot = stakeAmountSol * 2;
 
@@ -502,8 +525,9 @@ export const TwinDuelStage: React.FC<Props> = ({
 
             {/* Complete Dual Settlement Breakdown */}
             <div className="my-5 p-4 bg-slate-950 rounded-xl border border-slate-800 w-full text-left text-xs font-mono space-y-2">
-              <div className="text-[11px] font-bold text-cyan-400 border-b border-slate-800 pb-1 uppercase">
-                Solana Smart Escrow Settlement Breakdown
+              <div className="text-[11px] font-bold text-cyan-400 border-b border-slate-800 pb-1 uppercase flex items-center justify-between">
+                <span>Solana Smart Escrow Settlement</span>
+                <span className="text-emerald-400">0.4s Finality</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Match Prize Pot ({circuitTier.toUpperCase()}):</span>
@@ -522,6 +546,18 @@ export const TwinDuelStage: React.FC<Props> = ({
               <div className="flex justify-between">
                 <span className="text-slate-400">Player 2 Crowd Tips Kept:</span>
                 <span className="text-emerald-400 font-bold">+{tipsB.toFixed(4)} SOL</span>
+              </div>
+
+              <div className="border-t border-slate-800/80 pt-2 flex items-center justify-between text-[11px]">
+                <span className="text-slate-500">Escrow Payout Tx:</span>
+                <a
+                  href={getSolanaExplorerUrl(matchSettlementTx || '5Kt8YVwzF7PqM18R4xGf57LhNkLpQ2q8z7R9YpVxK18p')}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-cyan-400 underline flex items-center gap-1 hover:text-cyan-300"
+                >
+                  View on Solana Explorer <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
             </div>
 

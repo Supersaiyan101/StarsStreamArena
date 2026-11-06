@@ -9,13 +9,18 @@ import {
   CheckCircle2,
   AlertTriangle,
   Play,
+  Trophy,
+  User,
 } from 'lucide-react';
-import type { PlayerAttributes, PlayerLoadout, Arena } from '../types/game';
+import type { PlayerAttributes, PlayerLoadout, Arena, SpectatorConstellation } from '../types/game';
 import { AVATAR_ARCHETYPES, type AvatarArchetype } from '../data/archetypes';
 import { WEAPON_RELICS, type WeaponRelic } from '../data/weapons';
 import { ARENAS } from '../data/arenas';
 import { AttributeAllocator } from './AttributeAllocator';
 import { SkillDeckBuilder } from './SkillDeckBuilder';
+import { ConstellationModal } from './ConstellationModal';
+import { StarArchive } from './StarArchive';
+import { solanaService } from '../utils/solanaService';
 
 interface Props {
   onDeploy: (config: {
@@ -25,15 +30,23 @@ interface Props {
     stakeAmountSol: number;
     mode: 'solo' | 'duel';
   }) => void;
-  walletBalanceSol?: number;
-  walletAddress?: string;
+  walletBalanceSol: number;
+  walletAddress: string;
+  constellation: SpectatorConstellation;
+  onUpdateConstellation: (c: SpectatorConstellation) => void;
+  onAirdrop: () => Promise<void>;
 }
 
 export const Armory: React.FC<Props> = ({
   onDeploy,
-  walletBalanceSol = 2.45,
-  walletAddress = '7xKt...89Jq',
+  walletBalanceSol,
+  walletAddress,
+  constellation,
+  onUpdateConstellation,
+  onAirdrop,
 }) => {
+  const [isConstellationModalOpen, setIsConstellationModalOpen] = useState(false);
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
   // Mode selection
   const [mode, setMode] = useState<'solo' | 'duel'>('duel');
 
@@ -193,11 +206,29 @@ export const Armory: React.FC<Props> = ({
             ))}
           </div>
 
+          {/* Constellation Studio & Hall of Fame Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsConstellationModalOpen(true)}
+              className="bg-slate-950/90 border border-slate-800 hover:border-cyan-400 rounded-xl px-3 py-1.5 flex items-center gap-2 font-mono text-xs text-cyan-300 transition-all cursor-pointer"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>{constellation.customTitle}</span>
+            </button>
+            <button
+              onClick={() => setIsArchiveOpen(true)}
+              className="bg-slate-950/90 border border-slate-800 hover:border-amber-400 rounded-xl px-3 py-1.5 flex items-center gap-1.5 font-mono text-xs text-amber-300 transition-all cursor-pointer"
+            >
+              <Trophy className="w-3.5 h-3.5" />
+              <span>Star Archive</span>
+            </button>
+          </div>
+
           {/* Connected Solana Wallet Badge */}
           <div className="bg-slate-950/90 border border-slate-800 rounded-xl px-3 py-1.5 flex items-center gap-2 font-mono text-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             <span className="text-slate-400">{walletAddress}</span>
-            <span className="text-emerald-400 font-bold font-mono">{walletBalanceSol} SOL</span>
+            <span className="text-emerald-400 font-bold font-mono">{walletBalanceSol.toFixed(4)} SOL</span>
           </div>
         </div>
       </div>
@@ -382,6 +413,24 @@ export const Armory: React.FC<Props> = ({
           </div>
         </div>
       </div>
+      {/* Constellation Studio Modal */}
+      <ConstellationModal
+        isOpen={isConstellationModalOpen}
+        onClose={() => setIsConstellationModalOpen(false)}
+        constellation={constellation}
+        onSave={onUpdateConstellation}
+        onAirdrop={onAirdrop}
+        walletBalanceSol={walletBalanceSol}
+      />
+
+      {/* Star Archive Leaderboard Modal */}
+      <StarArchive
+        isOpen={isArchiveOpen}
+        onClose={() => setIsArchiveOpen(false)}
+        onTipRunner={async (runnerAddress, amount) => {
+          await solanaService.sendTipTransaction(walletAddress, runnerAddress, amount);
+        }}
+      />
     </div>
   );
 };
