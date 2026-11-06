@@ -1,0 +1,231 @@
+# 🌌 StarStream Arena — Comprehensive Project Memory Context & System Blueprint
+
+> **System Memory Document:** Single-source-of-truth reference covering the entire architecture, lore, mechanics, Web3 integration, UI hierarchy, and development trajectory for **StarStream Arena**.
+> **Hackathon:** MLH Solana Hackathon (Nov 6–8, 2026 | Event ID: `01a0ce54-d5d4-a695-4377-b821fcd52659`)  
+> **Official Repository:** [https://github.com/Supersaiyan101/StarsStreamArena](https://github.com/Supersaiyan101/StarsStreamArena)  
+> **License:** MIT  
+
+---
+
+## 1. Executive Summary & Core Game Concept
+
+**StarStream Arena** is an esports-grade, spectator-driven Web3 battle arena built on Solana, inspired by the seminal Korean web novel & webtoon *Omniscient Reader's Viewpoint* (ORV). 
+
+In traditional games, spectators are passive observers. In StarStream Arena:
+1. **Spectators ARE the Constellations:** Spectators connect their Solana wallets, customize their divine celestial moniker (e.g., *"Demon-like Judge of Fire"*, *"Prisoner of the Golden Headband"*, or user-chosen titles like *"Neon Phantom"*), and actively influence battles by sending micro-SOL tips and triggering divine blessings.
+2. **Symmetrical Mirrored Twin Arenas:** In 1v1 duels, Player 1 (Channel A) and Opponent (Channel B) face identical boss encounters in parallel mirrored dimensions. This guarantees **100% competitive fairness** while introducing **Cross-Arena Sabotage**—players charge Sabotage Energy by executing combos and spend it to launch stage hazards, debris barrages, or shadow minions directly into their rival's arena.
+3. **Dual Economic Model:**
+   - **Primary Match Pot:** Winner claims the winner-takes-all circuit wager (Bronze 0.005 SOL, Silver 0.010 SOL, Gold 0.025 SOL).
+   - **Audience Micro-Tips:** Both players retain 100% of live tips sent by watching Constellations during combat, verified on the Solana Devnet blockchain.
+
+---
+
+## 2. Technical Stack & Architecture
+
+```
+                                  [ USER BROWSER ]
+                                         │
+        ┌────────────────────────────────┴────────────────────────────────┐
+        ▼                                                                 ▼
+[ React 19 + TypeScript + Vite ]                              [ Solana Devnet Web3 ]
+├── Tailwind CSS v4 styling                                   ├── Dual-Mode Wallet Adapter
+├── Lucide React icon suite                                   │   ├── Phantom Browser Extension
+├── Canvas Confetti particle engine                           │   └── Ephemeral Keypair Fallback
+├── Web Audio API Sound Synthesizer                           ├── JSON-RPC Endpoint (api.devnet.solana.com)
+│   ├── Blade slashes & parry clangs                          ├── Live Balance & Airdrop (+1 SOL)
+│   ├── Alarm sirens & stigma booms                           └── Micro-Tip Escrow & Explorer Links
+└── 60 FPS 2D Procedural Combat Canvas
+        │
+        ▼
+[ Core Game Engine ]
+├── Combat State Engine (utils/combatEngine.ts)
+│   ├── Strict 30-Point Attribute Scaling (STR/AGI/RES)
+│   ├── Dynamic 3-Card Hand Drawer from 5-Skill Deck
+│   ├── Boss Telegraph & Reaction Matrix (Jump / Crouch / Parry)
+│   ├── Environmental Modifiers & Interactive Props
+│   └── Probability Heat & Cosmic Backlash (ORV Lore)
+├── Opponent AI Engine (utils/aiOpponent.ts)
+│   ├── Reactive behavior trees & combo chains
+│   └── Autonomous Cross-Arena Sabotage deployment
+└── Sound Synthesizer (utils/audioService.ts)
+    └── Zero-asset Web Audio oscillator & filter synthesis
+```
+
+### Key Libraries & Tools:
+* **Frontend:** React 19 (`react`, `react-dom`), Vite 6 (`@vitejs/plugin-react`), TypeScript 5.8 (`verbatimModuleSyntax: true`).
+* **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`), standard utility classes, custom glowing glassmorphic cards.
+* **Blockchain:** `@solana/web3.js` v1.98.0, standard browser `fetch` for robust JSON-RPC calls without CORS/bundler quirks.
+* **Audio:** Native browser `AudioContext` Web Audio API (procedural synthesis—0 external audio files, 0 load latency, 100% offline-ready).
+* **VFX:** HTML5 2D Canvas rendering with sprite transforms, procedural backgrounds, trail particles, and `canvas-confetti`.
+
+---
+
+## 3. ORV Canonical Lore & Metaphor Translation
+
+StarStream Arena translates high-concept novel mechanics into intuitive, competitive game systems without requiring players to know Korean or deep lore:
+
+| Canonical ORV Concept | Game Mechanic | In-Game Translation & Purpose |
+| :--- | :--- | :--- |
+| **The Star Stream** | **Live Streaming Arena** | Global esports broadcast feed connecting fighters and spectators. |
+| **Constellations** | **Spectators / Bettors** | Real wallet users who watch, tip SOL, and cheer with custom titles. |
+| **Dokkaebi (Bihyung)** | **Channel Arbiter / Host** | Automated referee managing Channel #BI-7623, escrow pots, and rules. |
+| **Incarnations** | **Challengers (Players)** | Fighters who enter scenarios with a 30-pt stat build and 5-skill deck. |
+| **Coins** | **Solana SOL** | Circuit stakes, spectator tips, and leaderboard prize pools. |
+| **Probability (Gaeyeonseong)** | **Probability Heat Meter (0-100%)** | Narrative realism cost. Powerful stigmas spike heat; 100% causes Cosmic Backlash. |
+| **Dokkaebi Bag** | **Combat Armory** | Pre-match character, skill deck, and weapon relic configuration studio. |
+| **Stigmas** | **Divine Ultimates** | High-impact ultimate skills granted by constellations (Hellfire, Heavenly Pillar, etc.). |
+| **Fables (Stories)** | **Star Archive Chronicles** | On-chain verified battle records and match telemetry. |
+
+---
+
+## 4. Game Systems & Data Specifications
+
+### 4.1 Strict 30-Point Attribute Economy
+Fair play is enforced through a rigid 30-point budget across three core attributes (minimum 5 points each):
+* **Strength (STR):** +1.5% Physical & Melee Attack damage per point.
+* **Agility (AGI):** +1.2% Critical strike chance, +1.5% Sabotage energy generation rate, wider parry window.
+* **Resonance (RES):** +4 Max HP (base 200 HP), +2 Starting Shield points, +1.5% Elemental skill damage.
+
+### 4.2 Challenger Archetypes (`src/data/archetypes.ts`)
+1. **Blade Disciple** (*Yoo Joonghyuk lineage*): High STR (12) / AGI (10) / RES (8). Melee burst and aerial juggles. Metro bias.
+2. **Shadow Rogue** (*Han Sooyoung lineage*): High AGI (12) / STR (10) / RES (8). Evasion, critical strikes, and rapid sabotage. Ocean bias.
+3. **Titan Vanguard** (*Lee Hyunsung lineage*): High RES (12) / STR (10) / AGI (8). High defense, shields, and poise break. Metro bias.
+
+### 4.3 Star Relic Weapons (`src/data/weapons.ts`)
+* **Unbroken Faith** (Legendary): Pure White Ether Blade. +15% Sabotage Energy generation rate on combos.
+* **Four Tiger Exorcism Sword** (Legendary): Celestial Tiger Constellation Blade. +25% bonus damage vs Calamity Bosses.
+* **White Star Fluid Dagger** (Historic): Condensed Stellar Plasma Dagger. Every 3rd basic attack triggers a guaranteed double strike.
+* **Infinite Space Trench Coat** (Mythic): Sub-Dimensional Storage Relic. Reduces incoming critical damage by 30% and adds +35 starting shield.
+
+### 4.4 Scenario Arenas & Bosses (`src/data/arenas.ts`)
+1. **Subterranean Metro (Line 3, Carriage 3807):**
+   - *Modifier:* Confined Quarters (+30% Melee/Slashing damage; -25% projectile speed).
+   - *Boss:* **Gorgon Brute** (320 HP, 100 Poise).
+   - *Interactive Props:* Emergency Brake (inflicts Stagger), Fire Extinguisher (creates Blind smoke screen).
+2. **Han River Crossing (Mapo Bridge):**
+   - *Modifier:* Torrential Surge (+35% Lightning/Shock damage; Fire skills deal -20% damage).
+   - *Boss:* **Ichthyosaur Sovereign** (420 HP, 120 Poise, Enrages below 50% HP).
+   - *Interactive Props:* Bridge Suspension Cable (electrifies water), Debris Chunk (crushing damage).
+
+### 4.5 Combat Skills & Stigmas (`src/data/skills.ts`)
+17 distinct skills categorized into:
+* **Melee:** Pure Ether Blade, Breaking Sky Fist, Red Phoenix Lunge, Storm Cleave, Dragon Fang Thrust.
+* **Elemental:** Electrification, Glacial Shards, Flame Burst, Thunder Spear, Void Nova.
+* **Tactical:** The Fourth Wall (Parry/Shield), Way of the Wind (Dodge), Kinetic Deflector, Shadow Cloak.
+* **Stigmas (Ultimates):**
+  - *Stigma: Hellfire* (Uriel): 90 DMG, cleanses debuffs, massive boss burn.
+  - *Stigma: Heavenly Pillar* (Sun Wukong): 110 DMG, immediately shatters boss poise.
+  - *Stigma: Black Dragon Flame* (Black Flame Dragon): 130 DMG, generates high Probability Heat.
+
+### 4.6 Boss Telegraph & Counter Matrix
+When a boss begins winding up a named attack, the HUD warns the player with a telegraph banner and required counter:
+* **Sweep / Ground Wave** ➡️ Counter with **JUMP** (`⬆️ Jump` hotkey or button).
+* **Overhead Slam / Laser** ➡️ Counter with **SLIDE / CROUCH** (`⬇️ Slide` hotkey or button).
+* **Piercing Thrust / Energy Blast** ➡️ Counter with **PARRY** (`🛡️ Parry` hotkey or button).
+* *Success:* 100% damage negated + player gains bonus Combat Energy and style points.
+* *Failure:* Player suffers full attack damage + stagger stun.
+
+### 4.7 Cross-Arena Sabotage Actions (`src/data/sabotage.ts`)
+* **Debris Barrage (40 Sabotage Energy):** Collapses roof chunks into opponent's arena, dealing 25 damage.
+* **Spawn Shadow Minion (70 Sabotage Energy):** Summons an aggressive add into the rival channel that attacks every turn.
+* **Probability Overload (100 Sabotage Energy):** Overcharges the rival's arena, causing an immediate Cosmic Backlash and scrambling their hand.
+
+---
+
+## 5. Web Audio Engine (`src/utils/audioService.ts`)
+
+Procedural audio synthesizer running directly on standard Web Audio API without asset files:
+* `playBladeSlash()`: Rapid bandpass noise sweep with exponential pitch drop (120ms).
+* `playParryClang()`: Dual high-frequency square oscillators (800Hz & 1600Hz) with high-Q ringing bandpass (250ms).
+* `playDodgeWoosh()`: Low-pass filtered white noise burst with frequency modulation (180ms).
+* `playCoinJingle()`: Two-tone bright sine chime (987.77Hz B5 -> 1318.51Hz E6) with smooth decay (400ms).
+* `playAlarmSiren()`: Sweeping sawtooth oscillator (400Hz to 800Hz) with rapid vibrato (300ms).
+* `playStigmaCast()`: Sub-bass triangle drop (150Hz -> 40Hz) with heavy stereo resonance (600ms).
+* `playVictoryFanfare()`: Arpeggiated triumphal chord progression (C5 - E5 - G5 - C6) over 800ms.
+* `playCosmicBacklash()`: Distorted square wave crunch with steep resonant low-pass filter (400ms).
+* **Mute Control:** State stored in memory with live toggle button in the floating bottom-right dock.
+
+---
+
+## 6. Solana Devnet Integration (`src/utils/solanaService.ts`)
+
+* **Endpoint:** `https://api.devnet.solana.com`
+* **Dual Wallet Architecture:**
+  1. Detects `window.solana` (Phantom / Solflare).
+  2. If wallet extension is absent, generates an ephemeral in-app Solana Ed25519 keypair and persists it in `sessionStorage` for seamless testing without requiring judges to install an extension.
+* **Live Features:**
+  - `getBalance()` via standard JSON-RPC `getBalance` method.
+  - `requestAirdrop()` with signature polling for 1-click +1.0 SOL devnet funding.
+  - `sendTipTransaction()` creating real SystemProgram transfer signatures.
+  - Direct clickable links to `https://explorer.solana.com/tx/{signature}?cluster=devnet`.
+
+---
+
+## 7. Current Project File Map
+
+```
+starstream-arena/
+├── public/
+│   ├── favicon.svg
+│   └── vite.svg
+├── src/
+│   ├── assets/
+│   │   └── hero.png
+│   ├── components/
+│   │   ├── Armory.tsx               # Master loadout & match launcher
+│   │   ├── AttributeAllocator.tsx   # 30-point attribute allocation card
+│   │   ├── SkillDeckBuilder.tsx     # 5-card deck builder with filter tabs
+│   │   ├── CombatCanvas.tsx         # Procedural 60 FPS 2D HTML5 canvas stage
+│   │   ├── CombatHUD.tsx            # HP bars, energy orbs, telegraph reaction, hand cards
+│   │   ├── CombatStage.tsx          # Solo scenario run orchestrator
+│   │   ├── TwinDuelStage.tsx        # Symmetrical 1v1 split-screen duel orchestrator
+│   │   ├── StreamChat.tsx           # Live spectator chat & micro-tipping feed
+│   │   ├── ConstellationModal.tsx   # Spectator moniker & celestial aura studio
+│   │   └── StarArchive.tsx          # Leaderboard & verified on-chain run archive
+│   ├── data/
+│   │   ├── archetypes.ts            # Blade Disciple, Shadow Rogue, Titan Vanguard
+│   │   ├── arenas.ts                # Metro Carriage 3807 & Mapo Bridge
+│   │   ├── sabotage.ts              # Debris Barrage, Minion Spawn, Overload
+│   │   ├── skills.ts                # 17 balanced combat skills & stigmas
+│   │   └── weapons.ts               # Unbroken Faith, Four Tiger Sword, etc.
+│   ├── types/
+│   │   └── game.ts                  # Complete TypeScript definitions
+│   ├── utils/
+│   │   ├── aiOpponent.ts            # Reactive Channel B bot intelligence
+│   │   ├── audioService.ts          # Web Audio API sound synthesizer
+│   │   ├── combatEngine.ts          # Turn cycles, damage formulas, counters
+│   │   └── solanaService.ts         # Solana RPC, wallet connection, explorer links
+│   ├── App.tsx                      # Root component, router, audio dock
+│   ├── index.css                    # Tailwind CSS v4 styling & dark theme
+│   └── main.tsx                     # React DOM root mounting
+├── index.html                       # HTML5 entry with StarStream metadata
+├── package.json                     # Dependencies & build scripts
+├── README.md                        # Master hackathon submission documentation
+├── ORV_LORE_CONTEXT.md              # Original novel lore mapping reference
+└── PROJECT_MEMORY_CONTEXT.md        # Comprehensive memory document (this file)
+```
+
+---
+
+## 8. Development Trajectory & Commit History
+
+1. **`ea7ebf3`** — *Initial scaffold:* Vite + React 19 + TypeScript + Tailwind v4 + Solana Web3 + Lucide.
+2. **`84e752c`** — *Core Game Engine:* State models, turn cycles, boss telegraph matrix, 17 skills, 3 sabotages.
+3. **`93935eb` & `bd1df5e`** — *Armory & Loadout Studio:* 30-pt allocator, 5-skill deck builder, relic weapons, circuit tiers.
+4. **`c826182`** — *2D Combat Canvas & HUD:* Procedural render engine, blade slashes, screen shake, telegraph counter buttons.
+5. **`9410701`** — *Symmetrical Twin Duel:* Channel A vs Channel B split-screen, AI bot, cross-arena sabotage, dual escrow pot.
+6. **`f2e12d1`** — *Solana Devnet Spectator Integration:* Dual-mode wallet, constellation studio, explorer links, tip transactions.
+7. **`bf1c64e`** — *Canonical Lore Alignment:* Standardized ORV stigmas, bosses, relics, and props.
+8. **`3d6572b`** — *Web Audio Synthesizer:* Zero-asset procedural SFX and floating audio control pill.
+9. **`bc4bb23` & `1abcadd`** — *Documentation & Expansion:* ASCII architecture, Solana Devnet guide, and long-term expansion blueprint.
+10. **`1e237b0`** — *English Sweep & Layout Polish:* Removed Korean clutter, pinned Deploy Card, added header start button.
+
+---
+
+## 9. Permanent Ground Rules & Constraints
+
+* **Strict Fair Play:** Mirrored arenas and fixed 30-point attribute cap are non-negotiable.
+* **Spectator Freedom:** Spectators are real users who choose their own custom monikers; no hardcoded NPC lockouts.
+* **Pure English UI:** Clean, punchy terminology (*Ether Blade*, *Breaking Sky*, *Fourth Wall*); no Hangul remnants.
+* **Zero External Audio Assets:** Audio must remain procedurally synthesized via Web Audio API.
+* **Dual-Mode Wallet:** Always support both Phantom and in-browser fallback keypairs so hackathon judges can test in any browser with zero barriers.
