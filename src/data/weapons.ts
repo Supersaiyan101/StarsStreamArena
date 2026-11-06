@@ -56,3 +56,4 @@ export const WEAPON_RELICS: WeaponRelic[] = [
     iconName: 'Shield',
   },
 ];
+

@@ -57,3 +57,4 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
     avatarIcon: 'ShieldAlert',
   },
 ];
+
