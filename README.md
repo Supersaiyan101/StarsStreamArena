@@ -167,6 +167,55 @@ Visit `http://localhost:5173` to enter the Star Stream!
 
 ---
 
+## 🗺️ The Expansion Blueprint: Scaling StarStream Arena into a Living Esports Universe
+
+While the current MVP delivers a complete, esports-ready 1v1 duel and solo trial engine, the architecture has been deliberately decoupled to scale seamlessly into a massive competitive universe. Here is our strategic roadmap for expanding StarStream Arena:
+
+### 1. Expanding the Scenario Catalog (Canonical ORV Arenas)
+The game engine uses modular JSON-driven arena definitions (`Arena`, `Boss`, `Props`, `EnvironmentalModifier`), making it effortless to introduce new iconic scenarios from the novel:
+
+* **🚇 Scenario #03 — Chungmuro Station ("Green Zone Survival"):**
+  * *Unique Mechanic:* Expanding toxic miasma shrinks the playable floor. Players must battle the *Grade 6 Underground King* while racing to claim and defend randomized green sanctuary squares.
+  * *Sabotage Ability:* Spend 80 Sabotage Energy to contaminate an opponent's green zone with toxic spores!
+* **🏰 Scenario #08 — Dark Castle ("Ascension Tower"):**
+  * *Unique Mechanic:* Vertical multi-floor battle gauntlet. Combatants race upward against time, defeating floor wardens, collecting ranking badges, and racing to claim the Demon King's Throne.
+* **⚡ Scenario #10+ — Gigantomachia ("Olympus Titan Raid"):**
+  * *Unique Mechanic:* Colossal multi-limb titan raid (*Mythic-Grade Briareus*). Requires targeted limb-breaking, scaling hydraulic armor plates, and coordinating raid-wide Stigma cascades.
+* **🏭 The 73rd Demon Realm ("Industrial Complex"):**
+  * *Unique Mechanic:* Factory conveyor belts, molten slag hazards, and revolutionary partisan minion waves.
+
+---
+
+### 2. Multiplayer Evolution: 3v3 Squad Duels & Guild Raids
+* **3v3 Parallel Tri-Duels:** Symmetrical 3-lane parallel arenas (Vanguard, Striker, and Tactical Support). Support players can channel energy to shield teammates across channels or coordinate a 3-man synchronized Stigma bombardment on the enemy team!
+* **Nebula Guilds (Spectator DAOs):** Constellations can band together into mythic Nebulae (*Eden*, *Olympus*, *Underworld*, *Vedas*, *Black Cloud*), pooling SOL into a Nebula Treasury to sponsor competitive teams, vote on scenario modifiers, and earn dividend yields from circuit championship pots.
+
+---
+
+### 3. Community Scenario Builder (UGC & Creator Economy)
+* **On-Chain Scenario Specification:** Community modders and level designers can define custom bosses, attack telegraph timings, interactive props, and environmental modifiers using verified on-chain JSON schemas.
+* **Solana Creator Royalties:** Whenever a community-authored scenario is selected in ranked tournament circuits, a percentage of the circuit rake is routed directly to the creator's Solana wallet automatically.
+
+---
+
+### 4. Dynamic Fables (Solana Compressed NFTs / cNFTs)
+* **Chronicle Minting:** When a player clears a scenario with an SS-Rank style rating (e.g., 10+ consecutive *Fourth Wall* perfect parries at low HP), the match history, combo string, and spectator tip logs are compressed and minted as an on-chain **Fable cNFT** (설화).
+* **Fable Relics:** Fables can be exhibited in the Star Archive, traded on secondary marketplaces (Magic Eden, Tensor), or equipped in the Armory to grant cosmetic celestial aura glows and Dokkaebi announcer voice lines.
+
+---
+
+### 5. Interactive Streaming Extensions (Twitch, Kick & YouTube)
+* **Interactive Live Overlay:** Connect livestream viewers directly to the Solana Devnet escrow contracts via a custom video overlay extension:
+  * Viewers vote on mid-match flash polls (e.g. *“Spawn Ghost Express early?”*).
+  * Direct micro-tipping with zero-fee Solana transactions renders customized celestial banners on the streamer's canvas in real time.
+
+---
+
+### 6. Solana Mobile Stack (SMS) & Chapter 2 Native App
+* **Touch-Optimized Combat:** Natural swipe gestures (Swipe Up = Jump, Double Tap = Parry, Swipe Down = Slide) tailored for mobile esports on Solana Mobile Chapter 2 devices with integrated Solana Seed Vault security.
+
+---
+
 ## 🛠️ Tech Stack & Dependencies
 
 * **Frontend:** React 19, TypeScript, HTML5 Canvas 2D, Tailwind CSS v4, Lucide React, Canvas Confetti.
