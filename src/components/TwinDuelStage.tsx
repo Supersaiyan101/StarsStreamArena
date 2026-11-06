@@ -66,7 +66,7 @@ export const TwinDuelStage: React.FC<Props> = ({
     ],
     weapon: {
       name: 'White Pure Star Fluid Dagger',
-      koreanLoreRef: '백청강기',
+      koreanLoreRef: 'Condensed Stellar Plasma Dagger',
       description: 'Blistering attack speed with double-hit chance.',
       bonusEffect: 'Rapid combo generation.',
     },

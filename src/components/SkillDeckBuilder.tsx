@@ -169,14 +169,14 @@ export const SkillDeckBuilder: React.FC<Props> = ({
                       </span>
                     )}
                   </div>
-                  <h4 className="text-xs font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
+                  <h4 className="text-xs font-bold text-slate-100 mt-0.5">
                     {skill.name}
-                    {skill.koreanLoreRef && (
-                      <span className="text-[10px] font-normal text-slate-500 font-mono">
-                        ({skill.koreanLoreRef})
-                      </span>
-                    )}
                   </h4>
+                  {skill.koreanLoreRef && (
+                    <span className="text-[10px] text-cyan-400/70 font-mono block truncate">
+                      {skill.koreanLoreRef}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">

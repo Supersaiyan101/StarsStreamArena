@@ -2,12 +2,12 @@ import type { Skill } from '../types/game';
 
 export const SKILL_CATALOG: Skill[] = [
   // ==========================================
-  // MELEE & PHYSICAL ARTS (CANONICAL ORV INSPIRATION)
+  // MELEE & PHYSICAL ARTS
   // ==========================================
   {
     id: 'plasma_cleave',
-    name: 'Pure Ether Blade',
-    koreanLoreRef: '순백의 에테르 검 (Pure Ether Blade)',
+    name: 'Ether Blade Cleave',
+    koreanLoreRef: 'Pure Ether Arts',
     category: 'melee',
     element: 'physical',
     energyCost: 1,
@@ -22,7 +22,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'kinetic_breaker',
     name: 'Breaking Sky Fist',
-    koreanLoreRef: '파천무공 (Breaking Sky Force)',
+    koreanLoreRef: 'Poise Crushing Martial Arts',
     category: 'melee',
     element: 'physical',
     energyCost: 2,
@@ -36,8 +36,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'phantom_lunge',
-    name: 'Red Phoenix Shunpo',
-    koreanLoreRef: '적봉순보 (Red Phoenix Flash Step)',
+    name: 'Red Phoenix Lunge',
+    koreanLoreRef: 'Armor Piercing Thrust',
     category: 'melee',
     element: 'physical',
     energyCost: 1,
@@ -51,8 +51,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'cyclone_shred',
-    name: 'Storm Cleave',
-    koreanLoreRef: '폭풍참 (White Star Whirlwind)',
+    name: 'Cyclone Cleave',
+    koreanLoreRef: '360 Whirlwind Slashing',
     category: 'melee',
     element: 'physical',
     energyCost: 2,
@@ -71,7 +71,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'volt_arc',
     name: 'Electrification',
-    koreanLoreRef: '전인화 (Electrification — Kyrgios Rodgraim)',
+    koreanLoreRef: 'High-Voltage Lightning Arts',
     category: 'elemental',
     element: 'lightning',
     energyCost: 2,
@@ -85,8 +85,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'glacial_aegis',
-    name: 'Glacial Aegis',
-    koreanLoreRef: '빙화 (Glacial Shield)',
+    name: 'Glacial Barrier',
+    koreanLoreRef: 'Cryo Absorption Shield',
     category: 'elemental',
     element: 'ice',
     energyCost: 1,
@@ -100,8 +100,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'infernal_ignition',
-    name: 'Flame Qi',
-    koreanLoreRef: '화염기 (Flame Qi)',
+    name: 'Infernal Ignition',
+    koreanLoreRef: 'Plasma Fire Wave',
     category: 'elemental',
     element: 'fire',
     energyCost: 2,
@@ -110,13 +110,13 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 15,
     sabotageEnergyGain: 15,
     heatGenerated: 16,
-    description: 'Unleashes a cone of concentrated flame qi, burning the target for 3 turns.',
+    description: 'Unleashes a cone of concentrated flame energy, burning the target for 3 turns.',
     synergyText: 'Inflicts 10 burn damage per turn.',
   },
   {
     id: 'tempest_surge',
-    name: 'Thunder Surge',
-    koreanLoreRef: '뇌전격 (Thunder Surge)',
+    name: 'Thunder Pillar',
+    koreanLoreRef: 'Direct Celestial Lightning Strike',
     category: 'elemental',
     element: 'lightning',
     energyCost: 2,
@@ -135,7 +135,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'phase_shift',
     name: 'Way of the Wind (Dodge)',
-    koreanLoreRef: '바람의 길 (Way of the Wind)',
+    koreanLoreRef: 'Air Current Evasion',
     category: 'tactical',
     element: 'void',
     energyCost: 1,
@@ -150,7 +150,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'kinetic_deflector',
     name: 'The Fourth Wall (Parry)',
-    koreanLoreRef: '제4의 벽 (The Fourth Wall)',
+    koreanLoreRef: 'Translucent Kinetic Barrier',
     category: 'tactical',
     element: 'physical',
     energyCost: 1,
@@ -165,7 +165,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'smoke_veil',
     name: 'Shadow Camouflage (Slide)',
-    koreanLoreRef: '암살보 (Shadow Step)',
+    koreanLoreRef: 'Smoke Slide Evasion',
     category: 'tactical',
     element: 'void',
     energyCost: 1,
@@ -179,8 +179,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'grapple_tether',
-    name: 'Dokkaebi Cable',
-    koreanLoreRef: '도깨비의 줄 (Dokkaebi Cable)',
+    name: 'Overseer Cable',
+    koreanLoreRef: 'High-Tension Steel Tether',
     category: 'tactical',
     element: 'physical',
     energyCost: 1,
@@ -195,12 +195,11 @@ export const SKILL_CATALOG: Skill[] = [
 
   // ==========================================
   // DIVINE STIGMAS (ULTIMATES - Requires 100% Stigma Meter)
-  // Canonical Constellations from ORV Source Material
   // ==========================================
   {
     id: 'heavens_retribution',
     name: 'Stigma: Hellfire',
-    koreanLoreRef: '지옥염화 (Hellfire) — Demon-like Judge of Fire',
+    koreanLoreRef: 'Archangel Uriel — Eden Divine Fire',
     category: 'stigma',
     element: 'fire',
     energyCost: 0,
@@ -215,8 +214,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'ruyi_jingu_bang',
-    name: 'Stigma: Ruyi Jingu Bang',
-    koreanLoreRef: '여의봉 (Heavenly Staff) — Prisoner of the Golden Headband',
+    name: 'Stigma: Heavenly Pillar',
+    koreanLoreRef: 'Sun Wukong — Great Sage Staff',
     category: 'stigma',
     element: 'physical',
     energyCost: 0,
@@ -231,8 +230,8 @@ export const SKILL_CATALOG: Skill[] = [
   },
   {
     id: 'black_flame_annihilation',
-    name: 'Stigma: Black Flame Annihilation',
-    koreanLoreRef: '흑염 멸살 (Dark Flame) — Abyssal Black Flame Dragon',
+    name: 'Stigma: Black Dragon Flame',
+    koreanLoreRef: 'Abyssal Dragon — Dark Cursed Flame',
     category: 'stigma',
     element: 'void',
     energyCost: 0,
@@ -248,7 +247,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'secretive_strike',
     name: 'Stigma: Calculated Abyss',
-    koreanLoreRef: '계산된 심연 (Calculated Abyss) — Secretive Plotter',
+    koreanLoreRef: 'Secret Watcher — Vital Execution',
     category: 'stigma',
     element: 'void',
     energyCost: 0,
@@ -264,7 +263,7 @@ export const SKILL_CATALOG: Skill[] = [
   {
     id: 'song_of_the_sword',
     name: 'Stigma: Song of the Sword',
-    koreanLoreRef: '칼의 노래 (Song of the Sword) — Maritime War God',
+    koreanLoreRef: 'Maritime War God — Naval Commander Aura',
     category: 'stigma',
     element: 'physical',
     energyCost: 0,

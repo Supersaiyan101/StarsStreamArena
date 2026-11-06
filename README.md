@@ -1,4 +1,4 @@
-# 🌌 StarStream Arena (스타 스트림 아레나)
+# 🌌 StarStream Arena
 
 > **Esports-grade, spectator-driven battle arena on Solana.**  
 > *Inspired by the cosmic stream of Omniscient Reader’s Viewpoint (ORV).*
@@ -83,20 +83,20 @@ Every skill and divine miracle consumes narrative plausibility. If your Heat Met
 
 | Canonical ORV Concept | StarStream Arena Equivalent | In-Game Mechanics & Role |
 | :--- | :--- | :--- |
-| **The Star Stream (스타 스트림)** | **Star Stream Hub** | Universal cosmic streaming network connecting combat instances to live viewers. |
-| **Constellations (성좌)** | **Live Viewers (Web3 Users)** | Real Solana wallet users who set custom monikers, pick celestial aura colors, and send SOL tips. |
-| **Dokkaebi (도깨비 - Bihyung)** | **Channel Arbiter AI** | Autonomous host managing Channel #BI-7623, narrating combat, and enforcing scenarios. |
-| **Coins (코인)** | **SOL (Devnet)** | Universal currency for circuit stakes, gear purchases, and live audience tips. |
-| **Probability (개연성)** | **Probability Heat (0-100%)** | Narrative plausibility meter. Reaching 100% triggers a catastrophic cosmic lightning backlash. |
-| **Dokkaebi Bag (도깨비 보따리)** | **Star Stream Armory** | Equipment terminal where fighters allocate 30 stat points and equip relics. |
-| **Fables / Stories (설화)** | **Star Archive** | On-chain historical battle records and verified replay ledger. |
+| **The Star Stream** | **Star Stream Hub** | Universal cosmic streaming network connecting combat instances to live viewers. |
+| **Constellations** | **Live Viewers (Web3 Users)** | Real Solana wallet users who set custom monikers, pick celestial aura colors, and send SOL tips. |
+| **Dokkaebi (Bihyung)** | **Channel Arbiter AI** | Autonomous host managing Channel #BI-7623, narrating combat, and enforcing scenarios. |
+| **Coins** | **SOL (Devnet)** | Universal currency for circuit stakes, gear purchases, and live audience tips. |
+| **Probability** | **Probability Heat (0-100%)** | Narrative plausibility meter. Reaching 100% triggers a catastrophic cosmic lightning backlash. |
+| **Dokkaebi Bag** | **Star Stream Armory** | Equipment terminal where fighters allocate 30 stat points and equip relics. |
+| **Fables / Stories** | **Star Archive** | On-chain historical battle records and verified replay ledger. |
 
 ### The 5 Canonical Divine Stigmas (Ultimates):
-1. **Stigma: Hellfire (지옥염화):** Bestowed by *Demon-like Judge of Fire* (Archangel Uriel). Purges all debuffs and scorches the boss with radiant holy flames of Eden.
-2. **Stigma: Ruyi Jingu Bang (여의봉):** Bestowed by *Prisoner of the Golden Headband* (Sun Wukong). Golden pillar crashes down, obliterating enemy poise and guaranteeing a 2-turn boss stagger.
-3. **Stigma: Black Flame Annihilation (흑염 멸살):** Bestowed by *Abyssal Black Flame Dragon*. Engulfs the arena in cursed dark fire, dealing 35% boss max HP over 4 turns.
-4. **Stigma: Calculated Abyss (계산된 심연):** Bestowed by *Secretive Plotter*. Teleports through the dimensional seam for an unblockable 100% Critical execution strike.
-5. **Stigma: Song of the Sword (칼의 노래):** Bestowed by *Maritime War God* (Admiral Yi Sun-sin). Sweeping naval sword aura granting +50% attack damage and knockback immunity when low on HP.
+1. **Stigma: Hellfire:** Bestowed by *Demon-like Judge of Fire* (Archangel Uriel). Purges all debuffs and scorches the boss with radiant holy flames of Eden.
+2. **Stigma: Heavenly Pillar:** Bestowed by *Prisoner of the Golden Headband* (Sun Wukong). Golden pillar crashes down, obliterating enemy poise and guaranteeing a 2-turn boss stagger.
+3. **Stigma: Black Dragon Flame:** Bestowed by *Abyssal Black Flame Dragon*. Engulfs the arena in cursed dark fire, dealing 35% boss max HP over 4 turns.
+4. **Stigma: Calculated Abyss:** Bestowed by *Secretive Plotter*. Teleports through the dimensional seam for an unblockable 100% Critical execution strike.
+5. **Stigma: Song of the Sword:** Bestowed by *Maritime War God* (Admiral Yi Sun-sin). Sweeping naval sword aura granting +50% attack damage and knockback immunity when low on HP.
 
 ---
 
@@ -199,7 +199,7 @@ The game engine uses modular JSON-driven arena definitions (`Arena`, `Boss`, `Pr
 ---
 
 ### 4. Dynamic Fables (Solana Compressed NFTs / cNFTs)
-* **Chronicle Minting:** When a player clears a scenario with an SS-Rank style rating (e.g., 10+ consecutive *Fourth Wall* perfect parries at low HP), the match history, combo string, and spectator tip logs are compressed and minted as an on-chain **Fable cNFT** (설화).
+* **Chronicle Minting:** When a player clears a scenario with an SS-Rank style rating (e.g., 10+ consecutive *Fourth Wall* perfect parries at low HP), the match history, combo string, and spectator tip logs are compressed and minted as an on-chain **Fable cNFT** (Chronicle Receipt).
 * **Fable Relics:** Fables can be exhibited in the Star Archive, traded on secondary marketplaces (Magic Eden, Tensor), or equipped in the Armory to grant cosmetic celestial aura glows and Dokkaebi announcer voice lines.
 
 ---

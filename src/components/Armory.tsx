@@ -230,6 +230,16 @@ export const Armory: React.FC<Props> = ({
             <span className="text-slate-400">{walletAddress}</span>
             <span className="text-emerald-400 font-bold font-mono">{walletBalanceSol.toFixed(4)} SOL</span>
           </div>
+
+          {/* Quick Header Start Button */}
+          <button
+            disabled={!isReady}
+            onClick={handleDeploy}
+            className="py-2 px-4 rounded-xl font-bold font-mono text-xs tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <Play className="w-3.5 h-3.5 fill-current" />
+            START {mode === 'duel' ? 'DUEL' : 'RUN'} ({currentStake} SOL)
+          </button>
         </div>
       </div>
 
@@ -301,85 +311,10 @@ export const Armory: React.FC<Props> = ({
           />
         </div>
 
-        {/* Column 3: Weapon Relic, Arena Target & Launch Deployment (3 cols) */}
-        <div className="lg:col-span-3 flex flex-col gap-5">
-          {/* Star Relic Weapon */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 backdrop-blur-md shadow-xl">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2 mb-3">
-              <Flame className="w-4 h-4 text-cyan-400" />
-              Equipped Star Relic
-            </h3>
-            <div className="space-y-2">
-              {WEAPON_RELICS.map((weapon) => {
-                const isSelected = selectedWeapon.id === weapon.id;
-                return (
-                  <div
-                    key={weapon.id}
-                    onClick={() => setSelectedWeapon(weapon)}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'bg-amber-500/10 border-amber-400 shadow-md shadow-amber-500/20'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-100">{weapon.name}</span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        {weapon.tier}
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-slate-500 font-mono block mt-0.5">
-                      {weapon.koreanLoreRef}
-                    </span>
-                    <p className="text-[11px] text-slate-300 mt-1.5 leading-snug">
-                      {weapon.bonusEffect}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Arena Destination Selector */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 backdrop-blur-md shadow-xl">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2 mb-3">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              Target Scenario Arena
-            </h3>
-            <div className="grid grid-cols-1 gap-2.5">
-              {ARENAS.map((arena) => {
-                const isSelected = selectedArena.id === arena.id;
-                return (
-                  <div
-                    key={arena.id}
-                    onClick={() => setSelectedArena(arena)}
-                    className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'bg-cyan-950/40 border-cyan-400 shadow-lg shadow-cyan-950/60'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
-                        {arena.theme === 'metro' ? '🚇' : '🌊'} {arena.name}
-                      </h4>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />}
-                    </div>
-                    <p className="text-[11px] text-emerald-400 font-mono mt-1 font-semibold">
-                      {arena.environmentalModifier.name}: {arena.environmentalModifier.description}
-                    </p>
-                    <div className="mt-2 text-[10px] font-mono text-slate-400 border-t border-slate-800/80 pt-1.5 flex items-center justify-between">
-                      <span>Boss: {arena.boss.name}</span>
-                      <span className="text-amber-400">{arena.boss.maxHp} HP</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Launch Deployment Card */}
-          <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950/50 border border-cyan-500/40 rounded-xl p-5 shadow-2xl flex flex-col gap-3">
+        {/* Column 3: Launch Deployment, Weapon Relic & Arena Target (3 cols) */}
+        <div className="lg:col-span-3 flex flex-col gap-4">
+          {/* Launch Deployment Card (Pinned to Top of Column 3) */}
+          <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950/60 border-2 border-cyan-500/50 rounded-xl p-4 shadow-2xl flex flex-col gap-3">
             <div className="flex items-center justify-between font-mono text-xs">
               <span className="text-slate-400">CIRCUIT STAKE</span>
               <span className="text-emerald-400 font-bold font-mono">{currentStake} SOL</span>
@@ -405,11 +340,86 @@ export const Armory: React.FC<Props> = ({
             <button
               disabled={!isReady}
               onClick={handleDeploy}
-              className="w-full py-3.5 rounded-xl font-bold font-mono text-sm tracking-wide bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full py-3.5 rounded-xl font-bold font-mono text-sm tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current" />
               DEPLOY TO ARENA ({currentStake} SOL)
             </button>
+          </div>
+
+          {/* Star Relic Weapon */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2 mb-2.5">
+              <Flame className="w-4 h-4 text-cyan-400" />
+              Equipped Star Relic
+            </h3>
+            <div className="space-y-2">
+              {WEAPON_RELICS.map((weapon) => {
+                const isSelected = selectedWeapon.id === weapon.id;
+                return (
+                  <div
+                    key={weapon.id}
+                    onClick={() => setSelectedWeapon(weapon)}
+                    className={`p-2.5 rounded-lg border cursor-pointer transition-all ${
+                      isSelected
+                        ? 'bg-amber-500/10 border-amber-400 shadow-md shadow-amber-500/20'
+                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-100">{weapon.name}</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        {weapon.tier}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-cyan-400/80 font-mono block mt-0.5">
+                      {weapon.koreanLoreRef}
+                    </span>
+                    <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+                      {weapon.bonusEffect}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Arena Destination Selector */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2 mb-2.5">
+              <Zap className="w-4 h-4 text-cyan-400" />
+              Target Scenario Arena
+            </h3>
+            <div className="grid grid-cols-1 gap-2">
+              {ARENAS.map((arena) => {
+                const isSelected = selectedArena.id === arena.id;
+                return (
+                  <div
+                    key={arena.id}
+                    onClick={() => setSelectedArena(arena)}
+                    className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                      isSelected
+                        ? 'bg-cyan-950/40 border-cyan-400 shadow-lg shadow-cyan-950/60'
+                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
+                        {arena.theme === 'metro' ? '🚇' : '🌊'} {arena.name}
+                      </h4>
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />}
+                    </div>
+                    <p className="text-[11px] text-emerald-400 font-mono mt-1 font-semibold">
+                      {arena.environmentalModifier.name}: {arena.environmentalModifier.description}
+                    </p>
+                    <div className="mt-1.5 text-[10px] font-mono text-slate-400 border-t border-slate-800/80 pt-1.5 flex items-center justify-between">
+                      <span>Boss: {arena.boss.name}</span>
+                      <span className="text-amber-400">{arena.boss.maxHp} HP</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

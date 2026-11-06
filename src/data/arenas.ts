@@ -163,7 +163,7 @@ export const ARENAS: Arena[] = [
     boss: {
       id: 'leviathan_automaton',
       name: 'Queen Mir (Ichthyosaur)',
-      subtitle: '7th Grade Sea Serpent (이무기) — Han River Calamity',
+      subtitle: '7th Grade Sea Serpent — Han River Calamity',
       maxHp: 520,
       currentHp: 520,
       staggerGauge: 100,
