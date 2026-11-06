@@ -99,3 +99,4 @@ During 1v1 Duels, players spend their Sabotage Bar (filled by combos, dodges, an
 1. **Debris Barrage (40 Sabotage Energy):** Triggers a ceiling cave-in or lightning strike across 2 lanes in the opponent's arena, forcing an emergency evade.
 2. **Spawn Shadow Minion (70 Sabotage Energy):** Summons an aggressive elite minion on the opponent's screen that intercepts attacks and shields the boss.
 3. **Probability Overload (100 Sabotage Energy):** Spikes the opponent's Probability Heat Meter by **+35%**, accelerating them toward a cosmic backlash!
+

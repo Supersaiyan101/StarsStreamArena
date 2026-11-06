@@ -126,3 +126,4 @@ All UI prompts, banners, and Overseer notices should emulate the iconic ORV blue
 * **100% Heat (Cosmic Backlash):**
   * `[WARNING: PROBABILITY AFTERSHOCK TRIGGERED!]`
   * The sky splits, and a cosmic lightning strike hits the arena dealing heavy true damage to all units.
+

@@ -3,13 +3,14 @@ import type { Arena } from '../types/game';
 export const ARENAS: Arena[] = [
   // ==========================================
   // ARENA 1: SUBTERRANEAN METRO (LINE 3)
+  // Scenario #01: Value of Life / Carriage 3807
   // ==========================================
   {
     id: 'subterranean_metro',
     name: 'Subterranean Metro (Line 3)',
-    subtitle: 'Scenario #01 — Confined Industrial Catacomb',
+    subtitle: 'Scenario #01: Carriage 3807 — Confined Industrial Catacomb',
     theme: 'metro',
-    description: 'An abandoned underground subway terminal with rusted rails, flickering yellow lamps, and exposed high-voltage cables.',
+    description: 'The iconic abandoned underground subway terminal from Scenario #01. Rusted rails, flickering warning lamps, and sparking high-voltage cables.',
     environmentalModifier: {
       name: 'Confined Quarters',
       description: 'Melee and Slashing skills gain +30% attack damage. Ranged projectile travel speed is reduced by 25%.',
@@ -19,17 +20,17 @@ export const ARENAS: Arena[] = [
       fireDurationMultiplier: 1.0,
     },
     phase2Hazard: {
-      name: 'The Ghost Express 308',
+      name: 'The Ghost Express 3807',
       description: 'A runaway express train barrels through the central tracks every 4 turns. Standing on rails deals 35% damage!',
       intervalTurns: 4,
       turnsUntilHazard: 4,
       damage: 60,
-      warningText: 'WARNING: EXPRESS CAR 308 APPROACHING TRACKS!',
+      warningText: 'WARNING: EXPRESS CAR 3807 BARRELING DOWN CENTRAL TRACKS!',
     },
     props: [
       {
         id: 'concrete_pillar_1',
-        name: 'Reinforced Concrete Pillar',
+        name: 'Reinforced Subway Pillar',
         description: 'Take cover to absorb heavy boss attacks. Dodging a boss charge into this pillar causes a self-stun!',
         actionText: 'Lure Boss into Pillar',
         effectType: 'pillar_cover',
@@ -61,7 +62,7 @@ export const ARENAS: Arena[] = [
     boss: {
       id: 'gorgon_brute',
       name: 'Gorgon Brute',
-      subtitle: 'Ironclad Calamity — Grade 7 Beast',
+      subtitle: 'Calamity of Carriage 3807 — 7th Grade Beast',
       maxHp: 450,
       currentHp: 450,
       staggerGauge: 100,
@@ -77,7 +78,7 @@ export const ARENAS: Arena[] = [
           telegraphType: 'ground_red',
           counterAction: 'jump',
           damage: 38,
-          description: 'Smashes pile-driver arm into floor sending a shockwave across the arena. Must JUMP or PHASE SHIFT!',
+          description: 'Smashes pile-driver arm into floor sending a shockwave across the carriage. Must JUMP or WAY OF THE WIND!',
           warningTurns: 1,
         },
         {
@@ -85,7 +86,7 @@ export const ARENAS: Arena[] = [
           telegraphType: 'pierce_blue',
           counterAction: 'parry',
           damage: 45,
-          description: 'Lowers horns and charges across the track. Counter with PARRY or dodge into pillar to stun him!',
+          description: 'Lowers horns and charges across the track. Counter with THE FOURTH WALL or dodge into pillar to stun him!',
           warningTurns: 1,
         },
         {
@@ -93,7 +94,7 @@ export const ARENAS: Arena[] = [
           telegraphType: 'slash_yellow',
           counterAction: 'crouch',
           damage: 32,
-          description: 'Tears a steel girder across head level. Must SLIDE / CROUCH underneath!',
+          description: 'Tears a steel girder across head level. Must SLIDE / SHADOW CAMOUFLAGE underneath!',
           warningTurns: 1,
         },
       ],
@@ -102,14 +103,15 @@ export const ARENAS: Arena[] = [
   },
 
   // ==========================================
-  // ARENA 2: FLOODED METROPOLIS (DISTRICT 7)
+  // ARENA 2: HAN RIVER CROSSING (MAPO BRIDGE)
+  // Scenario #02: Even Bridge / Ichthyosaur Waters
   // ==========================================
   {
     id: 'flooded_metropolis',
-    name: 'Flooded Metropolis (District 7)',
-    subtitle: 'Scenario #02 — Sunken Cyberpunk Plaza',
+    name: 'Han River Crossing (Mapo Bridge)',
+    subtitle: 'Scenario #02: Even Bridge — Conductive Deluge',
     theme: 'flooded',
-    description: 'Half-submerged city plaza under a midnight thunderstorm. Flickering holographic billboards reflect in dark conductive floodwaters.',
+    description: 'The collapsed spans of Mapo Bridge over the churning Han River under a torrential midnight storm. The water is infested with 7th Grade Ichthyosaurs.',
     environmentalModifier: {
       name: 'Conductive Deluge',
       description: 'Lightning and Ice attacks gain +40% Critical Strike Chance. Shockwaves propagate across water. Fire duration is cut by 50%.',
@@ -119,19 +121,19 @@ export const ARENAS: Arena[] = [
       fireDurationMultiplier: 0.5,
     },
     phase2Hazard: {
-      name: 'Lightning Cloudburst',
+      name: 'River Tempest Lightning',
       description: 'Torrential storm causes random cloudburst lightning strikes across water pools every 3 turns.',
       intervalTurns: 3,
       turnsUntilHazard: 3,
       damage: 55,
-      warningText: 'WARNING: SEVERE LIGHTNING STRIKE PREDICTED ON WATER!',
+      warningText: 'WARNING: HAN RIVER TEMPEST LIGHTNING CHARGING UPON WATER!',
     },
     props: [
       {
         id: 'cargo_platform_1',
-        name: 'Floating Cargo Platform',
-        description: 'Hop onto elevated dry platforms to escape electrified water pools and gain height advantage.',
-        actionText: 'Mount Cargo Crate',
+        name: 'Bridge Debris Platform',
+        description: 'Hop onto elevated dry bridge wreckage to escape electrified water and gain high ground.',
+        actionText: 'Mount High Platform',
         effectType: 'crate_hop',
         isUsed: false,
         cooldownTurns: 2,
@@ -139,9 +141,9 @@ export const ARENAS: Arena[] = [
       },
       {
         id: 'submerged_capacitor_1',
-        name: 'Submerged Neon Capacitor',
-        description: 'Zap the submerged neon sign to discharge an electric surge across the entire water zone.',
-        actionText: 'Discharge Capacitor',
+        name: 'Submerged Bridge Cable',
+        description: 'Zap the severed power cable to discharge an electric surge across the entire river zone.',
+        actionText: 'Discharge River Cable',
         effectType: 'capacitor_zap',
         isUsed: false,
         cooldownTurns: 3,
@@ -149,8 +151,8 @@ export const ARENAS: Arena[] = [
       },
       {
         id: 'lightning_rod_1',
-        name: 'Rooftop Lightning Rod Tower',
-        description: 'Direct the storm charge into the rod, calling down a direct bolt on the boss.',
+        name: 'Bridge Tower Lightning Rod',
+        description: 'Direct the storm charge into the rod, calling down a direct celestial lightning bolt on the serpent.',
         actionText: 'Redirect Storm Bolt',
         effectType: 'lightning_rod',
         isUsed: false,
@@ -160,8 +162,8 @@ export const ARENAS: Arena[] = [
     ],
     boss: {
       id: 'leviathan_automaton',
-      name: 'Leviathan Automaton',
-      subtitle: 'Abyssal Seraph — Biomechanical Calamity',
+      name: 'Queen Mir (Ichthyosaur)',
+      subtitle: '7th Grade Sea Serpent (이무기) — Han River Calamity',
       maxHp: 520,
       currentHp: 520,
       staggerGauge: 100,
@@ -173,27 +175,27 @@ export const ARENAS: Arena[] = [
       enrageThresholdHp: 260,
       possibleAttacks: [
         {
-          name: 'Plasma Discharge Orbs',
+          name: 'Abyssal Plasma Discharge',
           telegraphType: 'pierce_blue',
           counterAction: 'parry',
           damage: 42,
-          description: 'Fires 4 homing electrical plasma spheres. Can be deflected back with Kinetic Deflector!',
+          description: 'Discharges 4 homing bio-plasma spheres. Can be deflected back with The Fourth Wall!',
           warningTurns: 1,
         },
         {
-          name: 'Hydro-Beam Sweep',
+          name: 'Tidal Hydro-Beam Sweep',
           telegraphType: 'ground_red',
           counterAction: 'jump',
           damage: 48,
-          description: 'Sweeps a concentrated energy beam across the water surface. Jump to high ground or Phase Shift!',
+          description: 'Sweeps a concentrated river vortex across the waterline. Jump to bridge platforms or Way of the Wind!',
           warningTurns: 1,
         },
         {
-          name: 'Abyssal Tail Cleave',
+          name: 'Serpent Tail Cleave',
           telegraphType: 'slash_yellow',
           counterAction: 'crouch',
           damage: 36,
-          description: 'Wide horizontal tail swipe that tears across mid-height. Slide or crouch low!',
+          description: 'Colossal tail swipe churning the river. Slide or crouch low beneath the spray!',
           warningTurns: 1,
         },
       ],
