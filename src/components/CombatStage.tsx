@@ -234,33 +234,34 @@ export const CombatStage: React.FC<Props> = ({
       </div>
 
       {/* Main Battle Arena Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start flex-1">
-        {/* Left 8 Cols: Canvas & HUD */}
-        <div className="lg:col-span-8 flex flex-col gap-4">
-          <CombatCanvas
-            arena={arena}
-            boss={boss}
-            combatState={combatState}
-            loadout={loadout}
-            playerActionState={playerActionState}
-            screenShake={screenShake}
-            floatingTexts={floatingTexts}
-            onTriggerProp={handleTriggerProp}
-          />
-
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start flex-1">
+        {/* Left 8 Cols: Canvas & Integrated HUD Dock */}
+        <div className="lg:col-span-8 flex flex-col gap-3">
           <CombatHUD
             boss={boss}
             combatState={combatState}
             arena={arena}
+            loadout={loadout}
             onPlaySkill={handlePlaySkill}
             onCounterAction={handleCounter}
             onEndTurn={handleEndTurn}
             onTriggerProp={handleTriggerProp}
-          />
+          >
+            <CombatCanvas
+              arena={arena}
+              boss={boss}
+              combatState={combatState}
+              loadout={loadout}
+              playerActionState={playerActionState}
+              screenShake={screenShake}
+              floatingTexts={floatingTexts}
+              onTriggerProp={handleTriggerProp}
+            />
+          </CombatHUD>
         </div>
 
         {/* Right 4 Cols: Live Star Stream Feed & Spectator Tipping */}
-        <div className="lg:col-span-4 flex flex-col gap-4 h-full">
+        <div className="lg:col-span-4 flex flex-col gap-3 h-full">
           <StreamChat
             constellation={constellation}
             targetPlayerName={loadout.name}

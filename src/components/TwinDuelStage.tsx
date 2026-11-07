@@ -445,65 +445,65 @@ export const TwinDuelStage: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Canvas A */}
-          <CombatCanvas
-            arena={arenaA}
-            boss={bossA}
-            combatState={combatA}
-            loadout={player1Loadout}
-            playerActionState={actionStateA}
-            screenShake={shakeA}
-            floatingTexts={floatingTextsA}
-            onTriggerProp={handleTriggerPropA}
-          />
-
-          {/* Player 1 HUD & Actions */}
+          {/* Player 1 HUD Wrapping Canvas A and Sabotage Console */}
           <CombatHUD
             boss={bossA}
             combatState={combatA}
             arena={arenaA}
+            loadout={player1Loadout}
             onPlaySkill={handlePlaySkillA}
             onCounterAction={handleCounterA}
             onEndTurn={handleEndTurnA}
             onTriggerProp={handleTriggerPropA}
-          />
-
-          {/* Cross-Arena Sabotage Console (Player 1 sends to Channel B) */}
-          <div className="bg-slate-950/90 border border-amber-500/40 rounded-xl p-3 flex flex-col gap-2">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-amber-400 font-bold uppercase flex items-center gap-1.5">
-                <Swords className="w-3.5 h-3.5" />
-                Cross-Arena Sabotage Launcher
-              </span>
-              <span className="text-slate-400">
-                Available Energy: <span className="text-amber-400 font-bold">{combatA.sabotageEnergy} / 100</span>
-              </span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {SABOTAGE_ACTIONS.map((sab) => {
-                const canAfford = combatA.sabotageEnergy >= sab.cost;
-                return (
-                  <button
-                    key={sab.id}
-                    disabled={!canAfford}
-                    onClick={() => handleLaunchSabotage(sab.id)}
-                    className={`p-2 rounded-lg border text-left font-mono text-xs transition-all flex flex-col justify-between ${
-                      canAfford
-                        ? 'bg-amber-950/30 border-amber-500/50 hover:bg-amber-900/40 text-amber-200 cursor-pointer shadow-md'
-                        : 'bg-slate-900/40 border-slate-800 text-slate-600 opacity-40 cursor-not-allowed'
-                    }`}
-                  >
-                    <span className="font-bold block truncate">{sab.name}</span>
-                    <span className="text-[10px] text-amber-400 mt-1">{sab.cost} Sab Energy</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            extraActions={
+              <div className="bg-slate-950/90 border border-amber-500/40 rounded-xl p-2.5 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-amber-400 font-bold uppercase flex items-center gap-1.5 text-[11px]">
+                    <Swords className="w-3.5 h-3.5" />
+                    Cross-Arena Sabotage Console
+                  </span>
+                  <span className="text-slate-400 text-[11px]">
+                    Energy: <span className="text-amber-400 font-bold">{combatA.sabotageEnergy} / 100</span>
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {SABOTAGE_ACTIONS.map((sab) => {
+                    const canAfford = combatA.sabotageEnergy >= sab.cost;
+                    return (
+                      <button
+                        key={sab.id}
+                        disabled={!canAfford}
+                        onClick={() => handleLaunchSabotage(sab.id)}
+                        className={`p-1.5 rounded-lg border text-left font-mono text-xs transition-all flex flex-col justify-between ${
+                          canAfford
+                            ? 'bg-amber-950/30 border-amber-500/50 hover:bg-amber-900/40 text-amber-200 cursor-pointer shadow-md'
+                            : 'bg-slate-900/40 border-slate-800 text-slate-600 opacity-40 cursor-not-allowed'
+                        }`}
+                      >
+                        <span className="font-bold block truncate text-[11px]">{sab.name}</span>
+                        <span className="text-[9px] text-amber-400 mt-0.5">{sab.cost}⚡ Energy</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            }
+          >
+            <CombatCanvas
+              arena={arenaA}
+              boss={bossA}
+              combatState={combatA}
+              loadout={player1Loadout}
+              playerActionState={actionStateA}
+              screenShake={shakeA}
+              floatingTexts={floatingTextsA}
+              onTriggerProp={handleTriggerPropA}
+            />
+          </CombatHUD>
         </div>
 
         {/* CHANNEL B: OPPONENT (CHALLENGER REN) */}
-        <div className="bg-slate-900/80 border border-purple-500/40 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl">
+        <div className="bg-slate-900/80 border border-purple-500/40 rounded-2xl p-3 sm:p-4 flex flex-col gap-2.5 shadow-2xl">
           {/* Channel B Header */}
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <div className="flex items-center gap-2">
@@ -528,6 +528,75 @@ export const TwinDuelStage: React.FC<Props> = ({
               >
                 +0.001 SOL Tip 🔥
               </button>
+            </div>
+          </div>
+
+          {/* Symmetrical Dual Health Bar for Channel B */}
+          <div className="bg-slate-900/95 border border-slate-800 rounded-xl p-3 shadow-xl backdrop-blur-md">
+            <div className="grid grid-cols-12 gap-2 sm:gap-3 items-center">
+              {/* Opponent HP */}
+              <div className="col-span-5 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse shrink-0" />
+                    <span className="font-bold text-slate-100 text-xs sm:text-sm font-mono truncate">
+                      {opponentLoadout.name}
+                    </span>
+                  </div>
+                  <span className="text-purple-400 font-bold font-mono text-xs sm:text-sm shrink-0">
+                    {combatB.playerHp} / {combatB.maxPlayerHp} HP
+                  </span>
+                </div>
+                <div className="relative w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
+                  <div
+                    className="h-full rounded-full transition-all duration-300 bg-gradient-to-r from-purple-500 to-pink-500 shadow-sm"
+                    style={{ width: `${(combatB.playerHp / combatB.maxPlayerHp) * 100}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span>ENERGY: 3/3 ⚡</span>
+                  <span>HEAT: {combatB.probabilityHeat}%</span>
+                </div>
+              </div>
+
+              {/* VS */}
+              <div className="col-span-2 flex flex-col items-center justify-center border-x border-slate-800/80 px-1 text-center">
+                <span className="text-[11px] font-black font-mono text-purple-400/90 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+                  VS
+                </span>
+                <span className="text-[9px] font-mono text-slate-500 mt-0.5">MIRROR</span>
+              </div>
+
+              {/* Boss B HP */}
+              <div className="col-span-5 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-rose-400 font-bold font-mono text-xs sm:text-sm shrink-0">
+                    {bossB.currentHp} / {bossB.maxHp} HP
+                  </span>
+                  <div className="flex items-center gap-1.5 truncate">
+                    <span className="font-bold text-slate-100 text-xs sm:text-sm font-mono truncate">
+                      {bossB.name}
+                    </span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0" />
+                  </div>
+                </div>
+                <div className="relative w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
+                  <div
+                    className="h-full rounded-full transition-all duration-300 bg-rose-500 shadow-sm"
+                    style={{ width: `${(bossB.currentHp / bossB.maxHp) * 100}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-slate-400 text-[10px]">STUN:</span>
+                  <span className="text-slate-300 text-[10px] font-bold">{bossB.staggerGauge} / 100</span>
+                  <div className="w-20 sm:w-28 bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800/80">
+                    <div
+                      className="bg-amber-400 h-full rounded-full transition-all duration-300"
+                      style={{ width: `${bossB.staggerGauge}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -558,36 +627,8 @@ export const TwinDuelStage: React.FC<Props> = ({
             </div>
           )}
 
-          {/* Opponent Status Display */}
-          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 flex flex-col gap-2 font-mono text-xs">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Opponent HP:</span>
-              <span className="text-emerald-400 font-bold">
-                {combatB.playerHp} / {combatB.maxPlayerHp}
-              </span>
-            </div>
-            <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-              <div
-                className="bg-purple-500 h-full rounded-full transition-all"
-                style={{ width: `${(combatB.playerHp / combatB.maxPlayerHp) * 100}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-1">
-              <span className="text-slate-400">Opponent Boss HP:</span>
-              <span className="text-rose-400 font-bold">
-                {bossB.currentHp} / {bossB.maxHp}
-              </span>
-            </div>
-            <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-              <div
-                className="bg-rose-500 h-full rounded-full transition-all"
-                style={{ width: `${(bossB.currentHp / bossB.maxHp) * 100}%` }}
-              />
-            </div>
-          </div>
-
           {/* Opponent Broadcast Logs */}
-          <div className="bg-slate-950/90 border border-slate-800 rounded-xl p-3 flex flex-col h-[280px]">
+          <div className="bg-slate-950/90 border border-slate-800 rounded-xl p-3 flex flex-col h-[185px]">
             <span className="text-xs font-mono font-bold text-purple-400 flex items-center gap-1.5 uppercase border-b border-slate-800 pb-1.5 mb-2">
               <ScrollText className="w-3.5 h-3.5" />
               Channel B Combat Telemetry

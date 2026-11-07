@@ -141,24 +141,24 @@ export const CombatCanvas: React.FC<Props> = ({
         for (let i = 0; i < width; i += 70) {
           ctx.beginPath();
           ctx.moveTo(i, 0);
-          ctx.lineTo(i + 25, 90);
+          ctx.lineTo(i + 20, 60);
           ctx.stroke();
         }
 
         // Concrete Platform Floor
-        const groundY = height - 80;
+        const groundY = height - 50;
         ctx.fillStyle = '#181a26';
-        ctx.fillRect(0, groundY, width, 80);
+        ctx.fillRect(0, groundY, width, 50);
 
         // Third Rail (Center Electrified Track)
         ctx.fillStyle = '#2a2d3d';
-        ctx.fillRect(0, groundY + 30, width, 18);
+        ctx.fillRect(0, groundY + 18, width, 14);
         ctx.strokeStyle = '#ffd700';
         ctx.lineWidth = 2;
         ctx.setLineDash([15, 10]);
         ctx.beginPath();
-        ctx.moveTo(0, groundY + 39);
-        ctx.lineTo(width, groundY + 39);
+        ctx.moveTo(0, groundY + 25);
+        ctx.lineTo(width, groundY + 25);
         ctx.stroke();
         ctx.setLineDash([]);
 
@@ -166,32 +166,32 @@ export const CombatCanvas: React.FC<Props> = ({
         const flicker = Math.sin(t * 12) > 0.8 ? 0.3 : 1;
         ctx.fillStyle = `rgba(255, 215, 0, ${0.12 * flicker})`;
         ctx.beginPath();
-        ctx.arc(150, 40, 70, 0, Math.PI * 2);
+        ctx.arc(150, 30, 50, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(width - 150, 40, 70, 0, Math.PI * 2);
+        ctx.arc(width - 150, 30, 50, 0, Math.PI * 2);
         ctx.fill();
 
         // Concrete Pillars (Props)
         const pillar1 = arena.props.find((p) => p.id === 'concrete_pillar_1');
         if (pillar1) {
           ctx.fillStyle = pillar1.isUsed ? '#2b2226' : '#2d334d';
-          ctx.fillRect(width * 0.42, 60, 36, groundY - 60);
+          ctx.fillRect(width * 0.42, 40, 32, groundY - 40);
           ctx.fillStyle = '#475569';
-          ctx.fillRect(width * 0.42 - 4, groundY - 10, 44, 10);
+          ctx.fillRect(width * 0.42 - 4, groundY - 8, 40, 8);
 
           ctx.font = '10px monospace';
           ctx.fillStyle = pillar1.isUsed ? '#64748b' : '#38bdf8';
-          ctx.fillText(pillar1.isUsed ? 'SHATTERED' : 'PILLAR [4]', width * 0.42 - 8, 50);
+          ctx.fillText(pillar1.isUsed ? 'SHATTERED' : 'PILLAR [4]', width * 0.42 - 8, 32);
         }
 
         // Steam Pipe on left wall
         const steamProp = arena.props.find((p) => p.id === 'steam_valve_1');
         if (steamProp) {
           ctx.strokeStyle = '#64748b';
-          ctx.lineWidth = 8;
+          ctx.lineWidth = 7;
           ctx.beginPath();
-          ctx.moveTo(15, 70);
+          ctx.moveTo(15, 45);
           ctx.lineTo(15, groundY);
           ctx.stroke();
 
@@ -199,7 +199,7 @@ export const CombatCanvas: React.FC<Props> = ({
           if (!steamProp.isUsed) {
             ctx.fillStyle = `rgba(226, 232, 240, ${0.25 + Math.sin(t * 4) * 0.15})`;
             ctx.beginPath();
-            ctx.arc(22 + Math.cos(t * 3) * 6, 85 + Math.sin(t * 2) * 5, 14, 0, Math.PI * 2);
+            ctx.arc(22 + Math.cos(t * 3) * 5, 60 + Math.sin(t * 2) * 4, 11, 0, Math.PI * 2);
             ctx.fill();
           }
         }
@@ -214,33 +214,33 @@ export const CombatCanvas: React.FC<Props> = ({
 
         // Distant Sunken Skyscrapers
         ctx.fillStyle = '#08172c';
-        ctx.fillRect(40, 50, 90, height - 120);
-        ctx.fillRect(160, 90, 80, height - 160);
-        ctx.fillRect(width - 240, 40, 110, height - 110);
-        ctx.fillRect(width - 100, 80, 80, height - 150);
+        ctx.fillRect(40, 30, 80, height - 80);
+        ctx.fillRect(150, 60, 70, height - 110);
+        ctx.fillRect(width - 220, 25, 95, height - 75);
+        ctx.fillRect(width - 90, 50, 70, height - 100);
 
         // Torrential Rain lines
         ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
         ctx.lineWidth = 1;
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 35; i++) {
           const rx = ((i * 37 + t * 450) % width);
-          const ry = ((i * 53 + t * 700) % (height - 70));
+          const ry = ((i * 53 + t * 700) % (height - 45));
           ctx.beginPath();
           ctx.moveTo(rx, ry);
-          ctx.lineTo(rx - 8, ry + 22);
+          ctx.lineTo(rx - 8, ry + 18);
           ctx.stroke();
         }
 
         // Water Floor & Reflections
-        const groundY = height - 80;
+        const groundY = height - 50;
         ctx.fillStyle = '#05182e';
-        ctx.fillRect(0, groundY, width, 80);
+        ctx.fillRect(0, groundY, width, 50);
 
         // Water ripple highlights
         ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
         ctx.lineWidth = 1.5;
-        for (let r = 0; r < 4; r++) {
-          const ripY = groundY + 15 + r * 15;
+        for (let r = 0; r < 3; r++) {
+          const ripY = groundY + 12 + r * 12;
           const shift = Math.sin(t * 3 + r) * 15;
           ctx.beginPath();
           ctx.moveTo(50 + shift, ripY);
@@ -250,12 +250,12 @@ export const CombatCanvas: React.FC<Props> = ({
 
         // Floating Cargo Platform
         ctx.fillStyle = '#1e293b';
-        ctx.fillRect(width * 0.38, groundY - 14, 90, 18);
+        ctx.fillRect(width * 0.38, groundY - 12, 85, 16);
         ctx.strokeStyle = '#0284c7';
-        ctx.strokeRect(width * 0.38, groundY - 14, 90, 18);
+        ctx.strokeRect(width * 0.38, groundY - 12, 85, 16);
         ctx.font = '10px monospace';
         ctx.fillStyle = '#38bdf8';
-        ctx.fillText('DRY PLATFORM [4]', width * 0.38 + 2, groundY - 20);
+        ctx.fillText('DRY PLATFORM [4]', width * 0.38 + 2, groundY - 16);
       }
 
       // ==========================================
@@ -263,7 +263,7 @@ export const CombatCanvas: React.FC<Props> = ({
       // ==========================================
       if (boss.activeTelegraph) {
         const tele = boss.activeTelegraph;
-        const groundY = height - 80;
+        const groundY = height - 50;
 
         if (tele.telegraphType === 'ground_red') {
           // Red Ground Shockwave zone
@@ -309,30 +309,30 @@ export const CombatCanvas: React.FC<Props> = ({
       // ==========================================
       // 3. CHALLENGER SPRITE (ANIME SILHOUETTE)
       // ==========================================
-      const groundY = height - 80;
+      const groundY = height - 50;
       let playerX = 140;
-      let playerY = groundY - 55;
+      let playerY = groundY - 48;
 
       // Dynamic animation offset calculations
       if (playerActionState === 'jumping') {
-        playerY -= 55;
+        playerY -= 50;
       } else if (playerActionState === 'crouching') {
-        playerY += 18;
-        playerX += 20;
+        playerY += 15;
+        playerX += 18;
       } else if (playerActionState === 'attacking') {
-        playerX += 50;
+        playerX += 45;
       } else if (playerActionState === 'hurt') {
-        playerX -= 25;
+        playerX -= 22;
       } else {
         // Idle breathing oscillation
-        playerY += Math.sin(t * 4) * 2.5;
+        playerY += Math.sin(t * 4) * 2;
       }
 
       // Ground shadow under challenger (scales with jump height)
       const shadowScale = playerActionState === 'jumping' ? 0.55 : 1.0;
       ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.beginPath();
-      ctx.ellipse(playerX, groundY - 6, 22 * shadowScale, 6 * shadowScale, 0, 0, Math.PI * 2);
+      ctx.ellipse(playerX, groundY - 5, 20 * shadowScale, 5 * shadowScale, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Flowing Anime Trenchcoat / Cape Ribbons
@@ -466,10 +466,10 @@ export const CombatCanvas: React.FC<Props> = ({
       // 4. BOSS SPRITE (CALAMITY BEAST)
       // ==========================================
       const bossX = width - 170;
-      let bossY = groundY - 75;
+      let bossY = groundY - 60;
 
       if (boss.isStaggered) {
-        bossY += 15;
+        bossY += 12;
       } else {
         bossY += Math.sin(t * 3) * 3;
       }
@@ -477,7 +477,7 @@ export const CombatCanvas: React.FC<Props> = ({
       // Shadow under Boss
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.beginPath();
-      ctx.ellipse(bossX, groundY - 6, 42, 10, 0, 0, Math.PI * 2);
+      ctx.ellipse(bossX, groundY - 5, 40, 8, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Boss Wind-up Telegraph Aura
@@ -648,13 +648,13 @@ export const CombatCanvas: React.FC<Props> = ({
       <canvas
         ref={canvasRef}
         width={860}
-        height={400}
+        height={270}
         onClick={handleCanvasClick}
         className="w-full h-auto cursor-crosshair block"
       />
-      <div className="absolute top-3 left-3 bg-slate-950/80 border border-slate-800 rounded-lg px-2.5 py-1 font-mono text-[11px] text-slate-400 flex items-center gap-2">
+      <div className="absolute top-2.5 left-2.5 bg-slate-950/80 border border-slate-800 rounded-lg px-2 py-0.5 font-mono text-[10px] text-slate-400 flex items-center gap-1.5">
         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-        <span>CANVAS ENGINE: 60 FPS</span>
+        <span>CANVAS: 60 FPS</span>
       </div>
     </div>
   );
