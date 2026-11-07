@@ -8,7 +8,6 @@ import {
   ChevronDown,
   Sparkles,
   AlertTriangle,
-  RotateCcw,
 } from 'lucide-react';
 import type {
   Boss,
@@ -68,27 +67,24 @@ export const CombatHUD: React.FC<Props> = ({
 
       if (e.key === '1') {
         const card = combatState.activeHand[0];
-        if (card && combatState.playerEnergy >= card.energyCost) {
-          onPlaySkill(card.id);
-        }
+        if (card) onPlaySkill(card.id);
       } else if (e.key === '2') {
         const card = combatState.activeHand[1];
-        if (card && combatState.playerEnergy >= card.energyCost) {
-          onPlaySkill(card.id);
-        }
+        if (card) onPlaySkill(card.id);
       } else if (e.key === '3') {
         const card = combatState.activeHand[2];
-        if (card && combatState.playerEnergy >= card.energyCost) {
-          onPlaySkill(card.id);
-        }
+        if (card) onPlaySkill(card.id);
+      } else if (e.key === '4') {
+        const card = combatState.activeHand[3];
+        if (card) onPlaySkill(card.id);
+      } else if (e.key === '5' && arena.props[0] && !arena.props[0].isUsed) {
+        onTriggerProp(arena.props[0].id);
+      } else if (e.key === '6' && arena.props[1] && !arena.props[1].isUsed) {
+        onTriggerProp(arena.props[1].id);
       } else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') {
-        if (boss.activeTelegraph) {
-          onCounterAction('jump');
-        }
+        if (boss.activeTelegraph) onCounterAction('jump');
       } else if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
-        if (boss.activeTelegraph) {
-          onCounterAction('crouch');
-        }
+        if (boss.activeTelegraph) onCounterAction('crouch');
       } else if (e.key === ' ' || e.code === 'Space') {
         if (boss.activeTelegraph) {
           e.preventDefault();
@@ -96,10 +92,6 @@ export const CombatHUD: React.FC<Props> = ({
         }
       } else if (e.key === 'e' || e.key === 'E') {
         onEndTurn();
-      } else if (e.key === '4' && arena.props[0] && !arena.props[0].isUsed) {
-        onTriggerProp(arena.props[0].id);
-      } else if (e.key === '5' && arena.props[1] && !arena.props[1].isUsed) {
-        onTriggerProp(arena.props[1].id);
       }
     };
 
@@ -395,17 +387,54 @@ export const CombatHUD: React.FC<Props> = ({
       )}
 
       {/* ========================================== */}
-      {/* 5. ACTION DOCK: ATTACK CARDS & TURN CONTROLS */}
+      {/* 4.8 STAR STREAM NARRATIVE DIALOGUE BOX     */}
+      {/* ========================================== */}
+      <div className="bg-slate-950/95 border-2 border-cyan-500/40 rounded-xl p-3 shadow-xl flex flex-col gap-1 font-mono text-xs">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-1 text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
+          <span>STAR STREAM BATTLE TELEMETRY</span>
+          <span className="text-emerald-400">
+            TURN {combatState.turnCount || 1} • SPEED {loadout?.attributes.agility ?? 10}
+          </span>
+        </div>
+        <div className="space-y-1 py-1 min-h-[48px] max-h-[72px] overflow-y-auto">
+          {combatState.narrativeDialogue && combatState.narrativeDialogue.length > 0 ? (
+            combatState.narrativeDialogue.map((line, idx) => (
+              <div key={idx} className="flex items-center gap-1.5">
+                <span className="text-cyan-400 font-bold">▶</span>
+                <span
+                  className={
+                    line.includes('SUPER EFFECTIVE')
+                      ? 'text-amber-300 font-black'
+                      : line.includes('VICTORY')
+                      ? 'text-emerald-300 font-black'
+                      : line.includes('STATUS INFLICTED')
+                      ? 'text-purple-300 font-bold'
+                      : line.includes('PERFECT COUNTER')
+                      ? 'text-emerald-400 font-bold'
+                      : 'text-slate-200'
+                  }
+                >
+                  {line}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="text-slate-400 italic">
+              [OVERSEER BIHYUNG]: Incarnation {loadout?.name || 'Kai'}, choose your tactical move [1-4] or Arena Hazard [5-6]!
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ========================================== */}
+      {/* 5. POKÉMON-STYLE 4-MOVE BATTLE CONSOLE     */}
       {/* ========================================== */}
       <div className="bg-slate-900/95 border border-slate-800 rounded-xl p-3 shadow-xl backdrop-blur-md flex flex-col gap-2.5">
         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1 font-mono">
               <Swords className="w-3.5 h-3.5" />
-              Active Hand (3 Attacks)
-            </span>
-            <span className="text-slate-500 text-[11px] font-mono">
-              • Deck: {combatState.deckDrawPile.length} left
+              Tactical Combat Moves (Choose 1 per Turn)
             </span>
           </div>
 
@@ -424,43 +453,36 @@ export const CombatHUD: React.FC<Props> = ({
                 title={prop.description}
               >
                 <span className="text-[9px] px-1 py-0.2 rounded bg-slate-950 text-cyan-400 border border-cyan-500/30 font-bold">
-                  [{pIdx + 4}]
+                  [{pIdx + 5}]
                 </span>
                 <Sparkles className="w-3 h-3 text-cyan-400" />
                 <span className="truncate max-w-[90px]">{prop.actionText}</span>
               </button>
             ))}
-
-            {/* End Turn Button */}
-            <button
-              onClick={onEndTurn}
-              className="px-3.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              END TURN (E)
-            </button>
           </div>
         </div>
 
-        {/* 3 Skill Cards in Hand (Compact & High Contrast) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
-          {combatState.activeHand.map((skill: Skill, idx: number) => {
-            const canAfford = combatState.playerEnergy >= skill.energyCost;
+        {/* 4 Moves Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
+          {combatState.activeHand.slice(0, 4).map((skill: Skill, idx: number) => {
+            const isStigmaReady = !skill.isStigma || combatState.stigmaMeter >= 100;
             const borderGlow = skill.isStigma
-              ? 'border-amber-400 bg-amber-950/20 shadow-amber-500/20'
-              : skill.category === 'melee'
-              ? 'border-cyan-500/50 bg-cyan-950/20'
-              : skill.category === 'elemental'
-              ? 'border-purple-500/50 bg-purple-950/20'
-              : 'border-emerald-500/50 bg-emerald-950/20';
+              ? 'border-amber-400 bg-amber-950/30 shadow-amber-500/20'
+              : skill.priority === 1
+              ? 'border-emerald-500/60 bg-emerald-950/20'
+              : skill.priority === -1
+              ? 'border-blue-500/60 bg-blue-950/20'
+              : skill.moveRole === 'setup'
+              ? 'border-purple-500/60 bg-purple-950/20'
+              : 'border-cyan-500/50 bg-cyan-950/20';
 
             return (
               <div
                 key={skill.id}
-                onClick={() => canAfford && onPlaySkill(skill.id)}
+                onClick={() => isStigmaReady && onPlaySkill(skill.id)}
                 className={`p-2.5 rounded-xl border-2 flex flex-col justify-between transition-all cursor-pointer ${borderGlow} ${
-                  canAfford
-                    ? 'hover:scale-[1.02] shadow-lg opacity-100 bg-slate-900/90'
+                  isStigmaReady
+                    ? 'hover:scale-[1.02] shadow-lg opacity-100 bg-slate-900/95 hover:border-cyan-400'
                     : 'opacity-40 cursor-not-allowed bg-slate-950/60'
                 }`}
               >
@@ -471,20 +493,34 @@ export const CombatHUD: React.FC<Props> = ({
                     </span>
                     <h4 className="text-xs font-black text-slate-100 truncate">{skill.name}</h4>
                   </div>
-                  <span className="text-[11px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
-                    {skill.energyCost}⚡
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 uppercase shrink-0">
+                    {skill.element}
                   </span>
                 </div>
 
-                <p className="text-[11px] text-slate-300 my-1 leading-snug line-clamp-1">
+                <p className="text-[11px] text-slate-300 my-1 leading-snug line-clamp-2">
                   {skill.description}
                 </p>
 
-                <div className="border-t border-slate-800/80 pt-1 flex items-center justify-between text-[11px] font-mono">
+                <div className="border-t border-slate-800/80 pt-1 flex items-center justify-between text-[10px] font-mono">
                   <span className="text-rose-400 font-bold">
-                    {skill.baseDamage > 0 ? `💥 ${skill.baseDamage} DMG` : '🛡️ SHIELD / PARRY'}
+                    {skill.baseDamage > 0 ? `💥 ${skill.baseDamage} DMG` : '🛡️ TACTICAL BUFF'}
                   </span>
-                  <span className="text-amber-400 text-[10px]">+{skill.sabotageEnergyGain} Sab</span>
+                  {skill.priority === 1 && (
+                    <span className="text-emerald-400 font-bold bg-emerald-950 px-1 rounded border border-emerald-500/30">
+                      ⚡ +1 SPEED
+                    </span>
+                  )}
+                  {skill.priority === -1 && (
+                    <span className="text-blue-400 font-bold bg-blue-950 px-1 rounded border border-blue-500/30">
+                      🛡️ COUNTER
+                    </span>
+                  )}
+                  {skill.isStigma && (
+                    <span className="text-amber-400 font-bold">
+                      {combatState.stigmaMeter}% / 100%
+                    </span>
+                  )}
                 </div>
               </div>
             );
