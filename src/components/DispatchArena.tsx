@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import {
   ArrowLeft,
+  ArrowRight,
   Swords,
   Shield,
   CheckCircle2,
-  Play,
   AlertCircle,
 } from 'lucide-react';
-import type { Arena, PlayerLoadout } from '../types/game';
+import type { Arena } from '../types/game';
 import { ARENAS } from '../data/arenas';
 
 interface Props {
-  loadout: PlayerLoadout;
   walletBalanceSol: number;
-  onBackToChallenger: () => void;
-  onDeploy: (config: {
-    loadout: PlayerLoadout;
+  onBackToLobby: () => void;
+  onProceedToChallenger: (config: {
     arena: Arena;
     circuitTier: 'bronze' | 'silver' | 'gold';
     stakeAmountSol: number;
@@ -24,10 +22,9 @@ interface Props {
 }
 
 export const DispatchArena: React.FC<Props> = ({
-  loadout,
   walletBalanceSol,
-  onBackToChallenger,
-  onDeploy,
+  onBackToLobby,
+  onProceedToChallenger,
 }) => {
   const [selectedArena, setSelectedArena] = useState<Arena>(ARENAS[0]);
   const [mode, setMode] = useState<'solo' | 'duel'>('duel');
@@ -44,10 +41,9 @@ export const DispatchArena: React.FC<Props> = ({
 
   const canAfford = walletBalanceSol >= currentStake;
 
-  const handleLaunch = () => {
+  const handleNext = () => {
     if (!canAfford) return;
-    onDeploy({
-      loadout,
+    onProceedToChallenger({
       arena: selectedArena,
       circuitTier,
       stakeAmountSol: currentStake,
@@ -58,20 +54,20 @@ export const DispatchArena: React.FC<Props> = ({
   return (
     <div className="min-h-screen bg-[#060814] text-slate-100 flex flex-col p-4 md:p-6 lg:p-8">
       {/* ============================================================ */}
-      {/* HEADER & BREADCRUMB                                          */}
+      {/* HEADER & BREADCRUMB (STEP 1 OF 2)                            */}
       {/* ============================================================ */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 mb-6 backdrop-blur-md shadow-xl flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={onBackToChallenger}
+            onClick={onBackToLobby}
             className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-mono"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Fighter Select</span>
+            <span>Lobby</span>
           </button>
           <div>
             <span className="text-[10px] font-mono text-cyan-400 font-bold tracking-widest uppercase bg-cyan-950 px-2 py-0.5 rounded border border-cyan-500/30">
-              STEP 2 OF 2
+              STEP 1 OF 2 • SCENARIO SELECTION
             </span>
             <h1 className="text-xl md:text-2xl font-black text-slate-100 mt-0.5">
               Target Arena & Circuit Stakes
@@ -79,14 +75,15 @@ export const DispatchArena: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Selected Fighter Badge */}
-        <div className="flex items-center gap-3 bg-slate-950/80 border border-slate-800 px-3.5 py-2 rounded-xl text-xs font-mono">
-          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
-          <span className="text-slate-400">READY:</span>
-          <span className="text-cyan-300 font-bold">{loadout.name}</span>
-          <span className="text-slate-500">|</span>
-          <span className="text-amber-400">{loadout.weapon.name}</span>
-        </div>
+        {/* Next Button in Header */}
+        <button
+          disabled={!canAfford}
+          onClick={handleNext}
+          className="py-2.5 px-5 rounded-xl font-bold font-mono text-xs tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center gap-2 transition-all cursor-pointer"
+        >
+          <span>NEXT: ASSEMBLE CHALLENGER</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* ============================================================ */}
@@ -296,13 +293,11 @@ export const DispatchArena: React.FC<Props> = ({
 
             <button
               disabled={!canAfford}
-              onClick={handleLaunch}
+              onClick={handleNext}
               className="w-full py-4 rounded-xl font-bold font-mono text-sm tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-xl shadow-cyan-500/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
-              <Play className="w-5 h-5 fill-current" />
-              <span>
-                {mode === 'duel' ? 'LAUNCH 1V1 DUEL' : 'START SOLO RUN'} ({currentStake} SOL)
-              </span>
+              <span>NEXT: CHOOSE CHALLENGER ({currentStake} SOL)</span>
+              <ArrowRight className="w-5 h-5" />
             </button>
           </div>
         </div>

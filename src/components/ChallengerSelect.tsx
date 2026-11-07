@@ -1,31 +1,43 @@
 import React, { useState } from 'react';
 import {
   ArrowLeft,
-  ArrowRight,
   Swords,
   Shield,
   Zap,
   CheckCircle2,
   Sliders,
   User,
+  Play,
+  Sparkles,
 } from 'lucide-react';
-import type { PlayerAttributes, PlayerLoadout } from '../types/game';
+import type { PlayerAttributes, PlayerLoadout, Arena } from '../types/game';
 import { AVATAR_ARCHETYPES, type AvatarArchetype } from '../data/archetypes';
 import { WEAPON_RELICS, type WeaponRelic } from '../data/weapons';
 import { AttributeAllocator } from './AttributeAllocator';
 import { SkillDeckBuilder } from './SkillDeckBuilder';
 
 interface Props {
-  onBackToLobby: () => void;
-  onProceedToDispatch: (loadout: PlayerLoadout) => void;
+  arena: Arena;
+  circuitTier: 'bronze' | 'silver' | 'gold';
+  stakeAmountSol: number;
+  mode: 'solo' | 'duel';
+  onBackToDispatch: () => void;
+  onDeploy: (loadout: PlayerLoadout) => void;
 }
 
 export const ChallengerSelect: React.FC<Props> = ({
-  onBackToLobby,
-  onProceedToDispatch,
+  arena,
+  circuitTier,
+  stakeAmountSol,
+  mode,
+  onBackToDispatch,
+  onDeploy,
 }) => {
-  // Selected Archetype
-  const [selectedArchetype, setSelectedArchetype] = useState<AvatarArchetype>(AVATAR_ARCHETYPES[0]);
+  // Auto-select archetype with arena synergy if possible
+  const defaultArch =
+    AVATAR_ARCHETYPES.find((a) => a.preferredArena === arena.theme) || AVATAR_ARCHETYPES[0];
+
+  const [selectedArchetype, setSelectedArchetype] = useState<AvatarArchetype>(defaultArch);
   const [playerName, setPlayerName] = useState('Challenger Kai');
 
   // Loadout state initialized from chosen Archetype
@@ -61,7 +73,7 @@ export const ChallengerSelect: React.FC<Props> = ({
   const totalPoints = attributes.strength + attributes.agility + attributes.resonance;
   const isReady = totalPoints === 30 && equippedSkills.length === 5;
 
-  const handleProceed = () => {
+  const handleLaunch = () => {
     if (!isReady) return;
 
     const loadout: PlayerLoadout = {
@@ -78,26 +90,26 @@ export const ChallengerSelect: React.FC<Props> = ({
       sponsorContract: 'unsponsored',
     };
 
-    onProceedToDispatch(loadout);
+    onDeploy(loadout);
   };
 
   return (
     <div className="min-h-screen bg-[#060814] text-slate-100 flex flex-col p-4 md:p-6 lg:p-8">
       {/* ============================================================ */}
-      {/* HEADER & STEP BREADCRUMB                                     */}
+      {/* HEADER & ARENA SYNERGY BANNER (STEP 2 OF 2)                  */}
       {/* ============================================================ */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 mb-6 backdrop-blur-md shadow-xl flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 mb-4 backdrop-blur-md shadow-xl flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={onBackToLobby}
+            onClick={onBackToDispatch}
             className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-mono"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Lobby</span>
+            <span>Target Arena</span>
           </button>
           <div>
             <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-widest bg-cyan-950 px-2 py-0.5 rounded border border-cyan-500/30">
-              STEP 1 OF 2
+              STEP 2 OF 2 • CHALLENGER ADAPTATION
             </span>
             <h1 className="text-xl md:text-2xl font-black text-slate-100 mt-0.5">
               Choose Your Challenger
@@ -105,7 +117,7 @@ export const ChallengerSelect: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Codename Input & Next Button */}
+        {/* Codename Input & Launch Button */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl">
             <User className="w-3.5 h-3.5 text-slate-400" />
@@ -120,21 +132,44 @@ export const ChallengerSelect: React.FC<Props> = ({
 
           <button
             disabled={!isReady}
-            onClick={handleProceed}
-            className="py-2.5 px-5 rounded-xl font-bold font-mono text-xs tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center gap-2 transition-all cursor-pointer"
+            onClick={handleLaunch}
+            className="py-2.5 px-6 rounded-xl font-bold font-mono text-xs tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center gap-2 transition-all cursor-pointer"
           >
-            <span>NEXT: TARGET ARENA</span>
-            <ArrowRight className="w-4 h-4" />
+            <Play className="w-4 h-4 fill-current" />
+            <span>
+              {mode === 'duel' ? 'LAUNCH 1V1 DUEL' : 'START SOLO RUN'} ({stakeAmountSol} SOL)
+            </span>
           </button>
         </div>
       </div>
 
+      {/* Target Battlefield Synergy Banner */}
+      <div className="bg-gradient-to-r from-cyan-950/60 via-slate-900 to-slate-900 border border-cyan-500/40 rounded-xl p-3.5 mb-6 flex flex-wrap items-center justify-between gap-3 font-mono text-xs shadow-lg">
+        <div className="flex items-center gap-2.5">
+          <span className="text-xl">{arena.theme === 'metro' ? '🚇' : '🌊'}</span>
+          <div>
+            <span className="text-cyan-400 font-bold block">
+              BATTLEFIELD: {arena.name} ({arena.subtitle})
+            </span>
+            <span className="text-emerald-400 text-[11px]">
+              MODIFIER: {arena.environmentalModifier.name} — {arena.environmentalModifier.description}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-slate-400">
+          <span>Boss: <strong className="text-rose-400">{arena.boss.name}</strong></span>
+          <span>Circuit: <strong className="text-amber-400 uppercase">{circuitTier}</strong></span>
+          <span>Pot: <strong className="text-amber-300">{stakeAmountSol * 2} SOL ◎</strong></span>
+        </div>
+      </div>
+
       {/* ============================================================ */}
-      {/* 3 HERO SHOWCASE CARDS (HORIZONTAL CAROUSEL / GRID)           */}
+      {/* 3 HERO SHOWCASE CARDS (WITH ARENA SYNERGY HIGHLIGHTING)      */}
       {/* ============================================================ */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {AVATAR_ARCHETYPES.map((arch) => {
           const isSelected = selectedArchetype.id === arch.id;
+          const hasArenaSynergy = arch.preferredArena === arena.theme;
           const relic = WEAPON_RELICS.find((w) => w.id === arch.defaultWeaponId);
 
           return (
@@ -147,24 +182,36 @@ export const ChallengerSelect: React.FC<Props> = ({
                   : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/80'
               }`}
             >
-              {isSelected && (
-                <div className="absolute top-4 right-4 text-cyan-400 flex items-center gap-1 font-mono text-xs font-bold bg-cyan-950/90 px-2.5 py-1 rounded-full border border-cyan-500/40">
-                  <CheckCircle2 className="w-4 h-4" />
-                  SELECTED
-                </div>
-              )}
+              {/* Synergy & Selection Badges */}
+              <div className="flex items-center justify-between gap-2 mb-2">
+                {hasArenaSynergy ? (
+                  <span className="text-[10px] font-mono text-emerald-300 font-bold uppercase tracking-wider bg-emerald-950 px-2 py-0.5 rounded border border-emerald-500/50 flex items-center gap-1 animate-pulse">
+                    <Sparkles className="w-3 h-3 text-emerald-400" />
+                    ARENA SYNERGY
+                  </span>
+                ) : (
+                  <span />
+                )}
+
+                {isSelected && (
+                  <div className="text-cyan-400 flex items-center gap-1 font-mono text-xs font-bold bg-cyan-950/90 px-2 py-0.5 rounded border border-cyan-500/40">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    SELECTED
+                  </div>
+                )}
+              </div>
 
               <div>
                 {/* Title & Name */}
-                <div className="mb-4">
+                <div className="mb-3">
                   <span className="text-[11px] font-mono text-cyan-400 font-bold uppercase tracking-wider block">
                     {arch.title}
                   </span>
-                  <h3 className="text-2xl font-black text-slate-100 mt-1">{arch.name}</h3>
+                  <h3 className="text-2xl font-black text-slate-100 mt-0.5">{arch.name}</h3>
                 </div>
 
                 {/* Description */}
-                <p className="text-xs text-slate-400 leading-relaxed min-h-[48px]">
+                <p className="text-xs text-slate-400 leading-relaxed min-h-[44px]">
                   {arch.description}
                 </p>
 
@@ -210,16 +257,17 @@ export const ChallengerSelect: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* Signature Relic & Arena Bias */}
+                {/* Signature Relic & Arena Match */}
                 <div className="space-y-1.5 text-[11px] font-mono text-slate-400">
                   <div className="flex items-center justify-between">
                     <span>Signature Relic:</span>
                     <span className="text-amber-300 font-bold">{relic?.name}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Arena Synergy:</span>
-                    <span className="text-emerald-400">
+                    <span>Arena Preference:</span>
+                    <span className={hasArenaSynergy ? 'text-emerald-400 font-bold' : 'text-slate-400'}>
                       {arch.preferredArena === 'metro' ? '🚇 Metro Bias' : '🌊 Ocean Bias'}
+                      {hasArenaSynergy && ' (Active Bonus!)'}
                     </span>
                   </div>
                 </div>
@@ -234,7 +282,7 @@ export const ChallengerSelect: React.FC<Props> = ({
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                {isSelected ? '✓ ACTIVE PRESET' : 'SELECT ARCHETYPE'}
+                {isSelected ? '✓ ACTIVE CHALLENGER' : 'SELECT CHALLENGER'}
               </button>
             </div>
           );
@@ -303,7 +351,7 @@ export const ChallengerSelect: React.FC<Props> = ({
               <SkillDeckBuilder
                 equippedSkillIds={equippedSkills}
                 onToggleSkill={handleToggleSkill}
-                selectedArenaTheme={selectedArchetype.preferredArena}
+                selectedArenaTheme={arena.theme}
               />
             </div>
           </div>
@@ -315,20 +363,22 @@ export const ChallengerSelect: React.FC<Props> = ({
       {/* ============================================================ */}
       <div className="mt-auto pt-4 border-t border-slate-800 flex items-center justify-between">
         <button
-          onClick={onBackToLobby}
+          onClick={onBackToDispatch}
           className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs flex items-center gap-2 cursor-pointer transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          Back to Lobby
+          Back to Arena Selection
         </button>
 
         <button
           disabled={!isReady}
-          onClick={handleProceed}
-          className="py-3 px-8 rounded-xl font-bold font-mono text-sm tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-xl shadow-cyan-500/30 flex items-center gap-2 transition-all cursor-pointer"
+          onClick={handleLaunch}
+          className="py-3.5 px-8 rounded-xl font-bold font-mono text-sm tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 shadow-xl shadow-cyan-500/30 flex items-center gap-2 transition-all cursor-pointer"
         >
-          <span>PROCEED TO ARENA & STAKES</span>
-          <ArrowRight className="w-4 h-4" />
+          <Play className="w-4 h-4 fill-current" />
+          <span>
+            {mode === 'duel' ? 'LAUNCH 1V1 DUEL' : 'START SOLO RUN'} ({stakeAmountSol} SOL)
+          </span>
         </button>
       </div>
     </div>

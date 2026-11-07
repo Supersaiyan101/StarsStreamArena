@@ -6,6 +6,7 @@ import type {
   AppScreen,
   LiveBroadcastMatch,
 } from './types/game';
+import { ARENAS } from './data/arenas';
 import { MainLobby } from './components/MainLobby';
 import { ChallengerSelect } from './components/ChallengerSelect';
 import { DispatchArena } from './components/DispatchArena';
@@ -29,6 +30,13 @@ export interface ActiveDeploymentConfig {
   mode: 'solo' | 'duel';
 }
 
+export interface ActiveDispatchConfig {
+  arena: Arena;
+  circuitTier: 'bronze' | 'silver' | 'gold';
+  stakeAmountSol: number;
+  mode: 'solo' | 'duel';
+}
+
 export function App() {
   // Screen Router State
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('lobby');
@@ -38,8 +46,13 @@ export function App() {
   const [isConstellationModalOpen, setIsConstellationModalOpen] = useState(false);
   const [isArchiveOpen, setIsArchiveOpen] = useState(false);
 
-  // Active Fighter Setup
-  const [activeLoadout, setActiveLoadout] = useState<PlayerLoadout | null>(null);
+  // Active Pre-Combat Configuration (Flipped Order: Step 1 Arena -> Step 2 Challenger)
+  const [activeDispatchConfig, setActiveDispatchConfig] = useState<ActiveDispatchConfig>({
+    arena: ARENAS[0],
+    circuitTier: 'silver',
+    stakeAmountSol: 0.01,
+    mode: 'duel',
+  });
   const [activeDeployment, setActiveDeployment] = useState<ActiveDeploymentConfig | null>(null);
 
   // Active Spectator Broadcast Match
@@ -87,12 +100,13 @@ export function App() {
     setWalletBalanceSol((prev) => parseFloat((prev + 1.0).toFixed(4)));
   };
 
-  // Deployment & Combat Transitions
-  const handleProceedToDispatch = (loadout: PlayerLoadout) => {
-    setActiveLoadout(loadout);
-    setCurrentScreen('dispatch_arena');
+  // Step 1 -> Step 2 transition
+  const handleProceedToChallenger = (config: ActiveDispatchConfig) => {
+    setActiveDispatchConfig(config);
+    setCurrentScreen('challenger_select');
   };
 
+  // Step 2 -> Launch Combat
   const handleDeploy = (config: ActiveDeploymentConfig) => {
     setActiveDeployment(config);
     setWalletBalanceSol((prev) => Math.max(0, parseFloat((prev - config.stakeAmountSol).toFixed(4))));
@@ -134,7 +148,7 @@ export function App() {
           walletAddress={walletAddress}
           walletBalanceSol={walletBalanceSol}
           constellation={constellation}
-          onEnterChallenger={() => setCurrentScreen('challenger_select')}
+          onEnterChallenger={() => setCurrentScreen('dispatch_arena')}
           onEnterSpectator={() => setCurrentScreen('spectator_hub')}
           onOpenCodex={() => setIsCodexOpen(true)}
           onOpenConstellationModal={() => setIsConstellationModalOpen(true)}
@@ -143,21 +157,32 @@ export function App() {
         />
       )}
 
-      {/* SCREEN 1: CHALLENGER ASSEMBLY */}
-      {currentScreen === 'challenger_select' && (
-        <ChallengerSelect
+      {/* STEP 1 OF 2: SCENARIO ARENA & STAKES DISPATCH */}
+      {currentScreen === 'dispatch_arena' && (
+        <DispatchArena
+          walletBalanceSol={walletBalanceSol}
           onBackToLobby={() => setCurrentScreen('lobby')}
-          onProceedToDispatch={handleProceedToDispatch}
+          onProceedToChallenger={handleProceedToChallenger}
         />
       )}
 
-      {/* SCREEN 2: SCENARIO ARENA & STAKES DISPATCH */}
-      {currentScreen === 'dispatch_arena' && activeLoadout && (
-        <DispatchArena
-          loadout={activeLoadout}
-          walletBalanceSol={walletBalanceSol}
-          onBackToChallenger={() => setCurrentScreen('challenger_select')}
-          onDeploy={handleDeploy}
+      {/* STEP 2 OF 2: CHALLENGER ASSEMBLY (ADAPTING TO ARENA) */}
+      {currentScreen === 'challenger_select' && (
+        <ChallengerSelect
+          arena={activeDispatchConfig.arena}
+          circuitTier={activeDispatchConfig.circuitTier}
+          stakeAmountSol={activeDispatchConfig.stakeAmountSol}
+          mode={activeDispatchConfig.mode}
+          onBackToDispatch={() => setCurrentScreen('dispatch_arena')}
+          onDeploy={(loadout) =>
+            handleDeploy({
+              loadout,
+              arena: activeDispatchConfig.arena,
+              circuitTier: activeDispatchConfig.circuitTier,
+              stakeAmountSol: activeDispatchConfig.stakeAmountSol,
+              mode: activeDispatchConfig.mode,
+            })
+          }
         />
       )}
 

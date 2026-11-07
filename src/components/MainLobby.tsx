@@ -181,7 +181,7 @@ export const MainLobby: React.FC<Props> = ({
               className="w-full py-4 rounded-2xl font-bold font-mono text-sm tracking-wide bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 shadow-lg shadow-cyan-500/30 flex items-center justify-center gap-2 transition-all cursor-pointer group-hover:shadow-cyan-400/40"
             >
               <Swords className="w-4 h-4" />
-              CHOOSE HERO & FIGHT ➔
+              SELECT SCENARIO & ENTER ➔
             </button>
           </div>
         </div>
@@ -253,3 +253,4 @@ export const MainLobby: React.FC<Props> = ({
     </div>
   );
 };
+
