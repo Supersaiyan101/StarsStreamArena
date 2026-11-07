@@ -302,7 +302,7 @@ export const CombatStage: React.FC<Props> = ({
               onClick={onExit}
               className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-sm tracking-wide transition-all shadow-lg shadow-cyan-500/30 cursor-pointer"
             >
-              Return to Armory Terminal
+              RETURN TO MAIN LOBBY
             </button>
           </div>
         </div>

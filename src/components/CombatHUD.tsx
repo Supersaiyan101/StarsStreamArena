@@ -199,36 +199,36 @@ export const CombatHUD: React.FC<Props> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onCounterAction('jump')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 boss.activeTelegraph.counterAction === 'jump'
                   ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-md shadow-emerald-500/40 scale-105'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
               <ChevronUp className="w-4 h-4" />
-              [ ⬆️ JUMP ]
+              [ ⬆️ JUMP (W) ]
             </button>
             <button
               onClick={() => onCounterAction('crouch')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 boss.activeTelegraph.counterAction === 'crouch'
                   ? 'bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-md shadow-amber-500/40 scale-105'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
               <ChevronDown className="w-4 h-4" />
-              [ ⬇️ SLIDE ]
+              [ ⬇️ SLIDE (S) ]
             </button>
             <button
               onClick={() => onCounterAction('parry')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 boss.activeTelegraph.counterAction === 'parry'
                   ? 'bg-cyan-400 text-slate-950 hover:bg-cyan-300 shadow-md shadow-cyan-400/40 scale-105'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
               <Shield className="w-4 h-4" />
-              [ 🛡️ PARRY ]
+              [ 🛡️ PARRY (Space) ]
             </button>
           </div>
         </div>
@@ -259,23 +259,36 @@ export const CombatHUD: React.FC<Props> = ({
 
         {/* 3 Skill Cards in Hand */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {combatState.activeHand.map((skill: Skill) => {
+          {combatState.activeHand.map((skill: Skill, idx: number) => {
             const canAfford = combatState.playerEnergy >= skill.energyCost;
+            const borderGlow = skill.isStigma
+              ? 'border-amber-400 bg-amber-950/20 shadow-amber-500/20'
+              : skill.category === 'melee'
+              ? 'border-cyan-500/50 bg-cyan-950/20'
+              : skill.category === 'elemental'
+              ? 'border-purple-500/50 bg-purple-950/20'
+              : 'border-emerald-500/50 bg-emerald-950/20';
+
             return (
               <div
                 key={skill.id}
                 onClick={() => canAfford && onPlaySkill(skill.id)}
-                className={`p-3.5 rounded-xl border flex flex-col justify-between transition-all cursor-pointer ${
+                className={`p-3.5 rounded-xl border-2 flex flex-col justify-between transition-all cursor-pointer ${borderGlow} ${
                   canAfford
-                    ? 'bg-slate-950 border-slate-700 hover:border-cyan-400 hover:bg-slate-900 shadow-lg'
-                    : 'bg-slate-950/40 border-slate-800 opacity-40 cursor-not-allowed'
+                    ? 'hover:scale-[1.02] shadow-lg opacity-100'
+                    : 'opacity-40 cursor-not-allowed'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider">
-                      {skill.element} • {skill.category}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider">
+                        {skill.element} • {skill.category}
+                      </span>
+                      <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-slate-800 text-slate-300">
+                        [{idx + 1}]
+                      </span>
+                    </div>
                     <h4 className="text-sm font-bold text-slate-100 mt-0.5">{skill.name}</h4>
                   </div>
                   <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
