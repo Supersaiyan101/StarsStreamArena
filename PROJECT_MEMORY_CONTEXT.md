@@ -238,6 +238,10 @@ starstream-arena/
 21. **`e34af02`** — *Canvas 2.0 Anime Sprites & Hit-Stop Impact:* Flowing anime trenchcoat ribbons, neon blade aura, dynamic crescent slash VFX, hexagonal parry energy shields, and 45-60ms hit-stop freeze.
 22. **`c36a276`** — *Arcade Popups & Visual Cross-Arena Missile:* Bouncy impact texts (`🔥 COMBO x3!`, `💥 STUN CRITICAL!`, `🛡️ PERFECT PARRY!`) and animated cross-screen rocket projectiles streaking between Channel A and B.
 23. **`2a7a6d2`** — *Fighting Screen 2.0 Redesign:* Prominent Dual Health Bars at the very top (You on Left vs Boss on Right), widescreen 270px canvas in the center, and zero-scroll action card dock directly below.
+24. **`87e57a5`** — *Codebase Housekeeping & RPC Guard:* Removed orphaned legacy `Armory.tsx` (19.2 KB dead code) and updated `solanaService.ts` to automatically resolve full 44-character Base58 keys on Devnet RPC balance and airdrop queries.
+25. **`c2fdf26`** — *Audio Impact & Keyboard Unlock:* Implemented procedural `playExplosionThud()` for cross-arena sabotage missile strikes and ensured `audio.resume()` runs on first keystroke to prevent browser audio context suspension.
+26. **`a2e4a11`** — *Responsive Dual Duel Viewport Modes:* Added 3-way view toggle pill (`[⚡ Split 50/50]`, `[🛡️ Focus You (Ch. A)]`, `[👁️ Focus Rival (Ch. B)]`) giving players full viewport control on desktop, laptop, and mobile screens.
+27. **`77b6a59`** — *Solo Trial Esports Grade & Star Archive Recording:* Added performance style rank badges (`S+ APEX INCARNATION`, `A DIVINE FAVOR`, `B VETERAN`, `C NOVICE`), 1-click on-chain record action to `StarArchive`, and radiant gold critical shockwave particles on staggered bosses.
 
 ---
 
