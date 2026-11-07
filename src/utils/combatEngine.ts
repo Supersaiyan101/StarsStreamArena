@@ -567,3 +567,307 @@ export function triggerInteractiveProp(
     message: `Triggered ${prop.name}!`,
   };
 }
+
+// ============================================================================
+// POKÉMON x ORV TACTICAL TURN ENGINE (Speed, Priority, Status & Weakness)
+// ============================================================================
+
+export function calculateElementalMultiplier(
+  attackElement: string,
+  bossWeaknesses: string[] = [],
+  bossResistances: string[] = []
+): { multiplier: number; descriptor: 'super_effective' | 'resisted' | 'neutral' } {
+  if (bossWeaknesses.includes(attackElement)) {
+    return { multiplier: 2.0, descriptor: 'super_effective' };
+  }
+  if (bossResistances.includes(attackElement)) {
+    return { multiplier: 0.5, descriptor: 'resisted' };
+  }
+  return { multiplier: 1.0, descriptor: 'neutral' };
+}
+
+export function determineTurnInitiative(
+  playerMove: Skill,
+  bossPriority: number,
+  playerAgility: number,
+  bossSpeed: number
+): boolean {
+  const pPriority = playerMove.priority ?? 0;
+  if (pPriority > bossPriority) return true;
+  if (pPriority < bossPriority) return false;
+  return playerAgility >= bossSpeed;
+}
+
+export interface PokemonTurnResult {
+  combatState: ActiveCombatState;
+  bossState: Boss;
+  arena: Arena;
+  playerActedFirst: boolean;
+  damageDealtByPlayer: number;
+  damageDealtByBoss: number;
+  isSuperEffective: boolean;
+  isResisted: boolean;
+  narrativeLogs: string[];
+}
+
+export function executePokemonStyleTurn(
+  skillId: string,
+  combatState: ActiveCombatState,
+  bossState: Boss,
+  arena: Arena,
+  loadout: PlayerLoadout
+): PokemonTurnResult {
+  const skill = combatState.activeHand.find((s) => s.id === skillId);
+  if (!skill) {
+    return {
+      combatState,
+      bossState,
+      arena,
+      playerActedFirst: true,
+      damageDealtByPlayer: 0,
+      damageDealtByBoss: 0,
+      isSuperEffective: false,
+      isResisted: false,
+      narrativeLogs: ['[ERROR: Move not found.]'],
+    };
+  }
+
+  let nextCombat: ActiveCombatState = { ...combatState };
+  let nextBoss: Boss = { ...bossState };
+  let nextArena: Arena = { ...arena };
+  const narrativeLogs: string[] = [];
+
+  // 1. Determine Initiative (Speed & Priority)
+  const bossMove = nextBoss.activeTelegraph;
+  const bossPriority = bossMove?.priority ?? 0;
+  const playerActedFirst = determineTurnInitiative(
+    skill,
+    bossPriority,
+    loadout.attributes.agility,
+    nextBoss.speed || 8
+  );
+
+  let totalPlayerDmg = 0;
+  let totalBossDmg = 0;
+  let isSuperEffective = false;
+  let isResisted = false;
+
+  // Sub-action: Player Executes Move
+  const executePlayerMove = () => {
+    narrativeLogs.push(`Incarnation ${loadout.name} used [${skill.name}]!`);
+
+    // Check Setup Buff (Song of the Sword / swords dance)
+    let attackMultiplier = 1.0;
+    if (nextCombat.setupBuff && nextCombat.setupBuff.turnsRemaining > 0) {
+      attackMultiplier = nextCombat.setupBuff.attackMultiplier;
+      narrativeLogs.push(`[${nextCombat.setupBuff.name}] amplified damage by +60%!`);
+    }
+
+    // Check Elemental Effectiveness
+    const elemResult = calculateElementalMultiplier(
+      skill.element,
+      nextBoss.weaknesses || [],
+      nextBoss.resistances || []
+    );
+
+    if (elemResult.descriptor === 'super_effective') {
+      isSuperEffective = true;
+      narrativeLogs.push(`💥 IT'S SUPER EFFECTIVE! (2.0x DMG)`);
+    } else if (elemResult.descriptor === 'resisted') {
+      isResisted = true;
+      narrativeLogs.push(`🛡️ It's not very effective... (0.5x DMG)`);
+    }
+
+    // Base damage calculation with Strength
+    let dmg = skill.baseDamage;
+    if (skill.baseDamage > 0) {
+      dmg += Math.round(loadout.attributes.strength * 1.5);
+      dmg = Math.round(dmg * attackMultiplier * elemResult.multiplier);
+
+      // Staggered bonus (+50%)
+      if (nextBoss.isStaggered) {
+        dmg = Math.round(dmg * 1.5);
+        narrativeLogs.push(`CRITICAL STUN PUNISH! (+50% DMG)`);
+      }
+
+      totalPlayerDmg = dmg;
+      nextBoss.currentHp = Math.max(0, nextBoss.currentHp - dmg);
+      narrativeLogs.push(`Dealt ${dmg} ${skill.element.toUpperCase()} damage to ${nextBoss.name}!`);
+
+      // Strip stagger gauge
+      if (!nextBoss.isStaggered) {
+        nextBoss.staggerGauge = Math.max(0, nextBoss.staggerGauge - skill.staggerDamage);
+        if (nextBoss.staggerGauge === 0) {
+          nextBoss.isStaggered = true;
+          nextBoss.staggerTurnsRemaining = 2;
+          narrativeLogs.push(`ARMOR SHATTERED! ${nextBoss.name} is Staggered for 2 turns!`);
+        }
+      }
+    }
+
+    // Setup Buff Application (e.g. Song of the Sword)
+    if (skill.buffEffect) {
+      if (skill.buffEffect.attackMultiplier) {
+        nextCombat.setupBuff = {
+          name: skill.name,
+          attackMultiplier: skill.buffEffect.attackMultiplier,
+          turnsRemaining: skill.buffEffect.duration,
+        };
+        narrativeLogs.push(`${loadout.name}'s combat intent surged! Next attacks deal +60% DMG!`);
+      }
+      if (skill.buffEffect.shieldBonus) {
+        nextCombat.shieldPoints += skill.buffEffect.shieldBonus;
+        narrativeLogs.push(`Gained +${skill.buffEffect.shieldBonus} Shield Points!`);
+      }
+    }
+
+    // Status Ailment Infliction (Burn, Bleed, Paralyze, Concussion)
+    if (skill.statusEffect) {
+      const roll = Math.random();
+      if (roll <= skill.statusEffect.chance) {
+        nextBoss.activeStatus = {
+          type: skill.statusEffect.type,
+          durationTurns: skill.statusEffect.duration,
+          damagePerTurn: skill.statusEffect.damagePerTurn,
+        };
+        narrativeLogs.push(`STATUS INFLICTED: ${nextBoss.name} was afflicted with [${skill.statusEffect.type.toUpperCase()}]!`);
+      }
+    }
+
+    // Stigma & Heat tracking
+    nextCombat.stigmaMeter = skill.isStigma ? 0 : Math.min(100, nextCombat.stigmaMeter + 20);
+    nextCombat.probabilityHeat = Math.min(100, nextCombat.probabilityHeat + skill.heatGenerated);
+    nextCombat.sabotageEnergy = Math.min(100, nextCombat.sabotageEnergy + skill.sabotageEnergyGain);
+    nextCombat.styleRating += dmg * 2 + 100;
+  };
+
+  // Sub-action: Boss Executes Attack
+  const executeBossMove = () => {
+    // Check if Boss is Paralyzed or Staggered
+    if (nextBoss.isStaggered) {
+      narrativeLogs.push(`${nextBoss.name} is STAGGERED and cannot move!`);
+      return;
+    }
+
+    if (nextBoss.activeStatus?.type === 'paralyze' && Math.random() < 0.4) {
+      narrativeLogs.push(`${nextBoss.name} is PARALYZED! It couldn't move!`);
+      return;
+    }
+
+    if (nextBoss.activeStatus?.type === 'concussion') {
+      narrativeLogs.push(`${nextBoss.name} is CONCUSSED and flinched!`);
+      return;
+    }
+
+    // Pick attack if none active
+    const attacks = nextBoss.possibleAttacks;
+    const attack = nextBoss.activeTelegraph || attacks[Math.floor(Math.random() * attacks.length)];
+    narrativeLogs.push(`${nextBoss.name} executed [${attack.name}]!`);
+
+    let bossDmg = attack.damage;
+
+    // Check Avatar Decoy (Han Sooyoung clone absorbs 100%!)
+    if (nextCombat.avatarDecoyActive) {
+      nextCombat.avatarDecoyActive = false;
+      narrativeLogs.push(`DECOY CLASH: The Shadow Avatar absorbed the entire strike cleanly!`);
+      return;
+    }
+
+    // Check Counter Stance (Fourth Wall reflects 1.5x damage!)
+    if (skill.priority === -1) {
+      const reflected = Math.round(bossDmg * 1.5);
+      const reduced = Math.round(bossDmg * 0.5);
+      nextBoss.currentHp = Math.max(0, nextBoss.currentHp - reflected);
+      narrativeLogs.push(`PERFECT COUNTER REVERSAL! Endured strike for ${reduced} DMG and reflected ${reflected} DMG back to ${nextBoss.name}!`);
+      bossDmg = reduced;
+    }
+
+    // Apply damage to Player Shield first, then HP
+    if (nextCombat.shieldPoints > 0) {
+      if (nextCombat.shieldPoints >= bossDmg) {
+        nextCombat.shieldPoints -= bossDmg;
+        narrativeLogs.push(`Shield absorbed all ${bossDmg} damage!`);
+        bossDmg = 0;
+      } else {
+        bossDmg -= nextCombat.shieldPoints;
+        narrativeLogs.push(`Shield absorbed ${nextCombat.shieldPoints} damage and broke!`);
+        nextCombat.shieldPoints = 0;
+      }
+    }
+
+    totalBossDmg = bossDmg;
+    nextCombat.playerHp = Math.max(0, nextCombat.playerHp - bossDmg);
+    if (bossDmg > 0) {
+      narrativeLogs.push(`${loadout.name} took ${bossDmg} damage!`);
+    }
+
+    // Cycle next telegraph
+    nextBoss.activeTelegraph = attacks[Math.floor(Math.random() * attacks.length)];
+  };
+
+  // Execute in order of initiative
+  if (playerActedFirst) {
+    narrativeLogs.push(`SPEED INITIATIVE: ${loadout.name} moves first!`);
+    executePlayerMove();
+    if (nextBoss.currentHp > 0) {
+      executeBossMove();
+    } else {
+      narrativeLogs.push(`VICTORY! ${nextBoss.name} was defeated before it could strike!`);
+    }
+  } else {
+    narrativeLogs.push(`SPEED INITIATIVE: ${nextBoss.name} outspeeds and strikes first!`);
+    executeBossMove();
+    if (nextCombat.playerHp > 0) {
+      executePlayerMove();
+    }
+  }
+
+  // End-of-turn Status Ticks (Burn / Bleed)
+  if (nextBoss.currentHp > 0 && nextBoss.activeStatus) {
+    const status = nextBoss.activeStatus;
+    if (status.type === 'burn' || status.type === 'bleed') {
+      const tick = status.damagePerTurn || 15;
+      nextBoss.currentHp = Math.max(0, nextBoss.currentHp - tick);
+      narrativeLogs.push(`STATUS TICK: ${nextBoss.name} took ${tick} ${status.type.toUpperCase()} damage!`);
+    }
+    status.durationTurns -= 1;
+    if (status.durationTurns <= 0) {
+      narrativeLogs.push(`${nextBoss.name} recovered from ${status.type}!`);
+      nextBoss.activeStatus = null;
+    }
+  }
+
+  // Decrement Player Setup Buff
+  if (nextCombat.setupBuff) {
+    nextCombat.setupBuff.turnsRemaining -= 1;
+    if (nextCombat.setupBuff.turnsRemaining <= 0) {
+      nextCombat.setupBuff = null;
+    }
+  }
+
+  // Decrement Boss Stagger
+  if (nextBoss.isStaggered) {
+    nextBoss.staggerTurnsRemaining -= 1;
+    if (nextBoss.staggerTurnsRemaining <= 0) {
+      nextBoss.isStaggered = false;
+      nextBoss.staggerGauge = 100;
+      narrativeLogs.push(`${nextBoss.name} recovered its posture!`);
+    }
+  }
+
+  nextCombat.turnCount = (nextCombat.turnCount || 1) + 1;
+  nextCombat.narrativeDialogue = narrativeLogs;
+  nextCombat.combatLogs = [...nextCombat.combatLogs, ...narrativeLogs.map((l) => `[TURN ${nextCombat.turnCount}: ${l}]`)];
+
+  return {
+    combatState: nextCombat,
+    bossState: nextBoss,
+    arena: nextArena,
+    playerActedFirst,
+    damageDealtByPlayer: totalPlayerDmg,
+    damageDealtByBoss: totalBossDmg,
+    isSuperEffective,
+    isResisted,
+    narrativeLogs,
+  };
+}
