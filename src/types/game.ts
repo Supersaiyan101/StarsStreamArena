@@ -1,11 +1,51 @@
 // ============================================================================
-// StarStream Arena - Core Game Types
+// StarStream Arena - Core Game Types (ORV x Pokémon Tactical Engine)
 // ============================================================================
 
-export type ElementalType = 'physical' | 'lightning' | 'ice' | 'fire' | 'void';
-export type SkillCategory = 'melee' | 'elemental' | 'tactical' | 'stigma';
-export type TelegraphType = 'ground_red' | 'slash_yellow' | 'pierce_blue';
+export type ElementalType =
+  | 'physical'
+  | 'lightning'
+  | 'ice'
+  | 'fire'
+  | 'void'
+  | 'plasma'
+  | 'dark'
+  | 'holy'
+  | 'blunt'
+  | 'water';
+
+export type SkillCategory = 'melee' | 'elemental' | 'tactical' | 'stigma' | 'strike' | 'setup' | 'priority';
+export type MoveRole = 'strike' | 'setup' | 'priority' | 'stigma';
+export type MovePriority = -1 | 0 | 1; // +1 = Strikes first (Quick Attack); 0 = Standard; -1 = Slow Counter (Bide)
+export type TelegraphType = 'ground_red' | 'slash_yellow' | 'pierce_blue' | 'channel_ultimate';
 export type CounterAction = 'jump' | 'crouch' | 'parry' | 'none';
+export type StatusType = 'burn' | 'bleed' | 'paralyze' | 'concussion' | 'none';
+
+export interface ActiveStatusEffect {
+  type: StatusType;
+  durationTurns: number;
+  damagePerTurn?: number;
+  attackReductionPercent?: number; // e.g. burn halves physical attack
+  skipTurnChance?: number; // e.g. paralyze 35% chance to skip turn
+}
+
+export interface FablePassive {
+  id: string;
+  name: string;
+  koreanLoreRef?: string;
+  description: string;
+  triggerCondition: 'low_hp' | 'battle_start' | 'lethal_hit';
+  isTriggered?: boolean;
+}
+
+export interface BossChannelingAttack {
+  name: string;
+  damage: number;
+  turnsLeft: number;
+  breakShieldHp: number;
+  maxBreakShieldHp: number;
+  description: string;
+}
 
 export interface ArenaInteractiveProp {
   id: string;
@@ -25,6 +65,8 @@ export interface BossTelegraph {
   damage: number;
   description: string;
   warningTurns: number; // turns until impact
+  element?: ElementalType;
+  priority?: MovePriority;
 }
 
 export interface Boss {
@@ -33,11 +75,17 @@ export interface Boss {
   subtitle: string;
   maxHp: number;
   currentHp: number;
+  speed: number; // Speed stat compared against Player Agility for turn initiative
+  elementalType: ElementalType;
+  weaknesses: ElementalType[]; // Takes 2.0x Super Effective Damage!
+  resistances: ElementalType[]; // Takes 0.5x Resisted Damage!
   staggerGauge: number; // 0 to 100
   isStaggered: boolean;
   staggerTurnsRemaining: number;
   phase: 1 | 2;
   enraged: boolean;
+  activeStatus: ActiveStatusEffect | null;
+  channelingAttack: BossChannelingAttack | null; // Raid boss DPS check shield
   activeTelegraph: BossTelegraph | null;
   possibleAttacks: BossTelegraph[];
   enrageThresholdHp: number; // e.g. 50%
@@ -75,13 +123,26 @@ export interface Skill {
   name: string;
   koreanLoreRef?: string;
   category: SkillCategory;
+  moveRole?: MoveRole;
   element: ElementalType;
+  priority?: MovePriority;
   energyCost: number;
   cooldown: number; // turns
   baseDamage: number;
   staggerDamage: number;
   sabotageEnergyGain: number;
   heatGenerated: number;
+  statusEffect?: {
+    type: StatusType;
+    chance: number; // 0.0 to 1.0
+    duration: number;
+    damagePerTurn?: number;
+  };
+  buffEffect?: {
+    attackMultiplier?: number;
+    shieldBonus?: number;
+    duration: number;
+  };
   description: string;
   synergyText?: string;
   isStigma?: boolean;
@@ -89,7 +150,7 @@ export interface Skill {
 
 export interface PlayerAttributes {
   strength: number; // Melee & physical damage
-  agility: number; // Dodge rate, crit multiplier, sabotage energy gain
+  agility: number; // Turn order Speed initiative, Dodge rate, crit multiplier
   resonance: number; // Elemental damage, shield potency, cooldown reduction
 }
 
@@ -97,7 +158,8 @@ export interface PlayerLoadout {
   name: string;
   avatarArchetype: 'blade_disciple' | 'shadow_rogue' | 'titan_vanguard';
   attributes: PlayerAttributes; // must sum to 30
-  equippedSkills: string[]; // exactly 5 skill IDs
+  equippedSkills: string[]; // exactly 4 or 5 skill IDs
+  fablePassive?: FablePassive;
   weapon: {
     name: string;
     koreanLoreRef?: string;
@@ -134,7 +196,7 @@ export interface ActiveCombatState {
   probabilityHeat: number; // 0 - 100%
   sabotageEnergy: number; // 0 - 100
   stigmaMeter: number; // 0 - 100%
-  activeHand: Skill[]; // dynamic 3 cards drawn from equipped 5
+  activeHand: Skill[]; // dynamic cards / 4 tactical moves
   deckDiscardPile: Skill[];
   deckDrawPile: Skill[];
   comboCount: number;
@@ -143,6 +205,14 @@ export interface ActiveCombatState {
   shieldPoints: number;
   isStunned: boolean;
   turnCount: number;
+  activeStatus?: ActiveStatusEffect | null;
+  setupBuff?: {
+    name: string;
+    attackMultiplier: number;
+    turnsRemaining: number;
+  } | null;
+  avatarDecoyActive?: boolean; // Han Sooyoung shadow clone
+  counterStanceActive?: boolean; // Lee Hyunsung Kinetic Reversal ready
   activeShieldMinionHp?: number; // Calamity minion intercepting damage
   activeBounty?: FlashBounty | null;
   incomingSabotage: {
@@ -150,6 +220,7 @@ export interface ActiveCombatState {
     turnsUntilImpact: number;
   } | null;
   combatLogs: string[];
+  narrativeDialogue?: string[]; // Pokemon-style battle log ticker
 }
 
 export interface SpectatorConstellation {
