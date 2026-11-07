@@ -18,7 +18,9 @@ import { audio } from '../utils/audioService';
 import { CombatCanvas } from './CombatCanvas';
 import { CombatHUD } from './CombatHUD';
 import { StreamChat } from './StreamChat';
-import { Trophy, Skull, ArrowLeft } from 'lucide-react';
+import { saveArchiveEntry } from './StarArchive';
+import { solanaService, getSolanaExplorerUrl } from '../utils/solanaService';
+import { Trophy, Skull, ArrowLeft, Award, ExternalLink, BookmarkCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface Props {
@@ -55,6 +57,35 @@ export const CombatStage: React.FC<Props> = ({
   const [floatingTexts, setFloatingTexts] = useState<
     { id: string; text: string; x: number; y: number; color: string; opacity: number }[]
   >([]);
+  const [isRecorded, setIsRecorded] = useState(false);
+  const [recordedTx, setRecordedTx] = useState<string | null>(null);
+
+  const getStyleRank = (score: number) => {
+    if (score >= 12000) return { rank: 'S+', title: 'APEX INCARNATION', badgeClass: 'bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 shadow-amber-400/50' };
+    if (score >= 8000) return { rank: 'A', title: 'DIVINE FAVOR', badgeClass: 'bg-gradient-to-r from-cyan-400 to-blue-400 text-slate-950 shadow-cyan-400/50' };
+    if (score >= 4000) return { rank: 'B', title: 'VETERAN FIGHTER', badgeClass: 'bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-emerald-400/50' };
+    return { rank: 'C', title: 'NOVICE SURVIVOR', badgeClass: 'bg-slate-700 text-slate-200 shadow-slate-700/50' };
+  };
+
+  const handleRecordToArchive = () => {
+    if (isRecorded) return;
+    const tx = solanaService.generateTxSignature();
+    saveArchiveEntry({
+      id: `run_${Date.now()}`,
+      challengerName: loadout.name,
+      arenaName: arena.name,
+      theme: arena.theme,
+      clearTimeSeconds: Math.max(24, (combatState.turnCount || 1) * 7),
+      styleScore: combatState.styleRating,
+      tipsEarnedSol: parseFloat((stakeAmountSol * 2).toFixed(4)),
+      walletAddress: constellation.walletAddress,
+      txHash: tx,
+    });
+    setIsRecorded(true);
+    setRecordedTx(tx);
+    audio.playCoinJingle();
+    confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+  };
 
   // Trigger floating damage text
   const addFloatingText = (text: string, color: string = '#38bdf8', isCrit = false) => {
@@ -289,19 +320,45 @@ export const CombatStage: React.FC<Props> = ({
           <div className="bg-slate-900 border border-cyan-500/40 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center flex flex-col items-center">
             {isVictory ? (
               <>
-                <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-400 flex items-center justify-center text-amber-400 mb-4 shadow-lg shadow-amber-500/30">
+                <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-400 flex items-center justify-center text-amber-400 mb-3 shadow-lg shadow-amber-500/30">
                   <Trophy className="w-8 h-8" />
                 </div>
                 <h2 className="text-2xl font-black text-slate-100 tracking-tight">
                   SCENARIO CLEARED!
                 </h2>
-                <p className="text-sm text-emerald-400 font-mono mt-1 font-bold">
+                <p className="text-sm text-emerald-400 font-mono mt-0.5 font-bold">
                   Bounty Claimed: {(stakeAmountSol * 2).toFixed(4)} SOL
                 </p>
-                <div className="my-5 p-3.5 bg-slate-950 rounded-xl border border-slate-800 w-full text-left text-xs font-mono space-y-1.5">
+
+                {/* Esports Style Rank Badge */}
+                {(() => {
+                  const styleRank = getStyleRank(combatState.styleRating);
+                  return (
+                    <div className="my-3 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between w-full">
+                      <span className="text-xs font-mono text-slate-400 font-bold uppercase">
+                        PERFORMANCE RANK:
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2.5 py-0.5 rounded-lg text-xs font-black shadow-lg ${styleRank.badgeClass}`}>
+                          {styleRank.rank}
+                        </span>
+                        <span className="text-[11px] font-mono text-slate-300 font-bold">
+                          {styleRank.title}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Run Telemetry Summary */}
+                <div className="mb-4 p-3.5 bg-slate-950 rounded-xl border border-slate-800 w-full text-left text-xs font-mono space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-slate-500">Challenger:</span>
                     <span className="text-slate-200">{loadout.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Arena:</span>
+                    <span className="text-slate-200">{arena.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Final Style Score:</span>
@@ -313,6 +370,40 @@ export const CombatStage: React.FC<Props> = ({
                     <span className="text-slate-500">Max Combo:</span>
                     <span className="text-cyan-400">{combatState.comboCount} Hits</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Combat Duration:</span>
+                    <span className="text-slate-300">{combatState.turnCount || 1} Turns</span>
+                  </div>
+                </div>
+
+                {/* Record Run to Star Archive Leaderboard */}
+                <div className="w-full mb-3">
+                  {isRecorded ? (
+                    <div className="w-full py-2.5 px-3 rounded-xl bg-emerald-950/60 border border-emerald-500/60 text-emerald-300 font-mono text-xs flex flex-col gap-1 items-center">
+                      <div className="flex items-center gap-1.5 font-bold">
+                        <BookmarkCheck className="w-4 h-4 text-emerald-400" />
+                        <span>IMMORTALIZED IN STAR ARCHIVE!</span>
+                      </div>
+                      {recordedTx && (
+                        <a
+                          href={getSolanaExplorerUrl(recordedTx)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[10px] text-cyan-400 underline hover:text-cyan-300 flex items-center gap-1"
+                        >
+                          View Solana Explorer Tx <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleRecordToArchive}
+                      className="w-full py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-amber-500/10"
+                    >
+                      <Award className="w-4 h-4 text-amber-400" />
+                      RECORD RUN TO STAR ARCHIVE
+                    </button>
+                  )}
                 </div>
               </>
             ) : (

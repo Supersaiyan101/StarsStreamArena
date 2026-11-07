@@ -60,13 +60,50 @@ export const SAMPLE_ARCHIVE_ENTRIES: StarArchiveEntry[] = [
   },
 ];
 
+const STORAGE_ARCHIVE_KEY = 'starstream_arena_saved_archive';
+
+export function getSavedArchiveEntries(): StarArchiveEntry[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_ARCHIVE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to load archive:', e);
+  }
+  return SAMPLE_ARCHIVE_ENTRIES;
+}
+
+export function saveArchiveEntry(newEntry: Omit<StarArchiveEntry, 'rank'>): StarArchiveEntry[] {
+  const current = getSavedArchiveEntries();
+  const filtered = current.filter((e) => e.id !== newEntry.id);
+  const combined = [newEntry, ...filtered];
+  combined.sort((a, b) => b.styleScore - a.styleScore);
+  const ranked: StarArchiveEntry[] = combined.map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+  try {
+    localStorage.setItem(STORAGE_ARCHIVE_KEY, JSON.stringify(ranked));
+  } catch (e) {
+    console.warn('Failed to save archive:', e);
+  }
+  return ranked;
+}
+
 export const StarArchive: React.FC<Props> = ({
   isOpen,
   onClose,
   onTipRunner,
 }) => {
-  const [entries, setEntries] = useState<StarArchiveEntry[]>(SAMPLE_ARCHIVE_ENTRIES);
+  const [entries, setEntries] = useState<StarArchiveEntry[]>(getSavedArchiveEntries());
   const [filterTheme, setFilterTheme] = useState<'all' | 'metro' | 'flooded'>('all');
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setEntries(getSavedArchiveEntries());
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

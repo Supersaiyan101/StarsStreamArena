@@ -60,6 +60,25 @@ export const CombatCanvas: React.FC<Props> = ({
             decay: 0.04 + Math.random() * 0.03,
           });
         }
+
+        // Stagger Critical Shockwave Burst
+        if (boss.isStaggered) {
+          hitStopUntilRef.current = now + 70;
+          for (let i = 0; i < 22; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 3 + Math.random() * 7;
+            particlesRef.current.push({
+              x: 360 + (Math.random() - 0.5) * 40,
+              y: 230 + (Math.random() - 0.5) * 40,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              color: Math.random() > 0.3 ? '#fbbf24' : '#f59e0b',
+              size: 3 + Math.random() * 3.5,
+              alpha: 1.0,
+              decay: 0.03 + Math.random() * 0.02,
+            });
+          }
+        }
       } else if (playerActionState === 'parrying') {
         hitStopUntilRef.current = now + 60;
         // Hexagonal shield deflection sparks
