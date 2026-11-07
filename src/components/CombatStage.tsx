@@ -188,6 +188,9 @@ export const CombatStage: React.FC<Props> = ({
   // Trigger Prop
   const handleTriggerProp = (propId: string) => {
     const result = triggerInteractiveProp(propId, combatState, boss, arena);
+    if (result.success) {
+      audio.playExplosionThud();
+    }
     setCombatState(result.combatState);
     setBoss(result.bossState);
     setArena(result.arena);

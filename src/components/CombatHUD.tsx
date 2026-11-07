@@ -18,6 +18,7 @@ import type {
   CounterAction,
   PlayerLoadout,
 } from '../types/game';
+import { audio } from '../utils/audioService';
 
 interface Props {
   boss: Boss;
@@ -61,6 +62,9 @@ export const CombatHUD: React.FC<Props> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       const targetTag = (e.target as HTMLElement)?.tagName?.toUpperCase();
       if (targetTag === 'INPUT' || targetTag === 'TEXTAREA') return;
+
+      // Resume audio context on first keystroke
+      audio.resume();
 
       if (e.key === '1') {
         const card = combatState.activeHand[0];

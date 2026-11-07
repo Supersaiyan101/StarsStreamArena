@@ -23,6 +23,12 @@ class AudioService {
     return this.ctx;
   }
 
+  public resume(): void {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+  }
+
   public isMuted(): boolean {
     return this.muted;
   }
@@ -239,6 +245,31 @@ class AudioService {
       osc.start(startTime);
       osc.stop(startTime + 0.4);
     });
+  }
+
+  // 9. Explosion Thud (Cross-Arena Sabotage Missile Impact & Arena Hazards)
+  public playExplosionThud(): void {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(160, now);
+    osc.frequency.exponentialRampToValueAtTime(30, now + 0.45);
+
+    gain.gain.setValueAtTime(0.5, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.45);
+
+    this.playNoiseBurst(0.35, 0.4, 1800, 80);
   }
 
   // Internal helper for filtered noise burst (whoosh / impact)

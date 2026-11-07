@@ -150,6 +150,7 @@ export const TwinDuelStage: React.FC<Props> = ({
       if (prog >= 100) {
         clearInterval(interval);
         setActiveMissile(null);
+        audio.playExplosionThud();
         if (to === 'channelB') {
           setShakeB(true);
           setTimeout(() => setShakeB(false), 300);
@@ -343,6 +344,7 @@ export const TwinDuelStage: React.FC<Props> = ({
   // Trigger Prop in Channel A
   const handleTriggerPropA = (propId: string) => {
     addFloatingTextA('⚡ PROP DISCHARGED!', '#38bdf8');
+    audio.playExplosionThud();
     const result = triggerInteractiveProp(propId, combatA, bossA, arenaA);
     setCombatA(result.combatState);
     setBossA(result.bossState);
