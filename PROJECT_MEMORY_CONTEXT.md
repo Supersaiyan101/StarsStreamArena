@@ -229,13 +229,21 @@ starstream-arena/
 12. **`cc88e6d`** — *Stepped Tournament Architecture:* MainLobby, ChallengerSelect, and DispatchArena screens.
 13. **`f736ff7`** — *Spectator Experience:* SpectatorHub directory, 🎲 Quick Hop, and SpectatorTheater with live Devnet tipping.
 14. **`9792b4a`** — *Survival Codex & In-Combat Polish:* 4-tab interactive guide, elemental card frames, and counter hotkeys.
-
+15. **`4067011`** — *Arena-First Pre-Game Flow:* Flipped screen flow so players select Scenario Arena & Stakes first, then adapt Challenger build with active arena synergies highlighted.
+16. **`8fe7b73`** — *UI Streamlining:* Renamed complex terms to universal esports standards: "Stun Bar", "Overheat Gauge (0-100%)", and punchy arcade skill cards.
+17. **`9995ce9`** — *Archetype Roles & 1-Click Stat Presets:* Added punchy role subtitles (`COMBO SWORDMASTER`, `EVASIVE ASSASSIN`, `IRON BULWARK`) and 1-click attribute presets (`Balanced`, `Striker`, `Juggernaut`).
+18. **`f1c0c2e`** — *Keyboard Action Battler & Combo Chaining:* Real-time hotkeys (`1`, `2`, `3` for cards, `W` Jump, `S` Slide, `Space` Parry, `E` End Turn, `4`/`5` Props) and scaling combo multiplier damage (+15% per hit in chain).
+19. **`c6dbaab`** — *Dokkaebi Mid-Battle Flash Bounties:* Spontaneous live bounties (3-card combo, parry, arena props) granting immediate +0.003–0.005 SOL tips and boss stun breaks.
+20. **`7b2afd9`** — *Enhanced Cross-Arena Sabotage Hazards:* Real gameplay disruptions including Calamity Shield Minion damage interception (60 HP drone) and live incoming sabotage HUD banners.
+21. **`e34af02`** — *Canvas 2.0 Anime Sprites & Hit-Stop Impact:* Flowing anime trenchcoat ribbons, neon blade aura, dynamic crescent slash VFX, hexagonal parry energy shields, and 45-60ms hit-stop freeze.
+22. **`c36a276`** — *Arcade Popups & Visual Cross-Arena Missile:* Bouncy impact texts (`🔥 COMBO x3!`, `💥 STUN CRITICAL!`, `🛡️ PERFECT PARRY!`) and animated cross-screen rocket projectiles streaking between Channel A and B.
 
 ---
 
 ## 9. Permanent Ground Rules & Constraints
 
 * **Strict Fair Play:** Mirrored arenas and fixed 30-point attribute cap are non-negotiable.
+* **Instant Action Controls:** Every card, counter action, prop, and turn cycle can be triggered via keyboard hotkeys (`1-5`, `W`, `S`, `Space`, `E`) or mouse clicks.
 * **Spectator Freedom:** Spectators are real users who choose their own custom monikers; no hardcoded NPC lockouts.
 * **Pure English UI:** Clean, punchy terminology (*Ether Blade*, *Breaking Sky*, *Fourth Wall*); no Hangul remnants.
 * **Zero External Audio Assets:** Audio must remain procedurally synthesized via Web Audio API.
