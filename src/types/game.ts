@@ -179,3 +179,37 @@ export interface MirroredDuelState {
   activeSpectatorFocus: 'split' | 'channelA' | 'channelB';
 }
 
+export type AppScreen =
+  | 'lobby'
+  | 'challenger_select'
+  | 'dispatch_arena'
+  | 'combat_player'
+  | 'spectator_hub'
+  | 'spectator_theater';
+
+export interface LiveBroadcastMatch {
+  channelId: string;
+  channelName: string;
+  scenarioName: string;
+  arenaId: string;
+  mode: 'duel' | 'solo';
+  fighterA: {
+    name: string;
+    archetype: string;
+    relic: string;
+    hp: number;
+    maxHp: number;
+  };
+  fighterB?: {
+    name: string;
+    archetype: string;
+    relic: string;
+    hp: number;
+    maxHp: number;
+  };
+  bossName: string;
+  circuitTier: 'bronze' | 'silver' | 'gold';
+  potSol: number;
+  viewerCount: number;
+}
+

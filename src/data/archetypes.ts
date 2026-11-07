@@ -8,6 +8,8 @@ export interface AvatarArchetype {
     agility: number;
     resonance: number;
   };
+  defaultWeaponId: string;
+  defaultSkillIds: string[];
   preferredArena: 'metro' | 'flooded';
   accentColor: string;
   avatarIcon: string;
@@ -24,6 +26,14 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
       agility: 10,
       resonance: 8,
     },
+    defaultWeaponId: 'unbroken_faith',
+    defaultSkillIds: [
+      'plasma_cleave',
+      'kinetic_breaker',
+      'volt_arc',
+      'phase_shift',
+      'heavens_retribution',
+    ],
     preferredArena: 'metro',
     accentColor: 'text-cyan-400 border-cyan-500/50',
     avatarIcon: 'Sword',
@@ -38,6 +48,14 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
       agility: 14,
       resonance: 8,
     },
+    defaultWeaponId: 'white_star_dagger',
+    defaultSkillIds: [
+      'plasma_cleave',
+      'phantom_lunge',
+      'phase_shift',
+      'cyclone_shred',
+      'secretive_strike',
+    ],
     preferredArena: 'flooded',
     accentColor: 'text-purple-400 border-purple-500/50',
     avatarIcon: 'Ghost',
@@ -52,6 +70,14 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
       agility: 7,
       resonance: 12,
     },
+    defaultWeaponId: 'infinite_space_coat',
+    defaultSkillIds: [
+      'kinetic_breaker',
+      'kinetic_deflector',
+      'cyclone_shred',
+      'flame_pillar',
+      'hellfire',
+    ],
     preferredArena: 'metro',
     accentColor: 'text-amber-400 border-amber-500/50',
     avatarIcon: 'ShieldAlert',
