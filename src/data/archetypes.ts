@@ -19,8 +19,8 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
   {
     id: 'blade_disciple',
     name: 'Blade Disciple',
-    title: 'Disciple of Breaking Sky',
-    description: 'A disciplined swordmaster specializing in rapid fluid slashes, mid-air juggles, and relentless combo pressure.',
+    title: 'Combo Swordmaster',
+    description: 'Rapid dual-blade slashes, aerial juggles, and relentless combo pressure. Dominates close-quarters arenas.',
     defaultAttributes: {
       strength: 12,
       agility: 10,
@@ -41,8 +41,8 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
   {
     id: 'shadow_rogue',
     name: 'Shadow Rogue',
-    title: 'Phantom of the Seam',
-    description: 'An evasive infiltrator who excels at micro-parries, smoke veils, and lightning-fast Sabotage Energy generation.',
+    title: 'Evasive Assassin',
+    description: 'Lightning-fast dodges, critical strikes, and rapid Sabotage Energy generation to disrupt rivals.',
     defaultAttributes: {
       strength: 8,
       agility: 14,
@@ -63,8 +63,8 @@ export const AVATAR_ARCHETYPES: AvatarArchetype[] = [
   {
     id: 'titan_vanguard',
     name: 'Titan Vanguard',
-    title: 'Bulwark of the Nebula',
-    description: 'An ironclad frontliner capable of absorbing massive punishment, breaking boss stagger shields, and generating heavy counter-force.',
+    title: 'Iron Bulwark',
+    description: 'Heavy defense, shield absorptions, and crushing poise breaks to instantly shatter boss Stun bars.',
     defaultAttributes: {
       strength: 11,
       agility: 7,

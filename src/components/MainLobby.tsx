@@ -77,7 +77,7 @@ export const MainLobby: React.FC<Props> = ({
             className="bg-slate-950/90 border border-cyan-500/40 hover:border-cyan-400 rounded-xl px-3.5 py-2 flex items-center gap-2 font-mono text-xs text-cyan-300 transition-all cursor-pointer shadow-md hover:bg-cyan-950/40"
           >
             <BookOpen className="w-4 h-4 text-cyan-400" />
-            <span className="font-bold">Survival Codex</span>
+            <span className="font-bold">How To Play (Codex)</span>
           </button>
 
           {/* Constellation Studio Button */}
@@ -144,7 +144,7 @@ export const MainLobby: React.FC<Props> = ({
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="text-[11px] font-mono text-cyan-400 font-bold uppercase tracking-widest bg-cyan-950 px-2.5 py-1 rounded-full border border-cyan-500/40">
-                FIGHTER ARENA • 100% FAIR PLAY
+                ⚔️ PLAY AS FIGHTER • 1V1 DUELS
               </span>
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-300 group-hover:scale-110 transition-transform">
                 <Swords className="w-6 h-6" />
@@ -194,7 +194,7 @@ export const MainLobby: React.FC<Props> = ({
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="text-[11px] font-mono text-purple-400 font-bold uppercase tracking-widest bg-purple-950 px-2.5 py-1 rounded-full border border-purple-500/40">
-                SPECTATOR LOUNGE • DEVNET TIPPING
+                👁️ WATCH & TIP • LIVE STREAM
               </span>
               <div className="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/50 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform">
                 <Eye className="w-6 h-6" />

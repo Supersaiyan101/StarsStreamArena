@@ -68,6 +68,41 @@ export const AttributeAllocator: React.FC<Props> = ({
         </div>
       </div>
 
+      {/* Quick 1-Click Stat Presets */}
+      <div className="flex flex-wrap items-center gap-2 font-mono text-xs border-b border-slate-800 pb-3">
+        <span className="text-slate-500 text-[11px] font-bold">PRESETS:</span>
+        <button
+          onClick={() => onChange({ strength: 10, agility: 10, resonance: 10 })}
+          className={`px-2.5 py-1 rounded-lg border text-[11px] transition-all cursor-pointer ${
+            attributes.strength === 10 && attributes.agility === 10 && attributes.resonance === 10
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400 font-bold'
+              : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
+          }`}
+        >
+          Balanced (10/10/10)
+        </button>
+        <button
+          onClick={() => onChange({ strength: 15, agility: 10, resonance: 5 })}
+          className={`px-2.5 py-1 rounded-lg border text-[11px] transition-all cursor-pointer ${
+            attributes.strength === 15 && attributes.agility === 10 && attributes.resonance === 5
+              ? 'bg-rose-500/20 text-rose-300 border-rose-400 font-bold'
+              : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
+          }`}
+        >
+          Striker (15/10/5)
+        </button>
+        <button
+          onClick={() => onChange({ strength: 8, agility: 8, resonance: 14 })}
+          className={`px-2.5 py-1 rounded-lg border text-[11px] transition-all cursor-pointer ${
+            attributes.strength === 8 && attributes.agility === 8 && attributes.resonance === 14
+              ? 'bg-amber-500/20 text-amber-300 border-amber-400 font-bold'
+              : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
+          }`}
+        >
+          Juggernaut (8/8/14)
+        </button>
+      </div>
+
       {/* Attribute Sliders / Steppers */}
       <div className="space-y-3.5">
         {/* Strength */}
