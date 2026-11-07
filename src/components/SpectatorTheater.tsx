@@ -182,6 +182,7 @@ export const SpectatorTheater: React.FC<Props> = ({
     isAirborne: false,
     shieldPoints: 20,
     isStunned: false,
+    turnCount: 2,
     combatLogs: [],
     incomingSabotage: null,
   };
@@ -214,6 +215,7 @@ export const SpectatorTheater: React.FC<Props> = ({
     isAirborne: false,
     shieldPoints: 15,
     isStunned: false,
+    turnCount: 2,
     combatLogs: [],
     incomingSabotage: null,
   };

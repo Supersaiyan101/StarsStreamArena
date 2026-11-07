@@ -142,6 +142,7 @@ export interface ActiveCombatState {
   isAirborne: boolean; // boss airborne for juggles
   shieldPoints: number;
   isStunned: boolean;
+  turnCount: number;
   activeShieldMinionHp?: number; // Calamity minion intercepting damage
   activeBounty?: FlashBounty | null;
   incomingSabotage: {

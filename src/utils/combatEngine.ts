@@ -5,6 +5,7 @@ import type {
   Skill,
   PlayerLoadout,
   CounterAction,
+  FlashBounty,
 } from '../types/game';
 import { SKILL_CATALOG } from '../data/skills';
 
@@ -16,6 +17,38 @@ export function shuffleArray<T>(array: T[]): T[] {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// Generate spontaneous Dokkaebi Flash Bounty
+export function generateFlashBounty(turnNumber: number): FlashBounty {
+  const bounties = [
+    {
+      title: '⚡ 3-CARD COMBO SURGE',
+      description: 'Execute a 3-Hit Combo this turn to strip 40 Boss Stun & claim sponsor SOL!',
+      rewardSol: 0.005,
+      condition: 'combo3' as const,
+    },
+    {
+      title: '🛡️ GUARDIAN PARRY CLASH',
+      description: 'Execute a Perfect Parry against an incoming Boss Telegraph attack!',
+      rewardSol: 0.004,
+      condition: 'parry' as const,
+    },
+    {
+      title: '💥 ARENA PROP DESTABILIZATION',
+      description: 'Discharge an interactive arena hazard to disrupt the battlefield!',
+      rewardSol: 0.003,
+      condition: 'prop' as const,
+    },
+  ];
+
+  const chosen = bounties[turnNumber % bounties.length];
+  return {
+    id: `bounty_${Date.now()}_${turnNumber}`,
+    ...chosen,
+    isCompleted: false,
+    turnsRemaining: 2,
+  };
 }
 
 // Initialize Combat State for a player
@@ -47,6 +80,8 @@ export function initializeCombatState(loadout: PlayerLoadout): ActiveCombatState
     isAirborne: false,
     shieldPoints: 0,
     isStunned: false,
+    turnCount: 1,
+    activeBounty: generateFlashBounty(1),
     incomingSabotage: null,
     combatLogs: [
       `[SYSTEM: Challenger ${loadout.name} entered the Star Stream Arena.]`,
@@ -201,6 +236,23 @@ export function executePlayerSkill(
   const updatedHand = combatState.activeHand.filter((s) => s.id !== skillId);
   const updatedDiscard = [...combatState.deckDiscardPile, skill];
 
+  // Check Flash Bounty: 3-Card Combo
+  let currentBounty = combatState.activeBounty ? { ...combatState.activeBounty } : null;
+  if (
+    currentBounty &&
+    !currentBounty.isCompleted &&
+    currentBounty.condition === 'combo3' &&
+    newCombo >= 3
+  ) {
+    currentBounty.isCompleted = true;
+    newStagger = Math.max(0, newStagger - 40);
+    if (newStagger === 0 && !isNowStaggered) {
+      isNowStaggered = true;
+      staggerTurns = 2;
+    }
+    logs.push(`[DOKKAEBI FLASH BOUNTY CLAIMED: +${currentBounty.rewardSol} SOL Awarded! Boss Stun Bar stripped -40!]`);
+  }
+
   let nextCombatState: ActiveCombatState = {
     ...combatState,
     playerEnergy: newEnergy,
@@ -212,6 +264,7 @@ export function executePlayerSkill(
     activeHand: updatedHand,
     deckDiscardPile: updatedDiscard,
     activeShieldMinionHp: updatedMinionHp,
+    activeBounty: currentBounty,
     combatLogs: [...combatState.combatLogs, ...logs],
   };
 
@@ -259,12 +312,19 @@ export function executeCounterAction(
     let bonusStyle = 300;
     let extraLog = '';
 
+    let bountyState = combatState.activeBounty ? { ...combatState.activeBounty } : null;
     if (action === 'parry') {
       const reflectDamage = Math.round(telegraph.damage * 0.5);
       const newBossHp = Math.max(0, bossState.currentHp - reflectDamage);
       bonusStyle = 500;
       extraLog = `[PERFECT PARRY! Reflected ${reflectDamage} damage back to ${bossState.name}!]`;
       bossState = { ...bossState, currentHp: newBossHp, staggerGauge: Math.max(0, bossState.staggerGauge - 35) };
+
+      if (bountyState && !bountyState.isCompleted && bountyState.condition === 'parry') {
+        bountyState.isCompleted = true;
+        bonusStyle += 500;
+        extraLog += ` [DOKKAEBI FLASH BOUNTY CLAIMED: +${bountyState.rewardSol} SOL Awarded!]`;
+      }
     } else if (action === 'jump') {
       extraLog = `[LEAP OF FAITH! Jumped over ${telegraph.name} cleanly!]`;
     } else if (action === 'crouch') {
@@ -275,6 +335,7 @@ export function executeCounterAction(
       ...combatState,
       styleRating: combatState.styleRating + bonusStyle,
       sabotageEnergy: Math.min(100, combatState.sabotageEnergy + 15),
+      activeBounty: bountyState,
       combatLogs: [
         ...combatState.combatLogs,
         `[COUNTER SUCCESS: ${action.toUpperCase()} nullified ${telegraph.name}!]`,
@@ -396,6 +457,28 @@ export function resolveTurnCycle(
     }
   }
 
+  // 7. Advance Turn Count and Dokkaebi Flash Bounty Progression
+  nextCombatState.turnCount = (nextCombatState.turnCount || 1) + 1;
+  if (nextCombatState.activeBounty) {
+    if (nextCombatState.activeBounty.isCompleted) {
+      nextCombatState.activeBounty = generateFlashBounty(nextCombatState.turnCount);
+      logs.push(`[DOKKAEBI OVERSEER: New Flash Bounty issued: ${nextCombatState.activeBounty.title}!]`);
+    } else {
+      const remaining = nextCombatState.activeBounty.turnsRemaining - 1;
+      if (remaining <= 0) {
+        logs.push(`[DOKKAEBI: Flash Bounty expired! Rotating next bounty objective...]`);
+        nextCombatState.activeBounty = generateFlashBounty(nextCombatState.turnCount);
+      } else {
+        nextCombatState.activeBounty = {
+          ...nextCombatState.activeBounty,
+          turnsRemaining: remaining,
+        };
+      }
+    }
+  } else {
+    nextCombatState.activeBounty = generateFlashBounty(nextCombatState.turnCount);
+  }
+
   nextCombatState.combatLogs = [...nextCombatState.combatLogs, ...logs];
 
   return {
@@ -453,6 +536,20 @@ export function triggerInteractiveProp(
     updatedCombat.shieldPoints += 30;
     updatedCombat.styleRating += 200;
     logs.push(`[INTERACTIVE PROP: Hopped onto elevated platform! Height advantage gained (+30 Shield).]`);
+  }
+
+  // Check Flash Bounty: Prop
+  if (
+    updatedCombat.activeBounty &&
+    !updatedCombat.activeBounty.isCompleted &&
+    updatedCombat.activeBounty.condition === 'prop'
+  ) {
+    updatedCombat.activeBounty = {
+      ...updatedCombat.activeBounty,
+      isCompleted: true,
+    };
+    updatedCombat.sabotageEnergy = Math.min(100, updatedCombat.sabotageEnergy + 20);
+    logs.push(`[DOKKAEBI FLASH BOUNTY CLAIMED: +${updatedCombat.activeBounty.rewardSol} SOL Awarded! +20 Sabotage Energy!]`);
   }
 
   // Mark prop as used

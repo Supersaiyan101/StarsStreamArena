@@ -154,6 +154,53 @@ export const CombatHUD: React.FC<Props> = ({
       </div>
 
       {/* ========================================== */}
+      {/* 1.5 DOKKAEBI FLASH BOUNTY BANNER           */}
+      {/* ========================================== */}
+      {combatState.activeBounty && (
+        <div
+          className={`p-3 rounded-xl border backdrop-blur-md transition-all flex flex-wrap items-center justify-between gap-3 shadow-lg ${
+            combatState.activeBounty.isCompleted
+              ? 'bg-emerald-950/40 border-emerald-500/60 shadow-emerald-950/40'
+              : 'bg-amber-950/30 border-amber-500/40 shadow-amber-950/30'
+          }`}
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">
+              {combatState.activeBounty.isCompleted ? '🎉' : '✨'}
+            </span>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                  DOKKAEBI FLASH BOUNTY
+                </span>
+                <span className="text-xs font-bold text-slate-100 font-mono">
+                  {combatState.activeBounty.title}
+                </span>
+                <span className="text-amber-400 font-bold font-mono text-xs">
+                  (+{combatState.activeBounty.rewardSol} SOL)
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 mt-0.5 font-mono">
+                {combatState.activeBounty.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-2 font-mono text-xs">
+            {combatState.activeBounty.isCompleted ? (
+              <span className="px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold flex items-center gap-1 shadow-md shadow-emerald-500/30 animate-bounce">
+                ✅ CLAIMED! (+{combatState.activeBounty.rewardSol} SOL)
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-amber-300 border border-amber-500/30 font-bold">
+                ⏳ {combatState.activeBounty.turnsRemaining} turns left
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================== */}
       {/* 2. PLAYER STATUS METRICS (HP, HEAT, SABOTAGE) */}
       {/* ========================================== */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

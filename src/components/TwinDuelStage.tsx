@@ -118,6 +118,22 @@ export const TwinDuelStage: React.FC<Props> = ({
     setTimeout(() => setFloatingTextsB((prev) => prev.filter((t) => t.id !== id)), 1000);
   };
 
+  // Check if Dokkaebi Flash Bounty was completed
+  const prevBountyCompleted = React.useRef(false);
+  React.useEffect(() => {
+    if (combatA.activeBounty?.isCompleted && !prevBountyCompleted.current) {
+      prevBountyCompleted.current = true;
+      audio.playCoinJingle();
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+      const reward = combatA.activeBounty.rewardSol;
+      setTipsA((prev) => parseFloat((prev + reward).toFixed(4)));
+      addFloatingTextA(`+${reward} SOL BOUNTY!`, '#fbbf24');
+      onTipSent(reward);
+    } else if (!combatA.activeBounty?.isCompleted) {
+      prevBountyCompleted.current = false;
+    }
+  }, [combatA.activeBounty?.isCompleted, combatA.activeBounty?.id, onTipSent]);
+
   // Spectator Tipping Handlers
   const handleTipPlayer1 = async () => {
     const tipAmount = 0.001;

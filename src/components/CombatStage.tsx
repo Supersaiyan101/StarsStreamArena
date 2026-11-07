@@ -75,6 +75,21 @@ export const CombatStage: React.FC<Props> = ({
     }, 1200);
   };
 
+  // Check if Dokkaebi Flash Bounty was completed
+  const prevBountyCompleted = React.useRef(false);
+  React.useEffect(() => {
+    if (combatState.activeBounty?.isCompleted && !prevBountyCompleted.current) {
+      prevBountyCompleted.current = true;
+      audio.playCoinJingle();
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+      const reward = combatState.activeBounty.rewardSol;
+      addFloatingText(`+${reward} SOL BOUNTY!`, '#fbbf24', true);
+      onTipReceived(reward);
+    } else if (!combatState.activeBounty?.isCompleted) {
+      prevBountyCompleted.current = false;
+    }
+  }, [combatState.activeBounty?.isCompleted, combatState.activeBounty?.id, onTipReceived]);
+
   // Play Skill Handler
   const handlePlaySkill = (skillId: string) => {
     setPlayerActionState('attacking');
