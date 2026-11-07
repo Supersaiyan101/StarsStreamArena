@@ -52,6 +52,7 @@ export const TwinDuelStage: React.FC<Props> = ({
   onTipSent,
 }) => {
   const [matchSettlementTx, setMatchSettlementTx] = useState<string | null>(null);
+  const [viewportMode, setViewportMode] = useState<'split' | 'channelA' | 'channelB'>('split');
   // Opponent Loadout (Mirror Challenger)
   const opponentLoadout: PlayerLoadout = {
     name: 'Challenger Ren',
@@ -399,10 +400,44 @@ export const TwinDuelStage: React.FC<Props> = ({
             <span className="text-slate-500">ESCROW POT:</span>
             <span className="text-amber-400 font-bold text-sm">{matchPot.toFixed(4)} SOL ◎</span>
           </div>
-          <div className="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+          <div className="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 hidden sm:block">
             Circuit: <span className="text-cyan-300 font-bold uppercase">{circuitTier}</span> (
             {stakeAmountSol} SOL each)
           </div>
+        </div>
+
+        {/* Viewport Focus Switcher */}
+        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
+          <button
+            onClick={() => setViewportMode('split')}
+            className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+              viewportMode === 'split'
+                ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            ⚡ Split 50/50
+          </button>
+          <button
+            onClick={() => setViewportMode('channelA')}
+            className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+              viewportMode === 'channelA'
+                ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            🛡️ Focus You
+          </button>
+          <button
+            onClick={() => setViewportMode('channelB')}
+            className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+              viewportMode === 'channelB'
+                ? 'bg-purple-500 text-slate-950 font-bold shadow-md shadow-purple-500/20'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            👁️ Focus Rival
+          </button>
         </div>
 
         <button
@@ -417,9 +452,13 @@ export const TwinDuelStage: React.FC<Props> = ({
       {/* ========================================== */}
       {/* SPLIT-SCREEN CHANNELS: CHANNEL A vs CHANNEL B */}
       {/* ========================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 items-start">
+      <div className={`grid gap-4 flex-1 items-start ${
+        viewportMode === 'split' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'
+      }`}>
         {/* CHANNEL A: PLAYER 1 (YOU) */}
-        <div className="bg-slate-900/80 border border-cyan-500/40 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl">
+        <div className={`bg-slate-900/80 border border-cyan-500/40 rounded-2xl p-4 flex-col gap-3 shadow-2xl ${
+          viewportMode === 'channelB' ? 'hidden' : 'flex'
+        }`}>
           {/* Channel A Header */}
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <div className="flex items-center gap-2">
@@ -505,7 +544,9 @@ export const TwinDuelStage: React.FC<Props> = ({
         </div>
 
         {/* CHANNEL B: OPPONENT (CHALLENGER REN) */}
-        <div className="bg-slate-900/80 border border-purple-500/40 rounded-2xl p-3 sm:p-4 flex flex-col gap-2.5 shadow-2xl">
+        <div className={`bg-slate-900/80 border border-purple-500/40 rounded-2xl p-3 sm:p-4 flex-col gap-2.5 shadow-2xl ${
+          viewportMode === 'channelA' ? 'hidden' : 'flex'
+        }`}>
           {/* Channel B Header */}
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <div className="flex items-center gap-2">
