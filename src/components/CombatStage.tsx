@@ -108,6 +108,13 @@ export const CombatStage: React.FC<Props> = ({
       }
     }
 
+    if (combatState.comboCount > 0) {
+      addFloatingText(`🔥 COMBO x${combatState.comboCount + 1}!`, '#fbbf24');
+    }
+    if (boss.isStaggered) {
+      addFloatingText('💥 STUN CRITICAL!', '#ef4444', true);
+    }
+
     const result = executePlayerSkill(skillId, combatState, boss, arena, loadout);
 
     setCombatState(result.combatState);
@@ -145,12 +152,17 @@ export const CombatStage: React.FC<Props> = ({
     if (result.success) {
       if (action === 'parry') {
         audio.playParryClang();
+        addFloatingText('🛡️ PERFECT PARRY!', '#10b981', true);
+      } else if (action === 'jump') {
+        audio.playDodgeWoosh();
+        addFloatingText('⬆️ CLEAN LEAP!', '#38bdf8');
       } else {
         audio.playDodgeWoosh();
+        addFloatingText('⬇️ SLIDE EVASION!', '#38bdf8');
       }
-      addFloatingText(action === 'parry' ? 'PARRIED! +500 PTS' : 'COUNTER EVADED!', '#10b981');
     } else {
       audio.playCosmicBacklash();
+      addFloatingText('❌ COUNTER FAILED!', '#ef4444');
       setPlayerActionState('hurt');
       setScreenShake(true);
       setTimeout(() => setScreenShake(false), 300);

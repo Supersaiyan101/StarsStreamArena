@@ -134,6 +134,37 @@ export const TwinDuelStage: React.FC<Props> = ({
     }
   }, [combatA.activeBounty?.isCompleted, combatA.activeBounty?.id, onTipSent]);
 
+  // Cross-Arena Sabotage Projectile Animation State
+  const [activeMissile, setActiveMissile] = useState<{
+    from: 'channelA' | 'channelB';
+    to: 'channelA' | 'channelB';
+    type: string;
+    progress: number;
+  } | null>(null);
+
+  const launchSabotageMissile = (from: 'channelA' | 'channelB', to: 'channelA' | 'channelB', type: string) => {
+    setActiveMissile({ from, to, type, progress: 0 });
+    let prog = 0;
+    const interval = setInterval(() => {
+      prog += 10;
+      if (prog >= 100) {
+        clearInterval(interval);
+        setActiveMissile(null);
+        if (to === 'channelB') {
+          setShakeB(true);
+          setTimeout(() => setShakeB(false), 300);
+          addFloatingTextB(`💥 INCOMING ${type.toUpperCase()}!`, '#f43f5e');
+        } else {
+          setShakeA(true);
+          setTimeout(() => setShakeA(false), 300);
+          addFloatingTextA(`💥 INCOMING ${type.toUpperCase()}!`, '#f43f5e');
+        }
+      } else {
+        setActiveMissile({ from, to, type, progress: prog });
+      }
+    }, 45);
+  };
+
   // Spectator Tipping Handlers
   const handleTipPlayer1 = async () => {
     const tipAmount = 0.001;
@@ -180,6 +211,7 @@ export const TwinDuelStage: React.FC<Props> = ({
     if (combatA.sabotageEnergy < sab.cost) return;
 
     audio.playAlarmSiren();
+    launchSabotageMissile('channelA', 'channelB', sab.effectType);
 
     // Deduct cost from Player 1
     setCombatA((prev) => ({
@@ -200,9 +232,6 @@ export const TwinDuelStage: React.FC<Props> = ({
         `[⚠️ WARNING: Player 1 has targeted you with ${sab.name.toUpperCase()}!]`,
       ],
     }));
-
-    setShakeB(true);
-    setTimeout(() => setShakeB(false), 300);
   };
 
   // Player 1 Plays a Skill
@@ -218,6 +247,13 @@ export const TwinDuelStage: React.FC<Props> = ({
       } else {
         audio.playBladeSlash();
       }
+    }
+
+    if (combatA.comboCount > 0) {
+      addFloatingTextA(`🔥 COMBO x${combatA.comboCount + 1}!`, '#fbbf24');
+    }
+    if (bossA.isStaggered) {
+      addFloatingTextA('💥 STUN CRITICAL!', '#ef4444');
     }
 
     const result = executePlayerSkill(skillId, combatA, bossA, arenaA, player1Loadout);
@@ -239,10 +275,19 @@ export const TwinDuelStage: React.FC<Props> = ({
     const result = executeCounterAction(action, combatA, bossA);
 
     if (result.success) {
-      if (action === 'parry') audio.playParryClang();
-      else audio.playDodgeWoosh();
+      if (action === 'parry') {
+        audio.playParryClang();
+        addFloatingTextA('🛡️ PERFECT PARRY!', '#10b981');
+      } else if (action === 'jump') {
+        audio.playDodgeWoosh();
+        addFloatingTextA('⬆️ CLEAN LEAP!', '#38bdf8');
+      } else {
+        audio.playDodgeWoosh();
+        addFloatingTextA('⬇️ SLIDE EVASION!', '#38bdf8');
+      }
     } else {
       audio.playCosmicBacklash();
+      addFloatingTextA('❌ COUNTER FAILED!', '#ef4444');
     }
 
     setCombatA(result.combatState);
@@ -281,6 +326,7 @@ export const TwinDuelStage: React.FC<Props> = ({
     // If opponent launched sabotage at Player 1
     if (oppResult.sabotageLaunched) {
       const type = oppResult.sabotageLaunched;
+      launchSabotageMissile('channelB', 'channelA', type);
       setCombatA((prev) => ({
         ...prev,
         incomingSabotage: { type, turnsUntilImpact: 1 },
@@ -289,8 +335,6 @@ export const TwinDuelStage: React.FC<Props> = ({
           `[⚠️ WARNING: Opponent fired a ${type.toUpperCase()} strike into your arena!]`,
         ],
       }));
-      setShakeA(true);
-      setTimeout(() => setShakeA(false), 250);
     }
 
     setTimeout(() => setActionStateB('idle'), 400);
@@ -298,6 +342,7 @@ export const TwinDuelStage: React.FC<Props> = ({
 
   // Trigger Prop in Channel A
   const handleTriggerPropA = (propId: string) => {
+    addFloatingTextA('⚡ PROP DISCHARGED!', '#38bdf8');
     const result = triggerInteractiveProp(propId, combatA, bossA, arenaA);
     setCombatA(result.combatState);
     setBossA(result.bossState);
@@ -630,6 +675,41 @@ export const TwinDuelStage: React.FC<Props> = ({
             >
               RETURN TO MAIN LOBBY
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Animated Cross-Arena Sabotage Missile / Laser Projectile */}
+      {activeMissile && (
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+          <div
+            className="absolute transition-all duration-75 flex items-center gap-2"
+            style={{
+              left:
+                activeMissile.from === 'channelA'
+                  ? `${20 + activeMissile.progress * 0.6}%`
+                  : `${80 - activeMissile.progress * 0.6}%`,
+              top: '42%',
+              transform: `translate(-50%, -50%) ${
+                activeMissile.from === 'channelA' ? 'rotate(12deg)' : 'rotate(-168deg)'
+              }`,
+            }}
+          >
+            {/* Trailing smoke / laser plume */}
+            <div
+              className={`h-4 rounded-full blur-xs ${
+                activeMissile.from === 'channelA'
+                  ? 'bg-gradient-to-l from-amber-400 via-orange-500 to-transparent w-28'
+                  : 'bg-gradient-to-r from-purple-500 via-pink-500 to-transparent w-28'
+              }`}
+            />
+            {/* Warhead */}
+            <div className="text-3xl filter drop-shadow-[0_0_12px_rgba(251,191,36,0.9)] animate-pulse">
+              🚀
+            </div>
+            <span className="font-mono text-xs font-black uppercase text-amber-300 bg-slate-950/90 px-2 py-0.5 rounded border border-amber-400/60 shadow-lg">
+              {activeMissile.type} SABOTAGE
+            </span>
           </div>
         </div>
       )}
