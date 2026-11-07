@@ -498,6 +498,21 @@ export const TwinDuelStage: React.FC<Props> = ({
             onTriggerProp={() => {}}
           />
 
+          {/* Channel B Incoming Sabotage Indicator */}
+          {combatB.incomingSabotage && (
+            <div className="bg-purple-950/60 border border-purple-500/60 rounded-xl p-2.5 flex items-center justify-between text-xs font-mono text-purple-300 animate-pulse">
+              <span className="flex items-center gap-2">
+                <span className="text-base">🚀</span>
+                <span className="font-bold uppercase">
+                  INCOMING SABOTAGE: {combatB.incomingSabotage.type}
+                </span>
+              </span>
+              <span className="text-amber-400 font-bold">
+                Impacts in {combatB.incomingSabotage.turnsUntilImpact} turn!
+              </span>
+            </div>
+          )}
+
           {/* Opponent Status Display */}
           <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 flex flex-col gap-2 font-mono text-xs">
             <div className="flex justify-between">

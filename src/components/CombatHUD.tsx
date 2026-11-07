@@ -329,6 +329,28 @@ export const CombatHUD: React.FC<Props> = ({
       )}
 
       {/* ========================================== */}
+      {/* 3.5 INCOMING CROSS-ARENA SABOTAGE ALERT   */}
+      {/* ========================================== */}
+      {combatState.incomingSabotage && (
+        <div className="bg-amber-950/60 border-2 border-amber-500 rounded-xl p-3 flex items-center justify-between shadow-xl shadow-amber-950/50 animate-pulse font-mono text-xs">
+          <div className="flex items-center gap-2 text-amber-300">
+            <span className="text-xl">🚀</span>
+            <div>
+              <span className="font-bold text-amber-200 block uppercase tracking-wide">
+                ⚠️ INCOMING CROSS-ARENA SABOTAGE: {combatState.incomingSabotage.type.toUpperCase()}
+              </span>
+              <span className="text-[11px] text-amber-400">
+                Opponent strike will detonate in {combatState.incomingSabotage.turnsUntilImpact} turn!
+              </span>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded bg-amber-500 text-slate-950 font-bold text-[11px]">
+            BRACE FOR IMPACT!
+          </span>
+        </div>
+      )}
+
+      {/* ========================================== */}
       {/* 4. DYNAMIC 3-CARD SKILL HAND BAR           */}
       {/* ========================================== */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl flex flex-col gap-3">
