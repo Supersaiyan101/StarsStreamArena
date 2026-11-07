@@ -19,10 +19,10 @@ export const SABOTAGE_ACTIONS: SabotageAction[] = [
   },
   {
     id: 'probability_overload',
-    name: 'Probability Overload',
+    name: 'System Overload',
     cost: 100,
     effectType: 'heat',
-    description: 'Spikes opponent Probability Heat meter by +35%, pushing them dangerously close to a catastrophic Cosmic Backlash!',
+    description: 'Spikes opponent Overheat gauge by +35%, pushing them dangerously close to an emergency system recoil!',
     iconName: 'Zap',
   },
 ];

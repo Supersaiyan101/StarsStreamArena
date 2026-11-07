@@ -127,13 +127,12 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
               <div className="bg-slate-950/60 border border-slate-800 p-4 rounded-xl">
                 <h3 className="text-base font-bold text-slate-100 flex items-center gap-2 mb-2">
                   <Flame className="w-4 h-4 text-purple-400" />
-                  Probability Heat (Cosmic Plausibility)
+                  Overheat Gauge (System Load)
                 </h3>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  In the Star Stream, miraculous feats require narrative Probability. High-tier skills
-                  and divine Stigmas increase your Probability Heat gauge (0-100%). If Heat reaches
-                  100%, the scenario overseer imposes a <strong>Cosmic Backlash</strong>, dealing 20
-                  recoil damage and scrambling your active hand!
+                  In the Star Stream, heavy elemental arts and divine Stigmas generate <strong>Overheat (0-100%)</strong>.
+                  If Overheat reaches 100%, your suit suffers a <strong>System Recoil</strong>, dealing 20
+                  damage back to you and scrambling your active hand cards!
                 </p>
               </div>
             </div>
@@ -193,8 +192,8 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl text-xs font-mono text-amber-300">
-                ⚡ <strong>Pro Tip:</strong> Depleting the boss's Stagger Shield (100 Poise) causes an
-                ARMOR BREAK, stunning the boss for 2 full turns where all player skills deal +50% bonus
+                ⚡ <strong>Pro Tip:</strong> Depleting the boss's Stun Bar (100) causes an
+                ARMOR BREAK, stunning the boss for 2 full turns where all player attacks deal +50% bonus
                 damage!
               </div>
             </div>
@@ -239,8 +238,8 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
                   </div>
                   <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-rose-300">PROBABILITY OVERLOAD (100 Sab)</span>
-                      <span className="text-[11px] text-slate-400 block">Triggers instant Cosmic Backlash & scrambles their hand.</span>
+                      <span className="font-bold text-rose-300">SYSTEM OVERLOAD (100 Sab)</span>
+                      <span className="text-[11px] text-slate-400 block">Spikes rival Overheat by +35% & scrambles their hand.</span>
                     </div>
                   </div>
                 </div>

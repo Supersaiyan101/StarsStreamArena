@@ -40,14 +40,14 @@ export const CombatHUD: React.FC<Props> = ({
   const hpPercent = Math.max(0, (boss.currentHp / boss.maxHp) * 100);
   const playerHpPercent = Math.max(0, (combatState.playerHp / combatState.maxPlayerHp) * 100);
 
-  // Probability Heat Color
+  // Overheat Color
   const heat = combatState.probabilityHeat;
   const heatColor = heat > 80 ? 'text-rose-400 bg-rose-500' : heat > 50 ? 'text-cyan-400 bg-cyan-400' : 'text-emerald-400 bg-emerald-500';
 
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* ========================================== */}
-      {/* 1. TOP BAR: BOSS HEALTH & STAGGER POSTURE */}
+      {/* 1. TOP BAR: BOSS HP & STUN BAR             */}
       {/* ========================================== */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl flex flex-col gap-2.5">
         <div className="flex items-center justify-between text-xs font-mono">
@@ -56,7 +56,7 @@ export const CombatHUD: React.FC<Props> = ({
             <span className="font-bold text-slate-100 text-sm">{boss.name}</span>
             <span className="text-slate-500">({boss.subtitle})</span>
             {boss.enraged && (
-              <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold">
+              <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded text-[10px] font-bold animate-pulse">
                 ENRAGED PHASE 2
               </span>
             )}
@@ -82,20 +82,20 @@ export const CombatHUD: React.FC<Props> = ({
           />
         </div>
 
-        {/* Boss Stagger / Poise Gauge */}
+        {/* Boss Stun Bar (Clean & Universal) */}
         <div className="flex items-center justify-between text-[11px] font-mono">
-          <span className="text-slate-400 flex items-center gap-1">
-            <Shield className="w-3 h-3 text-amber-400" />
-            Ironclad Stagger Gauge:
+          <span className="text-slate-400 flex items-center gap-1 font-bold">
+            <Shield className="w-3.5 h-3.5 text-amber-400" />
+            STUN BAR:
           </span>
           <span
             className={`font-bold ${
-              boss.isStaggered ? 'text-amber-300 animate-pulse' : 'text-slate-300'
+              boss.isStaggered ? 'text-amber-300 animate-pulse text-xs' : 'text-slate-300'
             }`}
           >
             {boss.isStaggered
-              ? `ARMOR BROKEN! (${boss.staggerTurnsRemaining} Turns Left)`
-              : `${boss.staggerGauge} / 100 Poise`}
+              ? `💥 STUNNED! (+50% DMG FOR ${boss.staggerTurnsRemaining} TURNS)`
+              : `${boss.staggerGauge} / 100`}
           </span>
         </div>
         <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800/80">
@@ -113,7 +113,7 @@ export const CombatHUD: React.FC<Props> = ({
         {/* Player Health */}
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs font-mono mb-1">
-            <span className="text-slate-400">CHALLENGER HP</span>
+            <span className="text-slate-400">YOUR HP</span>
             <span className="text-emerald-400 font-bold">
               {combatState.playerHp} / {combatState.maxPlayerHp}
             </span>
@@ -128,7 +128,7 @@ export const CombatHUD: React.FC<Props> = ({
 
         {/* Energy Orbs */}
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
-          <span className="text-xs font-mono text-slate-400 block mb-1">COMBAT ENERGY</span>
+          <span className="text-xs font-mono text-slate-400 block mb-1">ENERGY</span>
           <div className="flex items-center gap-2">
             {[1, 2, 3].map((orb) => (
               <div
@@ -148,10 +148,10 @@ export const CombatHUD: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Probability Heat (ORV Lore) */}
+        {/* Overheat Gauge */}
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs font-mono mb-1">
-            <span className="text-slate-400">PROBABILITY HEAT</span>
+            <span className="text-slate-400">OVERHEAT</span>
             <span className={`font-bold font-mono ${heatColor.split(' ')[0]}`}>{heat}%</span>
           </div>
           <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
@@ -162,10 +162,10 @@ export const CombatHUD: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Sabotage Energy (Option B) */}
+        {/* Sabotage Energy */}
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs font-mono mb-1">
-            <span className="text-slate-400">SABOTAGE ENERGY</span>
+            <span className="text-slate-400">SABOTAGE</span>
             <span className="text-amber-400 font-bold font-mono">
               {combatState.sabotageEnergy} / 100
             </span>
@@ -180,18 +180,18 @@ export const CombatHUD: React.FC<Props> = ({
       </div>
 
       {/* ========================================== */}
-      {/* 3. ACTIVE TELEGRAPH REACTION BAR */}
+      {/* 3. ACTIVE TELEGRAPH REACTION BAR           */}
       {/* ========================================== */}
       {boss.activeTelegraph && (
-        <div className="bg-rose-950/40 border border-rose-500/60 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-rose-950/50 animate-pulse">
-          <div className="flex items-center gap-2">
+        <div className="bg-rose-950/50 border-2 border-rose-500 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-xl shadow-rose-950/60 animate-pulse">
+          <div className="flex items-center gap-2.5">
             <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0" />
             <div>
-              <span className="text-xs font-mono font-bold text-rose-300 block">
-                INCOMING BOSS ATTACK: {boss.activeTelegraph.name} ({boss.activeTelegraph.damage} DMG)
+              <span className="text-xs font-mono font-black text-rose-200 block uppercase tracking-wide">
+                ⚠️ INCOMING ATTACK: {boss.activeTelegraph.name} ({boss.activeTelegraph.damage} DMG)
               </span>
-              <span className="text-[11px] text-slate-300">
-                {boss.activeTelegraph.description}
+              <span className="text-[11px] text-slate-300 font-mono">
+                Counter: <strong className="text-amber-300 font-bold">{boss.activeTelegraph.counterAction.toUpperCase()}</strong>
               </span>
             </div>
           </div>
@@ -235,14 +235,14 @@ export const CombatHUD: React.FC<Props> = ({
       )}
 
       {/* ========================================== */}
-      {/* 4. DYNAMIC 3-CARD SKILL HAND BAR */}
+      {/* 4. DYNAMIC 3-CARD SKILL HAND BAR           */}
       {/* ========================================== */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl flex flex-col gap-3">
         <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
               <Swords className="w-4 h-4" />
-              Active Hand (Drawn 3-Cards)
+              Active Hand (3 Cards)
             </span>
             <span className="text-slate-500 text-xs font-mono">
               • Deck: {combatState.deckDrawPile.length} cards remaining
@@ -253,7 +253,7 @@ export const CombatHUD: React.FC<Props> = ({
             className="px-4 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            END TURN & REPLENISH
+            END TURN & DRAW (E)
           </button>
         </div>
 
@@ -282,10 +282,10 @@ export const CombatHUD: React.FC<Props> = ({
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider">
-                        {skill.element} • {skill.category}
+                      <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider font-bold">
+                        {skill.category}
                       </span>
-                      <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-slate-800 text-slate-300">
+                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 font-bold">
                         [{idx + 1}]
                       </span>
                     </div>
@@ -296,11 +296,12 @@ export const CombatHUD: React.FC<Props> = ({
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 my-2 line-clamp-2">{skill.description}</p>
+                {/* Punchy Clean Description */}
+                <p className="text-xs text-slate-200 my-2 leading-snug">{skill.description}</p>
 
                 <div className="border-t border-slate-800/80 pt-2 flex items-center justify-between text-xs font-mono">
                   <span className="text-rose-400 font-bold">
-                    {skill.baseDamage > 0 ? `${skill.baseDamage} DMG` : 'DEFENSIVE'}
+                    {skill.baseDamage > 0 ? `${skill.baseDamage} DMG` : 'SHIELD / PARRY'}
                   </span>
                   <span className="text-amber-400">+{skill.sabotageEnergyGain} Sab</span>
                 </div>
@@ -311,12 +312,12 @@ export const CombatHUD: React.FC<Props> = ({
       </div>
 
       {/* ========================================== */}
-      {/* 5. INTERACTIVE ARENA PROPS BAR */}
+      {/* 5. INTERACTIVE ARENA PROPS BAR             */}
       {/* ========================================== */}
       <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2.5 text-xs">
         <span className="text-slate-400 font-mono text-xs flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-          Interactive Arena Props:
+          Interactive Props:
         </span>
         <div className="flex items-center gap-2">
           {arena.props.map((prop) => (
@@ -339,4 +340,3 @@ export const CombatHUD: React.FC<Props> = ({
     </div>
   );
 };
-

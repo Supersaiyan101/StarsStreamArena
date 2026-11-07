@@ -16,8 +16,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 15,
     sabotageEnergyGain: 12,
     heatGenerated: 6,
-    description: 'Channels white ether along the weapon edge for rapid, elegant dual slashes. Builds combo multiplier.',
-    synergyText: '+30% damage inside the Subterranean Metro.',
+    description: 'Fast dual slashes. Builds combo multiplier.',
+    synergyText: '+30% damage in Subterranean Metro.',
   },
   {
     id: 'kinetic_breaker',
@@ -31,8 +31,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 40,
     sabotageEnergyGain: 25,
     heatGenerated: 12,
-    description: 'Heavy overhead bludgeon inspired by the Breaking Sky Sword Saint. Cracks heavy armor and poise.',
-    synergyText: 'Empties 50% of boss stagger gauge if executed after a parry.',
+    description: 'Heavy crushing slam. Cracks boss shields.',
+    synergyText: 'Deals 2x Stun damage if executed after a parry.',
   },
   {
     id: 'phantom_lunge',
@@ -46,8 +46,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 20,
     sabotageEnergyGain: 15,
     heatGenerated: 8,
-    description: 'High-speed piercing lunge that ignores 50% of target armor.',
-    synergyText: 'Knocks target airborne if stagger gauge is empty.',
+    description: 'High-speed piercing lunge. Ignores 50% armor.',
+    synergyText: 'Knocks boss airborne if Stun bar is depleted.',
   },
   {
     id: 'cyclone_shred',
@@ -61,7 +61,7 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 25,
     sabotageEnergyGain: 20,
     heatGenerated: 10,
-    description: '360-degree whirlwind spin that shreds projectiles and nearby minions.',
+    description: '360° whirlwind spin. Clears projectiles & minions.',
     synergyText: 'Destroys incoming sabotage minions instantly.',
   },
 
@@ -80,8 +80,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 22,
     sabotageEnergyGain: 18,
     heatGenerated: 14,
-    description: 'Discharges blue high-frequency lightning transmutation that chains across targets.',
-    synergyText: '+40% Critical Chance in Han River Crossing / Flooded Waters.',
+    description: 'High-voltage lightning arcs chaining across targets.',
+    synergyText: '+40% Critical Chance in Han River Waters.',
   },
   {
     id: 'glacial_aegis',
@@ -95,8 +95,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 10,
     sabotageEnergyGain: 10,
     heatGenerated: 5,
-    description: 'Summons an ice barrier absorbing 30 damage and freezing the arena ground.',
-    synergyText: 'Triggers Deep Freeze if target is wet, immobilizing them for 1 turn.',
+    description: 'Ice barrier absorbs 30 DMG and freezes ground.',
+    synergyText: 'Freezes wet targets for 1 full turn.',
   },
   {
     id: 'infernal_ignition',
@@ -110,8 +110,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 15,
     sabotageEnergyGain: 15,
     heatGenerated: 16,
-    description: 'Unleashes a cone of concentrated flame energy, burning the target for 3 turns.',
-    synergyText: 'Inflicts 10 burn damage per turn.',
+    description: 'Flamethrower burst. Burns target for 3 turns.',
+    synergyText: 'Deals 10 burn damage per turn.',
   },
   {
     id: 'tempest_surge',
@@ -125,8 +125,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 30,
     sabotageEnergyGain: 22,
     heatGenerated: 20,
-    description: 'Calls down a concentrated lightning pillar on the target position.',
-    synergyText: 'Electrocutes the entire water pool if target is submerged.',
+    description: 'Concentrated lightning pillar. Heavy Stun damage.',
+    synergyText: 'Electrocutes all submerged water targets.',
   },
 
   // ==========================================
@@ -144,8 +144,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 0,
     sabotageEnergyGain: 15,
     heatGenerated: 5,
-    description: 'Traverses air currents to phase out of reality. Evades incoming red/ground telegraphs completely.',
-    synergyText: 'Dodging on telegraph triggers Bullet Time (+300 Style Pts).',
+    description: 'Phases out of reality. Dodges red/ground attacks.',
+    synergyText: 'Triggers Bullet Time on telegraph (+300 Style Pts).',
   },
   {
     id: 'kinetic_deflector',
@@ -159,12 +159,12 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 35,
     sabotageEnergyGain: 25,
     heatGenerated: 8,
-    description: 'Channels the unbreakable translucent barrier. Perfectly counters piercing blue telegraphs.',
-    synergyText: 'Reflects 50% damage back to attacker and breaks stagger meter.',
+    description: 'Unbreakable barrier. Parries blue piercing thrusts.',
+    synergyText: 'Reflects 50% damage back and shatters boss Stun bar.',
   },
   {
     id: 'smoke_veil',
-    name: 'Shadow Camouflage (Slide)',
+    name: 'Shadow Slide',
     koreanLoreRef: 'Smoke Slide Evasion',
     category: 'tactical',
     element: 'void',
@@ -174,8 +174,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 5,
     sabotageEnergyGain: 12,
     heatGenerated: 6,
-    description: 'Drops smoke and slides low under sweeping yellow slash telegraphs.',
-    synergyText: 'Grants +50% Critical Strike Chance on the next attack.',
+    description: 'Slides low under high horizontal sweeps.',
+    synergyText: 'Grants +50% Crit Chance on next attack.',
   },
   {
     id: 'grapple_tether',
@@ -189,12 +189,12 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 15,
     sabotageEnergyGain: 15,
     heatGenerated: 6,
-    description: 'Launches a high-tension cable to reposition or yank minions into hazards.',
-    synergyText: 'Pulls player to high platforms to evade rising floods or ground fire.',
+    description: 'High-tension cable to pull minions or grapple away.',
+    synergyText: 'Pulls player to high platforms away from hazards.',
   },
 
   // ==========================================
-  // DIVINE STIGMAS (ULTIMATES - Requires 100% Stigma Meter)
+  // DIVINE STIGMAS (ULTIMATES)
   // ==========================================
   {
     id: 'heavens_retribution',
@@ -208,8 +208,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 80,
     sabotageEnergyGain: 40,
     heatGenerated: 35,
-    description: 'Archangel Uriel’s radiant flames descend from Eden, purging all debuffs and scorching the boss.',
-    synergyText: 'Purges all status effects, burns boss for 40 true damage over 2 turns.',
+    description: 'Radiant holy fire. Cleanses debuffs & burns boss.',
+    synergyText: 'Burns boss for 40 true damage over 2 turns.',
     isStigma: true,
   },
   {
@@ -224,8 +224,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 100,
     sabotageEnergyGain: 40,
     heatGenerated: 35,
-    description: 'The golden pillar of Sun Wukong crashes down from the clouds, obliterating all minions and boss poise.',
-    synergyText: 'Guarantees an immediate 2-turn boss stagger and breaks all shields.',
+    description: 'Massive golden staff crushes down. 100% Stun break.',
+    synergyText: 'Guarantees an immediate 2-turn boss Stun.',
     isStigma: true,
   },
   {
@@ -240,8 +240,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 60,
     sabotageEnergyGain: 45,
     heatGenerated: 45,
-    description: 'Engulfs the battlefield in cursed dark dragonfire from the Black Cloud Nebula. High risk, devastating calamity power.',
-    synergyText: 'Deals 35% boss max HP over 4 turns; temporarily locks healing.',
+    description: 'Cursed dragonfire. Devastating damage over 4 turns.',
+    synergyText: 'Deals 35% boss max HP over 4 turns.',
     isStigma: true,
   },
   {
@@ -256,8 +256,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 70,
     sabotageEnergyGain: 40,
     heatGenerated: 30,
-    description: 'Teleports through the dimensional seam, executing a calculated strike on the enemy core vital point.',
-    synergyText: '100% Critical execution damage. Ignores all boss defense buffs.',
+    description: 'Blink behind target. 100% Critical execution strike.',
+    synergyText: 'Guaranteed Critical. Ignores all boss defenses.',
     isStigma: true,
   },
   {
@@ -272,8 +272,8 @@ export const SKILL_CATALOG: Skill[] = [
     staggerDamage: 75,
     sabotageEnergyGain: 38,
     heatGenerated: 25,
-    description: 'Admiral Yi Sun-sin’s naval sword aura sweeps the arena, slicing through aquatic calamities and establishing unyielding defense.',
-    synergyText: 'Grants +50% attack damage and knockback immunity when player HP is below 30%.',
+    description: 'Naval blade sweep. +50% ATK boost at low HP.',
+    synergyText: '+50% attack damage when player HP is below 30%.',
     isStigma: true,
   },
 ];

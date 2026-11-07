@@ -202,7 +202,7 @@ export const CombatCanvas: React.FC<Props> = ({
 
           ctx.font = 'bold 12px monospace';
           ctx.fillStyle = '#f87171';
-          ctx.fillText(`⚠️ [SEISMIC WAVE INCOMING: JUMP OR PHASE SHIFT!]`, width * 0.25, groundY - 32);
+          ctx.fillText(`⚠️ INCOMING SWEEP ➔ JUMP (W)!`, width * 0.25, groundY - 32);
         } else if (tele.telegraphType === 'slash_yellow') {
           // Yellow High Slash cone
           ctx.fillStyle = 'rgba(245, 158, 11, 0.2)';
@@ -215,7 +215,7 @@ export const CombatCanvas: React.FC<Props> = ({
 
           ctx.font = 'bold 12px monospace';
           ctx.fillStyle = '#fbbf24';
-          ctx.fillText(`⚠️ [HIGH SLASH INCOMING: SLIDE OR CROUCH LOW!]`, width * 0.25, groundY - 95);
+          ctx.fillText(`⚠️ INCOMING SLAM ➔ SLIDE (S)!`, width * 0.25, groundY - 95);
         } else if (tele.telegraphType === 'pierce_blue') {
           // Blue Piercing line
           ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
@@ -229,7 +229,7 @@ export const CombatCanvas: React.FC<Props> = ({
 
           ctx.font = 'bold 12px monospace';
           ctx.fillStyle = '#38bdf8';
-          ctx.fillText(`⚠️ [PIERCING THRUST: TIME PARRY FOR COUNTER! 🛡️]`, width * 0.25, groundY - 60);
+          ctx.fillText(`⚠️ INCOMING THRUST ➔ PARRY (SPACE)!`, width * 0.25, groundY - 60);
         }
       }
 
@@ -306,7 +306,7 @@ export const CombatCanvas: React.FC<Props> = ({
         bossY += 15;
         ctx.fillStyle = 'rgba(250, 204, 21, 0.8)';
         ctx.font = 'bold 12px monospace';
-        ctx.fillText('💫 STAGGERED!', bossX - 20, bossY - 30);
+        ctx.fillText('💥 STUNNED!', bossX - 20, bossY - 30);
       } else {
         bossY += Math.sin(t * 3) * 3;
       }
