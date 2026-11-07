@@ -172,30 +172,36 @@ starstream-arena/
 │   ├── assets/
 │   │   └── hero.png
 │   ├── components/
-│   │   ├── Armory.tsx               # Master loadout & match launcher
-│   │   ├── AttributeAllocator.tsx   # 30-point attribute allocation card
-│   │   ├── SkillDeckBuilder.tsx     # 5-card deck builder with filter tabs
+│   │   ├── MainLobby.tsx            # Screen 0: Cinematic Title, Mode Portals & Wallet Bar
+│   │   ├── ChallengerSelect.tsx     # Screen 1: Visual Hero Cards with Auto-Ready Presets
+│   │   ├── DispatchArena.tsx        # Screen 2: Scenario Arena & Circuit Wager Command Station
+│   │   ├── SpectatorHub.tsx         # Screen 4: Live Channel Directory & 🎲 Quick Hop
+│   │   ├── SpectatorTheater.tsx     # Screen 5: Live 60 FPS Stream, VIP Chat & Solana Devnet Tipping
+│   │   ├── StarStreamCodex.tsx      # Field Manual: 4-Tab Interactive Game Guide
 │   │   ├── CombatCanvas.tsx         # Procedural 60 FPS 2D HTML5 canvas stage
 │   │   ├── CombatHUD.tsx            # HP bars, energy orbs, telegraph reaction, hand cards
 │   │   ├── CombatStage.tsx          # Solo scenario run orchestrator
 │   │   ├── TwinDuelStage.tsx        # Symmetrical 1v1 split-screen duel orchestrator
 │   │   ├── StreamChat.tsx           # Live spectator chat & micro-tipping feed
 │   │   ├── ConstellationModal.tsx   # Spectator moniker & celestial aura studio
-│   │   └── StarArchive.tsx          # Leaderboard & verified on-chain run archive
+│   │   ├── StarArchive.tsx          # Leaderboard & verified on-chain run archive
+│   │   ├── AttributeAllocator.tsx   # 30-point attribute allocation card
+│   │   └── SkillDeckBuilder.tsx     # 5-card deck builder with filter tabs
 │   ├── data/
-│   │   ├── archetypes.ts            # Blade Disciple, Shadow Rogue, Titan Vanguard
+│   │   ├── archetypes.ts            # Blade Disciple, Shadow Rogue, Titan Vanguard with auto-presets
 │   │   ├── arenas.ts                # Metro Carriage 3807 & Mapo Bridge
+│   │   ├── mockMatches.ts           # Mock broadcast matches for the Spectator Directory
 │   │   ├── sabotage.ts              # Debris Barrage, Minion Spawn, Overload
 │   │   ├── skills.ts                # 17 balanced combat skills & stigmas
 │   │   └── weapons.ts               # Unbroken Faith, Four Tiger Sword, etc.
 │   ├── types/
-│   │   └── game.ts                  # Complete TypeScript definitions
+│   │   └── game.ts                  # Complete TypeScript definitions & AppScreen router
 │   ├── utils/
 │   │   ├── aiOpponent.ts            # Reactive Channel B bot intelligence
 │   │   ├── audioService.ts          # Web Audio API sound synthesizer
 │   │   ├── combatEngine.ts          # Turn cycles, damage formulas, counters
 │   │   └── solanaService.ts         # Solana RPC, wallet connection, explorer links
-│   ├── App.tsx                      # Root component, router, audio dock
+│   ├── App.tsx                      # Root state router with multi-screen flow
 │   ├── index.css                    # Tailwind CSS v4 styling & dark theme
 │   └── main.tsx                     # React DOM root mounting
 ├── index.html                       # HTML5 entry with StarStream metadata
@@ -219,6 +225,11 @@ starstream-arena/
 8. **`3d6572b`** — *Web Audio Synthesizer:* Zero-asset procedural SFX and floating audio control pill.
 9. **`bc4bb23` & `1abcadd`** — *Documentation & Expansion:* ASCII architecture, Solana Devnet guide, and long-term expansion blueprint.
 10. **`1e237b0`** — *English Sweep & Layout Polish:* Removed Korean clutter, pinned Deploy Card, added header start button.
+11. **`b2b755b`** — *Project Memory Blueprint:* Permanent single-source-of-truth documentation across codebase.
+12. **`cc88e6d`** — *Stepped Tournament Architecture:* MainLobby, ChallengerSelect, and DispatchArena screens.
+13. **`f736ff7`** — *Spectator Experience:* SpectatorHub directory, 🎲 Quick Hop, and SpectatorTheater with live Devnet tipping.
+14. **`9792b4a`** — *Survival Codex & In-Combat Polish:* 4-tab interactive guide, elemental card frames, and counter hotkeys.
+
 
 ---
 
@@ -229,3 +240,4 @@ starstream-arena/
 * **Pure English UI:** Clean, punchy terminology (*Ether Blade*, *Breaking Sky*, *Fourth Wall*); no Hangul remnants.
 * **Zero External Audio Assets:** Audio must remain procedurally synthesized via Web Audio API.
 * **Dual-Mode Wallet:** Always support both Phantom and in-browser fallback keypairs so hackathon judges can test in any browser with zero barriers.
+
