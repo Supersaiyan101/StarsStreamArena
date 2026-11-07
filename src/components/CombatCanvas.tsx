@@ -326,11 +326,117 @@ export const CombatCanvas: React.FC<Props> = ({
       }
 
       // ==========================================
+      // 2.5 POKÉMON-STYLE ISOMETRIC BATTLE PEDESTALS
+      // ==========================================
+      const playerBaseX = width * 0.22;
+      const playerBaseY = height - 52;
+      const bossBaseX = width * 0.74;
+      const bossBaseY = height * 0.44;
+
+      // 1. Boss Elevated Calamity Platform (Top-Right Background)
+      ctx.save();
+      // Outer aura ring
+      ctx.strokeStyle = boss.enraged ? 'rgba(239, 68, 68, 0.6)' : 'rgba(168, 85, 247, 0.5)';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = boss.enraged ? '#ef4444' : '#a855f7';
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      ctx.ellipse(bossBaseX, bossBaseY, 130, 42, 0.05, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Platform body
+      const bossGrad = ctx.createRadialGradient(bossBaseX, bossBaseY, 20, bossBaseX, bossBaseY, 120);
+      bossGrad.addColorStop(0, arena.theme === 'metro' ? '#2d1a1a' : '#082f49');
+      bossGrad.addColorStop(1, '#090a14');
+      ctx.fillStyle = bossGrad;
+      ctx.beginPath();
+      ctx.ellipse(bossBaseX, bossBaseY, 122, 38, 0.05, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner platform tech rings
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(bossBaseX, bossBaseY, 90, 26, 0.05, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Pedestal Platform Label
+      ctx.font = 'bold 9px monospace';
+      ctx.fillStyle = boss.enraged ? '#f87171' : '#c084fc';
+      ctx.fillText(
+        `[CALAMITY BASE: ${boss.elementalType ? boss.elementalType.toUpperCase() : 'DARK'}]`,
+        bossBaseX - 58,
+        bossBaseY + 32
+      );
+      ctx.restore();
+
+      // 2. Connecting Terrain Conduit (Rails / Energy Currents)
+      ctx.save();
+      ctx.strokeStyle = arena.theme === 'metro' ? 'rgba(234, 179, 8, 0.35)' : 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([12, 10]);
+      ctx.beginPath();
+      ctx.moveTo(playerBaseX + 60, playerBaseY - 10);
+      ctx.lineTo(bossBaseX - 70, bossBaseY + 15);
+      ctx.stroke();
+      ctx.restore();
+
+      // 3. Player Battle Pedestal (Bottom-Left Foreground)
+      ctx.save();
+      // Outer glowing ring
+      ctx.strokeStyle = loadout.avatarArchetype === 'shadow_rogue' ? '#a855f7' : '#00e5ff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.ellipse(playerBaseX, playerBaseY, 115, 36, -0.05, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Platform body
+      const playerGrad = ctx.createRadialGradient(playerBaseX, playerBaseY, 15, playerBaseX, playerBaseY, 105);
+      playerGrad.addColorStop(0, '#0c2340');
+      playerGrad.addColorStop(1, '#050c18');
+      ctx.fillStyle = playerGrad;
+      ctx.beginPath();
+      ctx.ellipse(playerBaseX, playerBaseY, 108, 32, -0.05, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner tactical grid lines
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(playerBaseX, playerBaseY, 78, 22, -0.05, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Player Platform Label
+      ctx.font = 'bold 9px monospace';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(`[HERO PEDESTAL: SPEED ${loadout.attributes.agility}]`, playerBaseX - 60, playerBaseY + 28);
+      ctx.restore();
+
+      // Active Arena Terrain & Weakness Banner in Top-Left
+      ctx.save();
+      ctx.fillStyle = 'rgba(6, 8, 20, 0.85)';
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.fillRect(10, 10, 240, 28);
+      ctx.strokeRect(10, 10, 240, 28);
+      ctx.font = 'bold 10px monospace';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(`🏟️ ARENA: ${arena.name.slice(0, 24)}`, 16, 22);
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillText(
+        `WEAK: ${boss.weaknesses ? boss.weaknesses.map((w) => w.toUpperCase()).join(', ') : 'FIRE'} (2.0x)`,
+        16,
+        34
+      );
+      ctx.restore();
+
+      // ==========================================
       // 3. CHALLENGER SPRITE (ANIME SILHOUETTE)
       // ==========================================
-      const groundY = height - 50;
-      let playerX = 140;
-      let playerY = groundY - 48;
+      let playerX = playerBaseX;
+      let playerY = playerBaseY - 42;
 
       // Dynamic animation offset calculations
       if (playerActionState === 'jumping') {
@@ -339,7 +445,8 @@ export const CombatCanvas: React.FC<Props> = ({
         playerY += 15;
         playerX += 18;
       } else if (playerActionState === 'attacking') {
-        playerX += 45;
+        playerX += 65;
+        playerY -= 20;
       } else if (playerActionState === 'hurt') {
         playerX -= 22;
       } else {
@@ -351,7 +458,7 @@ export const CombatCanvas: React.FC<Props> = ({
       const shadowScale = playerActionState === 'jumping' ? 0.55 : 1.0;
       ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.beginPath();
-      ctx.ellipse(playerX, groundY - 5, 20 * shadowScale, 5 * shadowScale, 0, 0, Math.PI * 2);
+      ctx.ellipse(playerX, playerBaseY, 20 * shadowScale, 5 * shadowScale, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Flowing Anime Trenchcoat / Cape Ribbons
@@ -484,8 +591,8 @@ export const CombatCanvas: React.FC<Props> = ({
       // ==========================================
       // 4. BOSS SPRITE (CALAMITY BEAST)
       // ==========================================
-      const bossX = width - 170;
-      let bossY = groundY - 60;
+      const bossX = bossBaseX;
+      let bossY = bossBaseY - 48;
 
       if (boss.isStaggered) {
         bossY += 12;
@@ -496,7 +603,7 @@ export const CombatCanvas: React.FC<Props> = ({
       // Shadow under Boss
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.beginPath();
-      ctx.ellipse(bossX, groundY - 5, 40, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(bossX, bossBaseY, 40, 8, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Boss Wind-up Telegraph Aura
