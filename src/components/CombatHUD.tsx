@@ -44,6 +44,53 @@ export const CombatHUD: React.FC<Props> = ({
   const heat = combatState.probabilityHeat;
   const heatColor = heat > 80 ? 'text-rose-400 bg-rose-500' : heat > 50 ? 'text-cyan-400 bg-cyan-400' : 'text-emerald-400 bg-emerald-500';
 
+  // Global Keyboard Action Controls
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const targetTag = (e.target as HTMLElement)?.tagName?.toUpperCase();
+      if (targetTag === 'INPUT' || targetTag === 'TEXTAREA') return;
+
+      if (e.key === '1') {
+        const card = combatState.activeHand[0];
+        if (card && combatState.playerEnergy >= card.energyCost) {
+          onPlaySkill(card.id);
+        }
+      } else if (e.key === '2') {
+        const card = combatState.activeHand[1];
+        if (card && combatState.playerEnergy >= card.energyCost) {
+          onPlaySkill(card.id);
+        }
+      } else if (e.key === '3') {
+        const card = combatState.activeHand[2];
+        if (card && combatState.playerEnergy >= card.energyCost) {
+          onPlaySkill(card.id);
+        }
+      } else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') {
+        if (boss.activeTelegraph) {
+          onCounterAction('jump');
+        }
+      } else if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
+        if (boss.activeTelegraph) {
+          onCounterAction('crouch');
+        }
+      } else if (e.key === ' ' || e.code === 'Space') {
+        if (boss.activeTelegraph) {
+          e.preventDefault();
+          onCounterAction('parry');
+        }
+      } else if (e.key === 'e' || e.key === 'E') {
+        onEndTurn();
+      } else if (e.key === '4' && arena.props[0] && !arena.props[0].isUsed) {
+        onTriggerProp(arena.props[0].id);
+      } else if (e.key === '5' && arena.props[1] && !arena.props[1].isUsed) {
+        onTriggerProp(arena.props[1].id);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [boss.activeTelegraph, combatState.activeHand, combatState.playerEnergy, arena.props, onPlaySkill, onCounterAction, onEndTurn, onTriggerProp]);
+
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* ========================================== */}
@@ -239,7 +286,7 @@ export const CombatHUD: React.FC<Props> = ({
       {/* ========================================== */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md shadow-xl flex flex-col gap-3">
         <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 font-mono">
               <Swords className="w-4 h-4" />
               Active Hand (3 Cards)
@@ -247,6 +294,12 @@ export const CombatHUD: React.FC<Props> = ({
             <span className="text-slate-500 text-xs font-mono">
               • Deck: {combatState.deckDrawPile.length} cards remaining
             </span>
+            {combatState.comboCount > 0 && (
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/50 text-amber-300 font-mono text-[11px] font-bold animate-pulse">
+                <Flame className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                COMBO x{combatState.comboCount} (+{Math.min(60, combatState.comboCount * 15)}% DMG)
+              </span>
+            )}
           </div>
           <button
             onClick={onEndTurn}
@@ -256,6 +309,19 @@ export const CombatHUD: React.FC<Props> = ({
             END TURN & DRAW (E)
           </button>
         </div>
+
+        {/* Calamity Minion Interception Banner if present */}
+        {combatState.activeShieldMinionHp !== undefined && combatState.activeShieldMinionHp > 0 && (
+          <div className="bg-purple-950/40 border border-purple-500/50 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs font-mono text-purple-300 animate-pulse">
+            <span className="flex items-center gap-1.5 font-bold">
+              <Shield className="w-4 h-4 text-purple-400" />
+              CALAMITY SHIELD MINION ACTIVE:
+            </span>
+            <span className="font-bold text-purple-200">
+              {combatState.activeShieldMinionHp} HP (Deflecting Attacks from Boss)
+            </span>
+          </div>
+        )}
 
         {/* 3 Skill Cards in Hand */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -320,7 +386,7 @@ export const CombatHUD: React.FC<Props> = ({
           Interactive Props:
         </span>
         <div className="flex items-center gap-2">
-          {arena.props.map((prop) => (
+          {arena.props.map((prop, pIdx) => (
             <button
               key={prop.id}
               disabled={prop.isUsed}
@@ -331,6 +397,9 @@ export const CombatHUD: React.FC<Props> = ({
                   : 'bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 border border-slate-700 cursor-pointer shadow-sm'
               }`}
             >
+              <span className="text-[10px] px-1 py-0.2 rounded bg-slate-950 text-cyan-400 border border-cyan-500/30 font-bold">
+                [{pIdx + 4}]
+              </span>
               <Flame className="w-3 h-3 text-cyan-400" />
               {prop.actionText}
             </button>

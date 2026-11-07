@@ -138,8 +138,31 @@ export function executePlayerSkill(
     logs.push(`[STAGGER BREAK: Boss is vulnerable! +50% Bonus Damage!]`);
   }
 
+  // Active Combo Chaining Multiplier
+  if (combatState.comboCount > 0 && skill.baseDamage > 0) {
+    const comboBonusPercent = Math.min(60, combatState.comboCount * 15);
+    const comboMultiplier = 1 + comboBonusPercent / 100;
+    damage = Math.round(damage * comboMultiplier);
+    logs.push(`[COMBO MULTIPLIER: Hit #${combatState.comboCount + 1} amplified damage by +${comboBonusPercent}%!]`);
+  }
+
+  // Calamity Minion Damage Interception
+  let remainingDamage = damage;
+  let updatedMinionHp = combatState.activeShieldMinionHp ?? 0;
+  if (updatedMinionHp > 0 && remainingDamage > 0) {
+    if (updatedMinionHp >= remainingDamage) {
+      updatedMinionHp -= remainingDamage;
+      logs.push(`[MINION DEFENSE: Calamity Drone intercepted ${remainingDamage} damage! (${updatedMinionHp} HP left)]`);
+      remainingDamage = 0;
+    } else {
+      remainingDamage -= updatedMinionHp;
+      logs.push(`[MINION DESTROYED: Calamity Drone absorbed ${updatedMinionHp} damage and was obliterated!]`);
+      updatedMinionHp = 0;
+    }
+  }
+
   // Update Boss HP and Stagger
-  const newBossHp = Math.max(0, bossState.currentHp - damage);
+  const newBossHp = Math.max(0, bossState.currentHp - remainingDamage);
   let newStagger = bossState.staggerGauge;
   let isNowStaggered = bossState.isStaggered;
   let staggerTurns = bossState.staggerTurnsRemaining;
@@ -188,6 +211,7 @@ export function executePlayerSkill(
     styleRating: newStyle,
     activeHand: updatedHand,
     deckDiscardPile: updatedDiscard,
+    activeShieldMinionHp: updatedMinionHp,
     combatLogs: [...combatState.combatLogs, ...logs],
   };
 
@@ -300,8 +324,9 @@ export function resolveTurnCycle(
   let nextArena = { ...arena };
   const logs: string[] = [];
 
-  // 1. Replenish Player Energy
+  // 1. Replenish Player Energy & reset turn combo
   nextCombatState.playerEnergy = nextCombatState.maxPlayerEnergy;
+  nextCombatState.comboCount = 0;
 
   // 2. Replenish 3-card hand if needed
   nextCombatState = replenishHand(nextCombatState);
@@ -364,7 +389,8 @@ export function resolveTurnCycle(
         nextCombatState.probabilityHeat = Math.min(100, nextCombatState.probabilityHeat + 35);
         logs.push(`[SABOTAGE IMPACT: Opponent overloaded your Probability Heat (+35%)!]`);
       } else if (sabType === 'minion') {
-        logs.push(`[SABOTAGE IMPACT: Calamity Minion has spawned in your arena, protecting the boss!]`);
+        nextCombatState.activeShieldMinionHp = (nextCombatState.activeShieldMinionHp ?? 0) + 60;
+        logs.push(`[SABOTAGE IMPACT: Calamity Shield Minion (60 HP) spawned in your arena, protecting the boss!]`);
       }
       nextCombatState.incomingSabotage = null;
     }

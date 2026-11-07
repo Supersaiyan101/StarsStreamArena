@@ -116,6 +116,16 @@ export interface SabotageAction {
   iconName: string;
 }
 
+export interface FlashBounty {
+  id: string;
+  title: string;
+  description: string;
+  rewardSol: number;
+  condition: 'combo3' | 'parry' | 'prop';
+  isCompleted: boolean;
+  turnsRemaining: number;
+}
+
 export interface ActiveCombatState {
   playerHp: number;
   maxPlayerHp: number;
@@ -132,6 +142,8 @@ export interface ActiveCombatState {
   isAirborne: boolean; // boss airborne for juggles
   shieldPoints: number;
   isStunned: boolean;
+  activeShieldMinionHp?: number; // Calamity minion intercepting damage
+  activeBounty?: FlashBounty | null;
   incomingSabotage: {
     type: 'debris' | 'minion' | 'heat';
     turnsUntilImpact: number;
