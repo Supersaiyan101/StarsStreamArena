@@ -237,6 +237,7 @@ starstream-arena/
 20. **`7b2afd9`** — *Enhanced Cross-Arena Sabotage Hazards:* Real gameplay disruptions including Calamity Shield Minion damage interception (60 HP drone) and live incoming sabotage HUD banners.
 21. **`e34af02`** — *Canvas 2.0 Anime Sprites & Hit-Stop Impact:* Flowing anime trenchcoat ribbons, neon blade aura, dynamic crescent slash VFX, hexagonal parry energy shields, and 45-60ms hit-stop freeze.
 22. **`c36a276`** — *Arcade Popups & Visual Cross-Arena Missile:* Bouncy impact texts (`🔥 COMBO x3!`, `💥 STUN CRITICAL!`, `🛡️ PERFECT PARRY!`) and animated cross-screen rocket projectiles streaking between Channel A and B.
+23. **`2a7a6d2`** — *Fighting Screen 2.0 Redesign:* Prominent Dual Health Bars at the very top (You on Left vs Boss on Right), widescreen 270px canvas in the center, and zero-scroll action card dock directly below.
 
 ---
 
