@@ -12,6 +12,17 @@ interface Props {
   onTriggerProp: (propId: string) => void;
 }
 
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  color: string;
+  size: number;
+  alpha: number;
+  decay: number;
+}
+
 export const CombatCanvas: React.FC<Props> = ({
   arena,
   boss,
@@ -25,6 +36,63 @@ export const CombatCanvas: React.FC<Props> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameId = useRef<number | null>(null);
   const timeRef = useRef<number>(0);
+  const particlesRef = useRef<Particle[]>([]);
+  const lastActionRef = useRef<string>('idle');
+  const hitStopUntilRef = useRef<number>(0);
+
+  // Spawn action-specific particles
+  useEffect(() => {
+    if (playerActionState !== lastActionRef.current) {
+      const now = performance.now();
+      if (playerActionState === 'attacking') {
+        // Hit-stop micro-freeze (45ms)
+        hitStopUntilRef.current = now + 45;
+        // Blade slash sparks
+        for (let i = 0; i < 16; i++) {
+          particlesRef.current.push({
+            x: 200 + Math.random() * 80,
+            y: 260 + (Math.random() - 0.5) * 60,
+            vx: 3 + Math.random() * 8,
+            vy: (Math.random() - 0.5) * 6,
+            color: Math.random() > 0.4 ? '#00e5ff' : '#ffffff',
+            size: 2 + Math.random() * 3,
+            alpha: 1.0,
+            decay: 0.04 + Math.random() * 0.03,
+          });
+        }
+      } else if (playerActionState === 'parrying') {
+        hitStopUntilRef.current = now + 60;
+        // Hexagonal shield deflection sparks
+        for (let i = 0; i < 14; i++) {
+          particlesRef.current.push({
+            x: 180 + Math.random() * 20,
+            y: 260 + (Math.random() - 0.5) * 50,
+            vx: -2 - Math.random() * 5,
+            vy: (Math.random() - 0.5) * 7,
+            color: '#38bdf8',
+            size: 2.5 + Math.random() * 2.5,
+            alpha: 1.0,
+            decay: 0.03 + Math.random() * 0.02,
+          });
+        }
+      } else if (playerActionState === 'jumping') {
+        // Dust puffs at ground
+        for (let i = 0; i < 8; i++) {
+          particlesRef.current.push({
+            x: 140 + (Math.random() - 0.5) * 25,
+            y: 320,
+            vx: (Math.random() - 0.5) * 3,
+            vy: -1 - Math.random() * 2,
+            color: '#64748b',
+            size: 3 + Math.random() * 3,
+            alpha: 0.7,
+            decay: 0.03,
+          });
+        }
+      }
+      lastActionRef.current = playerActionState;
+    }
+  }, [playerActionState]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -33,7 +101,13 @@ export const CombatCanvas: React.FC<Props> = ({
     if (!ctx) return;
 
     const render = () => {
-      timeRef.current += 0.03;
+      const now = performance.now();
+      // Check Hit-Stop freeze
+      const isFrozen = now < hitStopUntilRef.current;
+
+      if (!isFrozen) {
+        timeRef.current += 0.03;
+      }
       const t = timeRef.current;
       const width = canvas.width;
       const height = canvas.height;
@@ -42,8 +116,8 @@ export const CombatCanvas: React.FC<Props> = ({
 
       // Screen Shake offset
       if (screenShake) {
-        const shakeX = (Math.random() - 0.5) * 8;
-        const shakeY = (Math.random() - 0.5) * 8;
+        const shakeX = (Math.random() - 0.5) * 10;
+        const shakeY = (Math.random() - 0.5) * 10;
         ctx.translate(shakeX, shakeY);
       }
 
@@ -106,10 +180,9 @@ export const CombatCanvas: React.FC<Props> = ({
           ctx.fillStyle = '#475569';
           ctx.fillRect(width * 0.42 - 4, groundY - 10, 44, 10);
 
-          // In-world label
           ctx.font = '10px monospace';
           ctx.fillStyle = pillar1.isUsed ? '#64748b' : '#38bdf8';
-          ctx.fillText(pillar1.isUsed ? 'SHATTERED' : 'PILLAR (COVER)', width * 0.42 - 12, 50);
+          ctx.fillText(pillar1.isUsed ? 'SHATTERED' : 'PILLAR [4]', width * 0.42 - 8, 50);
         }
 
         // Steam Pipe on left wall
@@ -182,7 +255,7 @@ export const CombatCanvas: React.FC<Props> = ({
         ctx.strokeRect(width * 0.38, groundY - 14, 90, 18);
         ctx.font = '10px monospace';
         ctx.fillStyle = '#38bdf8';
-        ctx.fillText('DRY PLATFORM', width * 0.38 + 6, groundY - 20);
+        ctx.fillText('DRY PLATFORM [4]', width * 0.38 + 2, groundY - 20);
       }
 
       // ==========================================
@@ -234,64 +307,158 @@ export const CombatCanvas: React.FC<Props> = ({
       }
 
       // ==========================================
-      // 3. CHALLENGER SPRITE (PLAYER)
+      // 3. CHALLENGER SPRITE (ANIME SILHOUETTE)
       // ==========================================
       const groundY = height - 80;
       let playerX = 140;
       let playerY = groundY - 55;
 
-      // Animation offsets
+      // Dynamic animation offset calculations
       if (playerActionState === 'jumping') {
-        playerY -= 45;
+        playerY -= 55;
       } else if (playerActionState === 'crouching') {
-        playerY += 15;
+        playerY += 18;
+        playerX += 20;
       } else if (playerActionState === 'attacking') {
-        playerX += 35;
+        playerX += 50;
       } else if (playerActionState === 'hurt') {
-        playerX -= 20;
+        playerX -= 25;
       } else {
-        // Idle breathing
-        playerY += Math.sin(t * 4) * 2;
+        // Idle breathing oscillation
+        playerY += Math.sin(t * 4) * 2.5;
       }
 
-      // Probability Sparks around player (ORV Lore)
-      const heat = combatState.probabilityHeat;
-      if (heat > 0) {
-        const sparkCount = Math.floor(heat / 15);
-        const sparkColor = heat > 80 ? '#ef4444' : heat > 50 ? '#00d2ff' : '#10b981';
-        ctx.fillStyle = sparkColor;
-        for (let s = 0; s < sparkCount; s++) {
-          const sx = playerX + (Math.sin(t * 8 + s) * 25);
-          const sy = playerY + (Math.cos(t * 7 + s) * 35);
-          ctx.fillRect(sx, sy, 3, 3);
-        }
-      }
-
-      // Player Body Silhouette & Robe
-      ctx.fillStyle = loadout.avatarArchetype === 'shadow_rogue' ? '#7e22ce' : '#0284c7';
+      // Ground shadow under challenger (scales with jump height)
+      const shadowScale = playerActionState === 'jumping' ? 0.55 : 1.0;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.beginPath();
-      ctx.arc(playerX, playerY - 12, 10, 0, Math.PI * 2); // Head
+      ctx.ellipse(playerX, groundY - 6, 22 * shadowScale, 6 * shadowScale, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Body & Cloak
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(playerX - 9, playerY - 2, 18, 34);
-
-      // Energy Blade (Weapon)
-      const bladeAngle = playerActionState === 'attacking' ? 0.3 : -0.7 + Math.sin(t * 4) * 0.1;
+      // Flowing Anime Trenchcoat / Cape Ribbons
+      const capeWave = Math.sin(t * 8) * 8;
+      const capeTilt = playerActionState === 'attacking' ? -22 : playerActionState === 'jumping' ? 15 : 0;
       ctx.save();
-      ctx.translate(playerX + 8, playerY + 12);
-      ctx.rotate(bladeAngle);
-      ctx.fillStyle = '#00d2ff';
-      ctx.fillRect(0, -3, 38, 5);
-      // Blade glow trail
-      ctx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(0, -3, 38, 5);
+      ctx.fillStyle = loadout.avatarArchetype === 'shadow_rogue' ? '#3b0764' : '#0c4a6e';
+      ctx.strokeStyle = loadout.avatarArchetype === 'shadow_rogue' ? '#a855f7' : '#00e5ff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(playerX - 6, playerY + 8);
+      ctx.lineTo(playerX - 28 + capeTilt, playerY + 32 + capeWave);
+      ctx.lineTo(playerX - 22 + capeTilt, playerY + 36 + capeWave);
+      ctx.lineTo(playerX + 2, playerY + 22);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
       ctx.restore();
 
+      // Challenger Body Silhouette
+      ctx.fillStyle = '#0f172a';
+      // Legs
+      ctx.fillRect(playerX - 8, playerY + 20, 6, 18);
+      ctx.fillRect(playerX + 2, playerY + 20, 6, 18);
+      // Torso & Trenchcoat
+      ctx.fillRect(playerX - 10, playerY - 2, 20, 24);
+
+      // Challenger Head & Glowing Eye Visor
+      ctx.fillStyle = loadout.avatarArchetype === 'shadow_rogue' ? '#7e22ce' : '#0284c7';
+      ctx.beginPath();
+      ctx.arc(playerX, playerY - 12, 10, 0, Math.PI * 2);
+      ctx.fill();
+      // Glowing Anime Eye Visor
+      ctx.fillStyle = '#00e5ff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 8;
+      ctx.fillRect(playerX + 2, playerY - 15, 6, 3);
+      ctx.shadowBlur = 0;
+
+      // Energy Blade Weapon
+      const bladeAngle = playerActionState === 'attacking' ? 0.35 : -0.7 + Math.sin(t * 4) * 0.12;
+      ctx.save();
+      ctx.translate(playerX + 8, playerY + 10);
+      ctx.rotate(bladeAngle);
+      // Blade handle
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(-6, -2, 6, 4);
+      // Glowing Energy Blade Edge
+      ctx.fillStyle = '#00e5ff';
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 12;
+      ctx.fillRect(0, -2.5, 42, 5);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, -1, 40, 2);
+      ctx.restore();
+
+      // ==========================================
+      // 3.1 DYNAMIC ANIME SLASH VFX (ON ATTACK)
+      // ==========================================
+      if (playerActionState === 'attacking') {
+        ctx.save();
+        // Outer neon aura arc
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 10;
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 24;
+        ctx.beginPath();
+        ctx.arc(playerX + 42, playerY + 8, 62, -Math.PI * 0.45, Math.PI * 0.35);
+        ctx.stroke();
+
+        // Inner white-hot cutting core
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.arc(playerX + 42, playerY + 8, 62, -Math.PI * 0.38, Math.PI * 0.28);
+        ctx.stroke();
+
+        // High-speed slash slash lines
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(playerX + 15, playerY - 30);
+        ctx.lineTo(playerX + 110, playerY + 40);
+        ctx.moveTo(playerX + 25, playerY - 15);
+        ctx.lineTo(playerX + 120, playerY + 30);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // ==========================================
+      // 3.2 HEXAGONAL PARRY ENERGY SHIELD (ON PARRY)
+      // ==========================================
+      if (playerActionState === 'parrying') {
+        ctx.save();
+        const hx = playerX + 32;
+        const hy = playerY;
+        const hSize = 38;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3.5;
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 20;
+
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const angle = (Math.PI / 3) * i;
+          const px = hx + hSize * Math.cos(angle);
+          const py = hy + hSize * Math.sin(angle);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Inner pulse circle
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(hx, hy, 16 + Math.sin(t * 15) * 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
       // Player Label
-      ctx.font = '11px monospace';
+      ctx.font = 'bold 11px monospace';
       ctx.fillStyle = '#38bdf8';
       ctx.fillText(loadout.name, playerX - 25, playerY - 30);
 
@@ -302,13 +469,44 @@ export const CombatCanvas: React.FC<Props> = ({
       let bossY = groundY - 75;
 
       if (boss.isStaggered) {
-        // Staggered posture
         bossY += 15;
-        ctx.fillStyle = 'rgba(250, 204, 21, 0.8)';
-        ctx.font = 'bold 12px monospace';
-        ctx.fillText('💥 STUNNED!', bossX - 20, bossY - 30);
       } else {
         bossY += Math.sin(t * 3) * 3;
+      }
+
+      // Shadow under Boss
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.beginPath();
+      ctx.ellipse(bossX, groundY - 6, 42, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Boss Wind-up Telegraph Aura
+      if (boss.activeTelegraph) {
+        ctx.save();
+        ctx.strokeStyle = boss.enraged ? '#f43f5e' : '#f59e0b';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = boss.enraged ? '#f43f5e' : '#f59e0b';
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(bossX, bossY + 15, 68 + Math.sin(t * 10) * 8, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Stagger Dizzy Swirl & Broken Sparks
+      if (boss.isStaggered) {
+        ctx.save();
+        ctx.font = 'bold 13px monospace';
+        ctx.fillStyle = '#fde047';
+        ctx.fillText('💥 STUNNED (+50% DMG)', bossX - 55, bossY - 45);
+        // Orbiting stars
+        for (let s = 0; s < 3; s++) {
+          const starAngle = t * 6 + (s * Math.PI * 2) / 3;
+          const sx = bossX + Math.cos(starAngle) * 32;
+          const sy = bossY - 35 + Math.sin(starAngle) * 10;
+          ctx.fillText('⭐', sx - 6, sy);
+        }
+        ctx.restore();
       }
 
       if (arena.theme === 'metro') {
@@ -329,9 +527,13 @@ export const CombatCanvas: React.FC<Props> = ({
         ctx.lineTo(bossX + 10, bossY - 30);
         ctx.fill();
 
-        // Crimson Glowing Visor
+        // Pulsing Crimson Visor
+        ctx.save();
         ctx.fillStyle = boss.enraged ? '#f43f5e' : '#ef4444';
-        ctx.fillRect(bossX - 12, bossY - 10, 24, 6);
+        ctx.shadowColor = boss.enraged ? '#f43f5e' : '#ef4444';
+        ctx.shadowBlur = 14;
+        ctx.fillRect(bossX - 14, bossY - 10, 28, 6);
+        ctx.restore();
 
         // Pneumatic Pile-Driver Arm
         const armPump = Math.sin(t * 6) * 8;
@@ -354,8 +556,12 @@ export const CombatCanvas: React.FC<Props> = ({
         // Biomechanical Dragon Head
         ctx.fillStyle = '#0f172a';
         ctx.fillRect(bossX - 50, bossY - 18, 35, 24);
+        ctx.save();
         ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 12;
         ctx.fillRect(bossX - 45, bossY - 8, 8, 6); // Plasma Eye
+        ctx.restore();
       }
 
       // Boss Label
@@ -364,14 +570,44 @@ export const CombatCanvas: React.FC<Props> = ({
       ctx.fillText(boss.name, bossX - 40, bossY - 40);
 
       // ==========================================
-      // 5. FLOATING COMBAT TEXT & DAMAGE NUMBERS
+      // 5. PROCEDURAL PARTICLE SYSTEM
+      // ==========================================
+      if (!isFrozen) {
+        particlesRef.current.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.decay;
+        });
+        particlesRef.current = particlesRef.current.filter((p) => p.alpha > 0);
+      }
+
+      particlesRef.current.forEach((p) => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // ==========================================
+      // 6. FLOATING ARCADE IMPACT COMBAT TEXTS
       // ==========================================
       floatingTexts.forEach((item) => {
-        ctx.font = 'bold 14px monospace';
-        ctx.fillStyle = item.color;
+        ctx.save();
+        ctx.font = '900 15px monospace';
+        ctx.textAlign = 'center';
         ctx.globalAlpha = item.opacity;
+        // Heavy dark drop outline
+        ctx.strokeStyle = '#020617';
+        ctx.lineWidth = 4;
+        ctx.strokeText(item.text, item.x, item.y);
+        ctx.fillStyle = item.color;
         ctx.fillText(item.text, item.x, item.y);
-        ctx.globalAlpha = 1.0;
+        ctx.restore();
       });
 
       ctx.restore();
@@ -423,4 +659,3 @@ export const CombatCanvas: React.FC<Props> = ({
     </div>
   );
 };
-
