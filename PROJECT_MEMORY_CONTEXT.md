@@ -242,6 +242,12 @@ starstream-arena/
 25. **`c2fdf26`** — *Audio Impact & Keyboard Unlock:* Implemented procedural `playExplosionThud()` for cross-arena sabotage missile strikes and ensured `audio.resume()` runs on first keystroke to prevent browser audio context suspension.
 26. **`a2e4a11`** — *Responsive Dual Duel Viewport Modes:* Added 3-way view toggle pill (`[⚡ Split 50/50]`, `[🛡️ Focus You (Ch. A)]`, `[👁️ Focus Rival (Ch. B)]`) giving players full viewport control on desktop, laptop, and mobile screens.
 27. **`77b6a59`** — *Solo Trial Esports Grade & Star Archive Recording:* Added performance style rank badges (`S+ APEX INCARNATION`, `A DIVINE FAVOR`, `B VETERAN`, `C NOVICE`), 1-click on-chain record action to `StarArchive`, and radiant gold critical shockwave particles on staggered bosses.
+28. **`e525016`** — *Pokémon x ORV Data Models:* Defined `MoveRole` (`strike`, `setup`, `priority`, `stigma`), `MovePriority` (`+1/0/-1`), `StatusType` (`burn`, `bleed`, `paralyze`, `concussion`), `FablePassive`, and boss speeds & elemental weaknesses in `types/game.ts`.
+29. **`b263a79`** — *Tactical Movepool Catalog:* Implemented 12 iconic Pokémon-inspired ORV abilities in `skills.ts` (White Pure Ether Slash, Song of the Sword, Way of the Wind, Stigma Hellfire, Avatar Decoy, Phase Ambush, Mountain Cleave, The Fourth Wall Counter).
+30. **`b574643`** — *Turn Initiative & Status Engine:* Implemented speed-based turn initiative, elemental weakness multipliers (2.0x Super Effective / 0.5x Resisted), setup buffs, and status ailment damage ticks in `combatEngine.ts`.
+31. **`37f9577`** — *3D Isometric Battle Pedestals:* Replaced flat canvas line with floating elliptical battle pedestals for Player (bottom-left foreground) and Boss (top-right elevated calamity platform) with dynamic terrain conduits and weakness banners in `CombatCanvas.tsx`.
+32. **`0b318bb`** — *Pokémon Narrative Box & 4-Move Console:* Redesigned `CombatHUD.tsx` with a typewriter battle dialogue ticker and 4 tactical move slots (`[1]` Strike, `[2]` Setup/Buff, `[3]` Priority/Status, `[4]` Stigma Ultimate) with hotkeys and elemental badges.
+33. **`a4fc9a8`** — *Stage Wiring & Full Production Build:* Fully integrated Pokémon-style tactical turns into `CombatStage.tsx` and `TwinDuelStage.tsx`, eliminating the sluggish 3-card draw loop and verifying 100% clean production build.
 
 ---
 
