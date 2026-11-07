@@ -81,7 +81,8 @@ export class SolanaService {
   }
 
   // Fetch Live Devnet Balance via JSON-RPC
-  async fetchBalance(pubkeyStr: string): Promise<number> {
+  async fetchBalance(pubkeyStr?: string): Promise<number> {
+    const targetKey = !pubkeyStr || pubkeyStr.includes('...') ? this.localPublicKey : pubkeyStr;
     try {
       const response = await fetch(DEVNET_RPC_URL, {
         method: 'POST',
@@ -90,7 +91,7 @@ export class SolanaService {
           jsonrpc: '2.0',
           id: 1,
           method: 'getBalance',
-          params: [pubkeyStr],
+          params: [targetKey],
         }),
       });
       const data = await response.json();
@@ -105,7 +106,8 @@ export class SolanaService {
   }
 
   // Request Test Airdrop via JSON-RPC
-  async requestAirdrop(pubkeyStr: string): Promise<string> {
+  async requestAirdrop(pubkeyStr?: string): Promise<string> {
+    const targetKey = !pubkeyStr || pubkeyStr.includes('...') ? this.localPublicKey : pubkeyStr;
     try {
       const response = await fetch(DEVNET_RPC_URL, {
         method: 'POST',
@@ -114,7 +116,7 @@ export class SolanaService {
           jsonrpc: '2.0',
           id: 1,
           method: 'requestAirdrop',
-          params: [pubkeyStr, LAMPORTS_PER_SOL],
+          params: [targetKey, LAMPORTS_PER_SOL],
         }),
       });
       const data = await response.json();
