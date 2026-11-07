@@ -9,10 +9,10 @@ import type {
 } from '../types/game';
 import {
   initializeCombatState,
-  executePlayerSkill,
   executeCounterAction,
   resolveTurnCycle,
   triggerInteractiveProp,
+  executePokemonStyleTurn,
 } from '../utils/combatEngine';
 import { executeOpponentAITurn } from '../utils/aiOpponent';
 import { SABOTAGE_ACTIONS } from '../data/sabotage';
@@ -236,14 +236,14 @@ export const TwinDuelStage: React.FC<Props> = ({
     }));
   };
 
-  // Player 1 Plays a Skill
+  // Player 1 Plays a Skill (Pokémon-Style Turn Initiative & Elemental Calculation)
   const handlePlaySkillA = (skillId: string) => {
     setActionStateA('attacking');
     const skill = combatA.activeHand.find((s) => s.id === skillId);
     if (skill) {
       if (skill.isStigma) {
         audio.playStigmaCast();
-      } else if (skill.category === 'tactical') {
+      } else if (skill.category === 'tactical' || skill.moveRole === 'priority') {
         if (skill.id === 'kinetic_deflector') audio.playParryClang();
         else audio.playDodgeWoosh();
       } else {
@@ -251,20 +251,33 @@ export const TwinDuelStage: React.FC<Props> = ({
       }
     }
 
-    if (combatA.comboCount > 0) {
-      addFloatingTextA(`🔥 COMBO x${combatA.comboCount + 1}!`, '#fbbf24');
-    }
-    if (bossA.isStaggered) {
-      addFloatingTextA('💥 STUN CRITICAL!', '#ef4444');
+    const turnResult = executePokemonStyleTurn(skillId, combatA, bossA, arenaA, player1Loadout);
+
+    if (turnResult.isSuperEffective) {
+      audio.playParryClang();
+      addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24');
+    } else if (turnResult.isResisted) {
+      addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8');
     }
 
-    const result = executePlayerSkill(skillId, combatA, bossA, arenaA, player1Loadout);
-    setCombatA(result.combatState);
-    setBossA(result.bossState);
-    setArenaA(result.arena);
+    if (turnResult.damageDealtByPlayer > 0) {
+      addFloatingTextA(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e');
+      setShakeA(true);
+      setTimeout(() => setShakeA(false), 200);
+    }
 
-    setShakeA(true);
-    setTimeout(() => setShakeA(false), 200);
+    if (turnResult.damageDealtByBoss > 0) {
+      setTimeout(() => {
+        addFloatingTextA(`-${turnResult.damageDealtByBoss} HP`, '#ef4444');
+        setActionStateA('hurt');
+        setTimeout(() => setActionStateA('idle'), 300);
+      }, 400);
+    }
+
+    setCombatA(turnResult.combatState);
+    setBossA(turnResult.bossState);
+    setArenaA(turnResult.arena);
+
     setTimeout(() => setActionStateA('idle'), 350);
 
     // Opponent AI responds with a turn

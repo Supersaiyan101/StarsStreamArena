@@ -53,16 +53,14 @@ export function generateFlashBounty(turnNumber: number): FlashBounty {
 
 // Initialize Combat State for a player
 export function initializeCombatState(loadout: PlayerLoadout): ActiveCombatState {
-  // Resolve equipped skills
+  // Resolve equipped skills into 4 tactical moves
   const equippedSkills = loadout.equippedSkills
     .map((id) => SKILL_CATALOG.find((s) => s.id === id))
     .filter((s): s is Skill => s !== undefined);
 
-  const shuffled = shuffleArray(equippedSkills);
-  const activeHand = shuffled.slice(0, 3);
-  const deckDrawPile = shuffled.slice(3);
-
+  const activeHand = equippedSkills.length >= 4 ? equippedSkills.slice(0, 4) : equippedSkills;
   const maxHp = 200 + loadout.attributes.resonance * 4;
+  const isDecoy = loadout.avatarArchetype === 'shadow_rogue';
 
   return {
     playerHp: maxHp,
@@ -74,13 +72,20 @@ export function initializeCombatState(loadout: PlayerLoadout): ActiveCombatState
     stigmaMeter: 0,
     activeHand,
     deckDiscardPile: [],
-    deckDrawPile,
+    deckDrawPile: [],
     comboCount: 0,
     styleRating: 0,
     isAirborne: false,
     shieldPoints: 0,
     isStunned: false,
     turnCount: 1,
+    avatarDecoyActive: isDecoy,
+    activeStatus: null,
+    setupBuff: null,
+    narrativeDialogue: [
+      `[SYSTEM: Incarnation ${loadout.name} stepped onto the Hero Pedestal.]`,
+      `[OVERSEER: Channel #BI-7623 initialized. May the Constellations gaze upon your blood.]`,
+    ],
     activeBounty: generateFlashBounty(1),
     incomingSabotage: null,
     combatLogs: [

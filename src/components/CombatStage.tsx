@@ -9,10 +9,10 @@ import type {
 } from '../types/game';
 import {
   initializeCombatState,
-  executePlayerSkill,
   executeCounterAction,
   resolveTurnCycle,
   triggerInteractiveProp,
+  executePokemonStyleTurn,
 } from '../utils/combatEngine';
 import { audio } from '../utils/audioService';
 import { CombatCanvas } from './CombatCanvas';
@@ -121,14 +121,14 @@ export const CombatStage: React.FC<Props> = ({
     }
   }, [combatState.activeBounty?.isCompleted, combatState.activeBounty?.id, onTipReceived]);
 
-  // Play Skill Handler
+  // Play Skill Handler (Pokémon-Style Turn Initiative & Elemental Calculation)
   const handlePlaySkill = (skillId: string) => {
     setPlayerActionState('attacking');
     const skill = combatState.activeHand.find((s) => s.id === skillId);
     if (skill) {
       if (skill.isStigma) {
         audio.playStigmaCast();
-      } else if (skill.category === 'tactical') {
+      } else if (skill.category === 'tactical' || skill.moveRole === 'priority') {
         if (skill.id === 'kinetic_deflector') {
           audio.playParryClang();
         } else {
@@ -139,30 +139,37 @@ export const CombatStage: React.FC<Props> = ({
       }
     }
 
-    if (combatState.comboCount > 0) {
-      addFloatingText(`🔥 COMBO x${combatState.comboCount + 1}!`, '#fbbf24');
+    const turnResult = executePokemonStyleTurn(skillId, combatState, boss, arena, loadout);
+
+    if (turnResult.isSuperEffective) {
+      audio.playParryClang();
+      addFloatingText('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', true);
+    } else if (turnResult.isResisted) {
+      addFloatingText('🛡️ RESISTED (0.5x)', '#94a3b8');
     }
-    if (boss.isStaggered) {
-      addFloatingText('💥 STUN CRITICAL!', '#ef4444', true);
-    }
 
-    const result = executePlayerSkill(skillId, combatState, boss, arena, loadout);
-
-    setCombatState(result.combatState);
-    setBoss(result.bossState);
-    setArena(result.arena);
-
-    // Trigger visual hit effect
-    if (skill && skill.baseDamage > 0) {
-      addFloatingText(`-${skill.baseDamage} DMG`, '#f43f5e', skill.baseDamage > 40);
+    if (turnResult.damageDealtByPlayer > 0) {
+      addFloatingText(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', turnResult.damageDealtByPlayer > 50);
       setScreenShake(true);
       setTimeout(() => setScreenShake(false), 250);
     }
 
+    if (turnResult.damageDealtByBoss > 0) {
+      setTimeout(() => {
+        addFloatingText(`-${turnResult.damageDealtByBoss} HP`, '#ef4444', true);
+        setPlayerActionState('hurt');
+        setTimeout(() => setPlayerActionState('idle'), 300);
+      }, 400);
+    }
+
+    setCombatState(turnResult.combatState);
+    setBoss(turnResult.bossState);
+    setArena(turnResult.arena);
+
     setTimeout(() => setPlayerActionState('idle'), 350);
 
     // Check Victory
-    if (result.bossState.currentHp <= 0) {
+    if (turnResult.bossState.currentHp <= 0) {
       audio.playVictoryFanfare();
       confetti({
         particleCount: 120,
