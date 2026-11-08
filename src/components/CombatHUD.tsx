@@ -56,6 +56,14 @@ export const CombatHUD: React.FC<Props> = ({
       ? 'text-cyan-400 bg-cyan-400'
       : 'text-emerald-400 bg-emerald-500';
 
+  // Auto-scroll narrative dialogue ticker to latest combat telemetry
+  const dialogueScrollRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (dialogueScrollRef.current) {
+      dialogueScrollRef.current.scrollTop = dialogueScrollRef.current.scrollHeight;
+    }
+  }, [combatState.narrativeDialogue]);
+
   // Global Keyboard Action Controls
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -396,7 +404,7 @@ export const CombatHUD: React.FC<Props> = ({
             TURN {combatState.turnCount || 1} • SPEED {loadout?.attributes.agility ?? 10}
           </span>
         </div>
-        <div className="space-y-1 py-1 min-h-[48px] max-h-[72px] overflow-y-auto">
+        <div ref={dialogueScrollRef} className="space-y-1 py-1 min-h-[48px] max-h-[72px] overflow-y-auto scroll-smooth">
           {combatState.narrativeDialogue && combatState.narrativeDialogue.length > 0 ? (
             combatState.narrativeDialogue.map((line, idx) => (
               <div key={idx} className="flex items-center gap-1.5">
