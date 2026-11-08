@@ -280,9 +280,10 @@ export const TwinDuelStage: React.FC<Props> = ({
       playSkillAudio();
 
       if (turnResult.isSuperEffective) {
-        audio.playParryClang();
+        setTimeout(() => audio.playSuperEffectiveHit(), 80);
         addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
       } else if (turnResult.isResisted) {
+        setTimeout(() => audio.playResistedHit(), 80);
         addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8', 'boss');
       }
 
@@ -337,9 +338,10 @@ export const TwinDuelStage: React.FC<Props> = ({
           playSkillAudio();
 
           if (turnResult.isSuperEffective) {
-            audio.playParryClang();
+            setTimeout(() => audio.playSuperEffectiveHit(), 80);
             addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
           } else if (turnResult.isResisted) {
+            setTimeout(() => audio.playResistedHit(), 80);
             addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8', 'boss');
           }
 

@@ -272,6 +272,70 @@ class AudioService {
     this.playNoiseBurst(0.35, 0.4, 1800, 80);
   }
 
+  // 10. Super Effective Critical Impact (Heavy Pokémon-Style Crunch Thud)
+  public playSuperEffectiveHit(): void {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+
+    // Sub-bass impact thud
+    const subOsc = ctx.createOscillator();
+    const subGain = ctx.createGain();
+    subOsc.type = 'triangle';
+    subOsc.frequency.setValueAtTime(220, now);
+    subOsc.frequency.exponentialRampToValueAtTime(35, now + 0.35);
+
+    subGain.gain.setValueAtTime(0.5, now);
+    subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+    subOsc.connect(subGain);
+    subGain.connect(ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.35);
+
+    // Resonant harmonic chime (2.0x effectiveness feedback)
+    const notes = [880, 1320]; // A5, E6
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+      gain.gain.setValueAtTime(0.25, now + idx * 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + idx * 0.04 + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.04);
+      osc.stop(now + idx * 0.04 + 0.25);
+    });
+
+    this.playNoiseBurst(0.2, 0.3, 3000, 300);
+  }
+
+  // 11. Resisted Hit (Dull Clink)
+  public playResistedHit(): void {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  }
+
+  // 12. Status Ailment Tick (Burn / Bleed Sizzle)
+  public playStatusTick(): void {
+    this.playNoiseBurst(0.12, 0.2, 4500, 1200);
+  }
+
   // Internal helper for filtered noise burst (whoosh / impact)
   private playNoiseBurst(duration: number, volume: number, startCutoff: number, endCutoff: number): void {
     const ctx = this.getContext();

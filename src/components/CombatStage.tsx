@@ -155,8 +155,10 @@ export const CombatStage: React.FC<Props> = ({
       playSkillAudio();
 
       if (turnResult.isSuperEffective) {
+        setTimeout(() => audio.playSuperEffectiveHit(), 80);
         addFloatingText('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', true, 'boss');
       } else if (turnResult.isResisted) {
+        setTimeout(() => audio.playResistedHit(), 80);
         addFloatingText('🛡️ RESISTED (0.5x)', '#94a3b8', false, 'boss');
       }
 
@@ -211,8 +213,10 @@ export const CombatStage: React.FC<Props> = ({
           playSkillAudio();
 
           if (turnResult.isSuperEffective) {
+            setTimeout(() => audio.playSuperEffectiveHit(), 80);
             addFloatingText('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', true, 'boss');
           } else if (turnResult.isResisted) {
+            setTimeout(() => audio.playResistedHit(), 80);
             addFloatingText('🛡️ RESISTED (0.5x)', '#94a3b8', false, 'boss');
           }
 
