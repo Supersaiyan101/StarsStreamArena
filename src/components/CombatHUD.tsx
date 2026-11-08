@@ -523,8 +523,13 @@ export const CombatHUD: React.FC<Props> = ({
           {combatState.activeHand.slice(0, 4).map((skill: Skill, idx: number) => {
             const isStigmaReady = !skill.isStigma || combatState.stigmaMeter >= 100;
             const canPlay = isStigmaReady && !isTurnResolving;
+            const isWeak = boss.weaknesses?.includes(skill.element);
+            const isResist = boss.resistances?.includes(skill.element);
+
             const borderGlow = skill.isStigma
               ? 'border-amber-400 bg-amber-950/30 shadow-amber-500/20'
+              : isWeak
+              ? 'border-amber-400/80 bg-amber-950/20 shadow-amber-500/10'
               : skill.priority === 1
               ? 'border-emerald-500/60 bg-emerald-950/20'
               : skill.priority === -1
@@ -550,9 +555,21 @@ export const CombatHUD: React.FC<Props> = ({
                     </span>
                     <h4 className="text-xs font-black text-slate-100 truncate">{skill.name}</h4>
                   </div>
-                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 uppercase shrink-0">
-                    {skill.element}
-                  </span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 uppercase">
+                      {skill.element}
+                    </span>
+                    {isWeak && (
+                      <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/50 uppercase animate-pulse">
+                        💥 2.0x
+                      </span>
+                    )}
+                    {isResist && (
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-900 text-slate-400 border border-slate-700 uppercase">
+                        🛡️ 0.5x
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <p className="text-[11px] text-slate-300 my-1 leading-snug line-clamp-2">
