@@ -248,6 +248,14 @@ starstream-arena/
 31. **`37f9577`** — *3D Isometric Battle Pedestals:* Replaced flat canvas line with floating elliptical battle pedestals for Player (bottom-left foreground) and Boss (top-right elevated calamity platform) with dynamic terrain conduits and weakness banners in `CombatCanvas.tsx`.
 32. **`0b318bb`** — *Pokémon Narrative Box & 4-Move Console:* Redesigned `CombatHUD.tsx` with a typewriter battle dialogue ticker and 4 tactical move slots (`[1]` Strike, `[2]` Setup/Buff, `[3]` Priority/Status, `[4]` Stigma Ultimate) with hotkeys and elemental badges.
 33. **`a4fc9a8`** — *Stage Wiring & Full Production Build:* Fully integrated Pokémon-style tactical turns into `CombatStage.tsx` and `TwinDuelStage.tsx`, eliminating the sluggish 3-card draw loop and verifying 100% clean production build.
+34. **`01e7c4f`** — *Dialogue Ticker Auto-Scroll:* Attached smooth programmatic auto-scroll to the bottom of the Star Stream narrative dialogue box on every combat telemetry line update.
+35. **`73add58`** — *Input Spamming Lockout Guard:* Added `isTurnResolving` guard locking move slots and keybindings during turn resolution with an `⚡ INITIATIVE RESOLVING...` badge to prevent action stacking and race conditions.
+36. **`2014bca`** — *Canvas Spatial Calibration:* Calibrated floating combat numbers and hit-stop particle bursts to dynamic 3D isometric platform coordinates (`bossBaseX, bossY` vs `playerBaseX, playerY`).
+37. **`7007836`** — *Visual Turn Sequencing & Speed Initiative:* Sequenced turn resolution into 2 discrete animated beats with staged HP bar reductions and floating damage numbers matching true Speed initiative order.
+38. **`11c6068`** — *Live Status Ailment & Buff Badges:* Added visual status condition pills (`🔥 BURN`, `🩸 BLEED`, `⚡ PARALYZED`, `💫 CONCUSSED`) and player setup buff indicators (`🗡️ +60% ATK`, `👤 DECOY`) directly adjacent to HP bars.
+39. **`58255c2`** — *Move Slot Matchup Indicators:* Added dynamic `💥 2.0x WEAK` and `🛡️ 0.5x RESIST` badges directly on move cards to communicate target vulnerabilities at a glance.
+40. **`2df3080`** — *Twin Duel Opponent AI Alignment:* Modernized Channel B opponent AI in `aiOpponent.ts` to execute tactical Pokémon turns with weakness targeting and priority awareness.
+41. **`77b64f2`** — *Dedicated Audio Synthesizers:* Added procedural Web Audio API synthesizers for super-effective crunch thuds, resisted clinks, and status ticks, staggered with attack animation beats.
 
 ---
 
