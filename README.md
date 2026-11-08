@@ -36,8 +36,8 @@ Traditional Web3 gaming suffers from two fatal flaws: **predatory pay-to-win eco
          │                                                                   │
  ⚔️ CHALLENGER (PLAYER 1)                                            👁️ SPECTATORS (CONSTELLATIONS)
    - 30-Pt Equalized Attribute Allocation                              - Solana Devnet Wallet Connect
-   - 5-Card Deck (Dynamic 3-Card Draw)                                - Custom Moniker & Celestial Aura
-   - Real-time Telegraph Counters (Jump/Slide/Parry)                   - Live Stream Chat & Micro-Tipping
+   - 4-Move Tactical Console (Strike, Setup, Priority, Stigma)         - Custom Moniker & Celestial Aura
+   - Speed Initiative & Real-time Telegraph Counters                   - Live Stream Chat & Micro-Tipping
          │                                                                   │
          │  Combos, Dodges & Stagger                                         │  0.001 - 0.005 SOL Tips
          ▼                                                                   ▼
@@ -65,8 +65,14 @@ Bosses announce deadly attacks with high-visibility color-coded telegraph zones:
 * 🔵 **Blue Telegraph (Pneumatic Bull Rush / Bio-Plasma Discharge):** Requires **PARRY** (*The Fourth Wall*). Reflects 50% damage back and shatters poise!
 * 🟡 **Yellow Telegraph (Girder Sweep / Serpent Tail Cleave):** Requires **CROUCH / SLIDE** (*Shadow Camouflage*).
 
-### 3. Dynamic 3-Card Skill Hand
-To eliminate spamming single overpowered skills, players equip a **5-card Combat Deck** in the Armory. Every round, the Overseer draws **3 active cards** into the player's hand. High-tier moves consume Probability Heat and Energy, requiring careful rotation.
+### 3. Pokémon-Inspired 4-Move Tactical Console & Speed Initiative
+Every combatant wields a 4-move tactical loadout with distinct roles:
+* **[1] STRIKE:** Primary damage attack with high critical hit rates.
+* **[2] SETUP / BUFF:** Tactical preparation (e.g. *Song of the Sword* +60% ATK, *Pure Steel* +80 Shield, or *Avatar Decoy* clone).
+* **[3] PRIORITY / DISRUPT:** `⚡ +1 Priority` strikes that outspeed opponents, or `-1 Priority` reactive counters (*The Fourth Wall* reflecting 150% damage back).
+* **[4] STIGMA ULTIMATE:** Calamity-tier divine fable unlocked at 100% Stigma meter (*Stigma: Hellfire*, *Black Dragon Flame*).
+* **Type Effectiveness & Status Ailments:** Hitting boss elemental weaknesses deals **2.0x Super Effective** damage (0.5x if resisted). Inflicts status ailments like Burn, Bleed, Paralyze, and Concussion flinches.
+* **Speed Initiative:** Priority brackets resolve first; equal priority compares Challenger Agility vs. Boss Speed.
 
 ### 4. Cross-Arena Sabotage Launcher
 Performing combos and parries fills your **Sabotage Bar (0–100 Energy)**:
