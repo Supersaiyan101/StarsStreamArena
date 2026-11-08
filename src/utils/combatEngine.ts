@@ -23,8 +23,8 @@ export function shuffleArray<T>(array: T[]): T[] {
 export function generateFlashBounty(turnNumber: number): FlashBounty {
   const bounties = [
     {
-      title: '⚡ 3-CARD COMBO SURGE',
-      description: 'Execute a 3-Hit Combo this turn to strip 40 Boss Stun & claim sponsor SOL!',
+      title: '⚡ 3-HIT COMBO STREAK',
+      description: 'Maintain a 3-Hit Combo Streak without getting hit to strip 40 Boss Poise & claim sponsor SOL!',
       rewardSol: 0.005,
       condition: 'combo3' as const,
     },
@@ -695,6 +695,26 @@ export function executePokemonStyleTurn(
         narrativeLogs.push(`CRITICAL STUN PUNISH! (+50% DMG)`);
       }
 
+      // Combo Streak bonus (+15% per consecutive hit, max +60%)
+      nextCombat.comboCount = (nextCombat.comboCount || 0) + 1;
+      if (nextCombat.comboCount > 1) {
+        const comboBonus = Math.min(60, (nextCombat.comboCount - 1) * 15);
+        dmg = Math.round(dmg * (1 + comboBonus / 100));
+        narrativeLogs.push(`COMBO STREAK x${nextCombat.comboCount}: Damage amplified by +${comboBonus}%!`);
+      }
+
+      // Check Flash Bounty: 3-Hit Combo
+      if (
+        nextCombat.activeBounty &&
+        !nextCombat.activeBounty.isCompleted &&
+        nextCombat.activeBounty.condition === 'combo3' &&
+        nextCombat.comboCount >= 3
+      ) {
+        nextCombat.activeBounty = { ...nextCombat.activeBounty, isCompleted: true };
+        nextBoss.staggerGauge = Math.max(0, nextBoss.staggerGauge - 40);
+        narrativeLogs.push(`DOKKAEBI FLASH BOUNTY CLAIMED: +${nextCombat.activeBounty.rewardSol} SOL! Stripped 40 Boss Poise!`);
+      }
+
       totalPlayerDmg = dmg;
       nextBoss.currentHp = Math.max(0, nextBoss.currentHp - dmg);
       narrativeLogs.push(`Dealt ${dmg} ${skill.element.toUpperCase()} damage to ${nextBoss.name}!`);
@@ -803,6 +823,7 @@ export function executePokemonStyleTurn(
     totalBossDmg = bossDmg;
     nextCombat.playerHp = Math.max(0, nextCombat.playerHp - bossDmg);
     if (bossDmg > 0) {
+      nextCombat.comboCount = 0;
       narrativeLogs.push(`${loadout.name} took ${bossDmg} damage!`);
     }
 
