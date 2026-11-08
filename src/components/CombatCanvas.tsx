@@ -44,14 +44,19 @@ export const CombatCanvas: React.FC<Props> = ({
   useEffect(() => {
     if (playerActionState !== lastActionRef.current) {
       const now = performance.now();
+      const bX = 860 * 0.74; // Boss Calamity Platform center (~636)
+      const bY = 270 * 0.44 - 30; // Boss Chest level (~90)
+      const pX = 860 * 0.22; // Hero Pedestal center (~190)
+      const pY = 270 - 52; // Hero Ground level (~218)
+
       if (playerActionState === 'attacking') {
         // Hit-stop micro-freeze (45ms)
         hitStopUntilRef.current = now + 45;
-        // Blade slash sparks
-        for (let i = 0; i < 16; i++) {
+        // Blade slash sparks impact directly on Boss
+        for (let i = 0; i < 18; i++) {
           particlesRef.current.push({
-            x: 200 + Math.random() * 80,
-            y: 260 + (Math.random() - 0.5) * 60,
+            x: bX + (Math.random() - 0.5) * 50,
+            y: bY + (Math.random() - 0.5) * 45,
             vx: 3 + Math.random() * 8,
             vy: (Math.random() - 0.5) * 6,
             color: Math.random() > 0.4 ? '#00e5ff' : '#ffffff',
@@ -61,15 +66,15 @@ export const CombatCanvas: React.FC<Props> = ({
           });
         }
 
-        // Stagger Critical Shockwave Burst
+        // Stagger Critical Shockwave Burst on Boss Platform
         if (boss.isStaggered) {
           hitStopUntilRef.current = now + 70;
-          for (let i = 0; i < 22; i++) {
+          for (let i = 0; i < 24; i++) {
             const angle = Math.random() * Math.PI * 2;
             const speed = 3 + Math.random() * 7;
             particlesRef.current.push({
-              x: 360 + (Math.random() - 0.5) * 40,
-              y: 230 + (Math.random() - 0.5) * 40,
+              x: bX + (Math.random() - 0.5) * 40,
+              y: bY + (Math.random() - 0.5) * 40,
               vx: Math.cos(angle) * speed,
               vy: Math.sin(angle) * speed,
               color: Math.random() > 0.3 ? '#fbbf24' : '#f59e0b',
@@ -81,11 +86,11 @@ export const CombatCanvas: React.FC<Props> = ({
         }
       } else if (playerActionState === 'parrying') {
         hitStopUntilRef.current = now + 60;
-        // Hexagonal shield deflection sparks
-        for (let i = 0; i < 14; i++) {
+        // Hexagonal shield deflection sparks directly at player's shield position
+        for (let i = 0; i < 16; i++) {
           particlesRef.current.push({
-            x: 180 + Math.random() * 20,
-            y: 260 + (Math.random() - 0.5) * 50,
+            x: pX + 25 + Math.random() * 15,
+            y: pY - 42 + (Math.random() - 0.5) * 40,
             vx: -2 - Math.random() * 5,
             vy: (Math.random() - 0.5) * 7,
             color: '#38bdf8',
@@ -95,17 +100,31 @@ export const CombatCanvas: React.FC<Props> = ({
           });
         }
       } else if (playerActionState === 'jumping') {
-        // Dust puffs at ground
-        for (let i = 0; i < 8; i++) {
+        // Dust puffs at Hero Pedestal base
+        for (let i = 0; i < 10; i++) {
           particlesRef.current.push({
-            x: 140 + (Math.random() - 0.5) * 25,
-            y: 320,
+            x: pX + (Math.random() - 0.5) * 35,
+            y: pY - 4,
             vx: (Math.random() - 0.5) * 3,
             vy: -1 - Math.random() * 2,
             color: '#64748b',
             size: 3 + Math.random() * 3,
             alpha: 0.7,
             decay: 0.03,
+          });
+        }
+      } else if (playerActionState === 'hurt') {
+        // Crimson impact sparks on player when taking damage
+        for (let i = 0; i < 14; i++) {
+          particlesRef.current.push({
+            x: pX + (Math.random() - 0.5) * 30,
+            y: pY - 40 + (Math.random() - 0.5) * 35,
+            vx: -3 + (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
+            color: '#f43f5e',
+            size: 2.5 + Math.random() * 3,
+            alpha: 1.0,
+            decay: 0.04 + Math.random() * 0.02,
           });
         }
       }

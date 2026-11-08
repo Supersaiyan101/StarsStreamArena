@@ -107,16 +107,34 @@ export const TwinDuelStage: React.FC<Props> = ({
   >([]);
   const [isTurnResolvingA, setIsTurnResolvingA] = useState(false);
 
-  // Floating text helpers
-  const addFloatingTextA = (text: string, color: string = '#38bdf8') => {
+  // Floating text helpers anchored to pedestals
+  const addFloatingTextA = (
+    text: string,
+    color: string = '#38bdf8',
+    target: 'boss' | 'player' = 'boss'
+  ) => {
     const id = Math.random().toString();
-    setFloatingTextsA((prev) => [...prev, { id, text, x: 380, y: 180, color, opacity: 1 }]);
+    const targetX = target === 'boss' ? 636 : 190;
+    const targetY = target === 'boss' ? 65 : 155;
+    setFloatingTextsA((prev) => [
+      ...prev,
+      { id, text, x: targetX + (Math.random() - 0.5) * 45, y: targetY + (Math.random() - 0.5) * 30, color, opacity: 1 },
+    ]);
     setTimeout(() => setFloatingTextsA((prev) => prev.filter((t) => t.id !== id)), 1000);
   };
 
-  const addFloatingTextB = (text: string, color: string = '#a855f7') => {
+  const addFloatingTextB = (
+    text: string,
+    color: string = '#a855f7',
+    target: 'boss' | 'player' = 'boss'
+  ) => {
     const id = Math.random().toString();
-    setFloatingTextsB((prev) => [...prev, { id, text, x: 380, y: 180, color, opacity: 1 }]);
+    const targetX = target === 'boss' ? 636 : 190;
+    const targetY = target === 'boss' ? 65 : 155;
+    setFloatingTextsB((prev) => [
+      ...prev,
+      { id, text, x: targetX + (Math.random() - 0.5) * 45, y: targetY + (Math.random() - 0.5) * 30, color, opacity: 1 },
+    ]);
     setTimeout(() => setFloatingTextsB((prev) => prev.filter((t) => t.id !== id)), 1000);
   };
 
@@ -258,20 +276,20 @@ export const TwinDuelStage: React.FC<Props> = ({
 
     if (turnResult.isSuperEffective) {
       audio.playParryClang();
-      addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24');
+      addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
     } else if (turnResult.isResisted) {
-      addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8');
+      addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8', 'boss');
     }
 
     if (turnResult.damageDealtByPlayer > 0) {
-      addFloatingTextA(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e');
+      addFloatingTextA(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', 'boss');
       setShakeA(true);
       setTimeout(() => setShakeA(false), 200);
     }
 
     if (turnResult.damageDealtByBoss > 0) {
       setTimeout(() => {
-        addFloatingTextA(`-${turnResult.damageDealtByBoss} HP`, '#ef4444');
+        addFloatingTextA(`-${turnResult.damageDealtByBoss} HP`, '#ef4444', 'player');
         setActionStateA('hurt');
         setTimeout(() => setActionStateA('idle'), 300);
       }, 400);
@@ -298,17 +316,17 @@ export const TwinDuelStage: React.FC<Props> = ({
     if (result.success) {
       if (action === 'parry') {
         audio.playParryClang();
-        addFloatingTextA('🛡️ PERFECT PARRY!', '#10b981');
+        addFloatingTextA('🛡️ PERFECT PARRY!', '#10b981', 'player');
       } else if (action === 'jump') {
         audio.playDodgeWoosh();
-        addFloatingTextA('⬆️ CLEAN LEAP!', '#38bdf8');
+        addFloatingTextA('⬆️ CLEAN LEAP!', '#38bdf8', 'player');
       } else {
         audio.playDodgeWoosh();
-        addFloatingTextA('⬇️ SLIDE EVASION!', '#38bdf8');
+        addFloatingTextA('⬇️ SLIDE EVASION!', '#38bdf8', 'player');
       }
     } else {
       audio.playCosmicBacklash();
-      addFloatingTextA('❌ COUNTER FAILED!', '#ef4444');
+      addFloatingTextA('❌ COUNTER FAILED!', '#ef4444', 'player');
     }
 
     setCombatA(result.combatState);

@@ -88,14 +88,21 @@ export const CombatStage: React.FC<Props> = ({
     confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
   };
 
-  // Trigger floating damage text
-  const addFloatingText = (text: string, color: string = '#38bdf8', isCrit = false) => {
+  // Trigger floating damage text anchored to target pedestal
+  const addFloatingText = (
+    text: string,
+    color: string = '#38bdf8',
+    isCrit = false,
+    target: 'boss' | 'player' = 'boss'
+  ) => {
     const id = Math.random().toString();
+    const targetX = target === 'boss' ? 636 : 190;
+    const targetY = target === 'boss' ? 65 : 155;
     const newText = {
       id,
       text,
-      x: 550 + (Math.random() - 0.5) * 60,
-      y: 200 + (Math.random() - 0.5) * 40,
+      x: targetX + (Math.random() - 0.5) * 45,
+      y: targetY + (Math.random() - 0.5) * 30,
       color: isCrit ? '#f43f5e' : color,
       opacity: 1.0,
     };
@@ -146,20 +153,20 @@ export const CombatStage: React.FC<Props> = ({
 
     if (turnResult.isSuperEffective) {
       audio.playParryClang();
-      addFloatingText('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', true);
+      addFloatingText('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', true, 'boss');
     } else if (turnResult.isResisted) {
-      addFloatingText('🛡️ RESISTED (0.5x)', '#94a3b8');
+      addFloatingText('🛡️ RESISTED (0.5x)', '#94a3b8', false, 'boss');
     }
 
     if (turnResult.damageDealtByPlayer > 0) {
-      addFloatingText(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', turnResult.damageDealtByPlayer > 50);
+      addFloatingText(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', turnResult.damageDealtByPlayer > 50, 'boss');
       setScreenShake(true);
       setTimeout(() => setScreenShake(false), 250);
     }
 
     if (turnResult.damageDealtByBoss > 0) {
       setTimeout(() => {
-        addFloatingText(`-${turnResult.damageDealtByBoss} HP`, '#ef4444', true);
+        addFloatingText(`-${turnResult.damageDealtByBoss} HP`, '#ef4444', true, 'player');
         setPlayerActionState('hurt');
         setTimeout(() => setPlayerActionState('idle'), 300);
       }, 400);
@@ -196,17 +203,17 @@ export const CombatStage: React.FC<Props> = ({
     if (result.success) {
       if (action === 'parry') {
         audio.playParryClang();
-        addFloatingText('🛡️ PERFECT PARRY!', '#10b981', true);
+        addFloatingText('🛡️ PERFECT PARRY!', '#10b981', true, 'player');
       } else if (action === 'jump') {
         audio.playDodgeWoosh();
-        addFloatingText('⬆️ CLEAN LEAP!', '#38bdf8');
+        addFloatingText('⬆️ CLEAN LEAP!', '#38bdf8', false, 'player');
       } else {
         audio.playDodgeWoosh();
-        addFloatingText('⬇️ SLIDE EVASION!', '#38bdf8');
+        addFloatingText('⬇️ SLIDE EVASION!', '#38bdf8', false, 'player');
       }
     } else {
       audio.playCosmicBacklash();
-      addFloatingText('❌ COUNTER FAILED!', '#ef4444');
+      addFloatingText('❌ COUNTER FAILED!', '#ef4444', false, 'player');
       setPlayerActionState('hurt');
       setScreenShake(true);
       setTimeout(() => setScreenShake(false), 300);
