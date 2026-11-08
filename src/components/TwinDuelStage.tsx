@@ -259,53 +259,114 @@ export const TwinDuelStage: React.FC<Props> = ({
   const handlePlaySkillA = (skillId: string) => {
     if (isTurnResolvingA || bossA.currentHp <= 0 || combatA.playerHp <= 0) return;
     setIsTurnResolvingA(true);
-    setActionStateA('attacking');
+
     const skill = combatA.activeHand.find((s) => s.id === skillId);
-    if (skill) {
-      if (skill.isStigma) {
-        audio.playStigmaCast();
-      } else if (skill.category === 'tactical' || skill.moveRole === 'priority') {
+    const turnResult = executePokemonStyleTurn(skillId, combatA, bossA, arenaA, player1Loadout);
+
+    const playSkillAudio = () => {
+      if (!skill) return;
+      if (skill.isStigma) audio.playStigmaCast();
+      else if (skill.category === 'tactical' || skill.moveRole === 'priority') {
         if (skill.id === 'kinetic_deflector') audio.playParryClang();
         else audio.playDodgeWoosh();
       } else {
         audio.playBladeSlash();
       }
-    }
+    };
 
-    const turnResult = executePokemonStyleTurn(skillId, combatA, bossA, arenaA, player1Loadout);
+    if (turnResult.playerActedFirst) {
+      // Beat 1: Player 1 Strikes First (Speed Initiative Won)
+      setActionStateA('attacking');
+      playSkillAudio();
 
-    if (turnResult.isSuperEffective) {
-      audio.playParryClang();
-      addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
-    } else if (turnResult.isResisted) {
-      addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8', 'boss');
-    }
+      if (turnResult.isSuperEffective) {
+        audio.playParryClang();
+        addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
+      } else if (turnResult.isResisted) {
+        addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8', 'boss');
+      }
 
-    if (turnResult.damageDealtByPlayer > 0) {
-      addFloatingTextA(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', 'boss');
-      setShakeA(true);
-      setTimeout(() => setShakeA(false), 200);
-    }
+      if (turnResult.damageDealtByPlayer > 0) {
+        addFloatingTextA(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', 'boss');
+        setShakeA(true);
+        setTimeout(() => setShakeA(false), 200);
+      }
 
-    if (turnResult.damageDealtByBoss > 0) {
+      // Decrement Boss A HP
+      setBossA((prev) => ({
+        ...prev,
+        currentHp: Math.max(0, prev.currentHp - turnResult.damageDealtByPlayer),
+      }));
+
       setTimeout(() => {
+        setActionStateA('idle');
+
+        // Beat 2: Boss A Strikes Back if still standing
+        if (turnResult.bossState.currentHp > 0 && turnResult.damageDealtByBoss > 0) {
+          setActionStateA('hurt');
+          addFloatingTextA(`-${turnResult.damageDealtByBoss} HP`, '#ef4444', 'player');
+
+          setCombatA((prev) => ({
+            ...prev,
+            playerHp: Math.max(0, prev.playerHp - turnResult.damageDealtByBoss),
+          }));
+
+          setTimeout(() => setActionStateA('idle'), 350);
+        }
+      }, 450);
+    } else {
+      // Beat 1: Boss A Outspeeds and Strikes First
+      setActionStateA('hurt');
+      if (turnResult.damageDealtByBoss > 0) {
         addFloatingTextA(`-${turnResult.damageDealtByBoss} HP`, '#ef4444', 'player');
-        setActionStateA('hurt');
-        setTimeout(() => setActionStateA('idle'), 300);
-      }, 400);
+        setShakeA(true);
+        setTimeout(() => setShakeA(false), 200);
+      }
+
+      setCombatA((prev) => ({
+        ...prev,
+        playerHp: Math.max(0, prev.playerHp - turnResult.damageDealtByBoss),
+      }));
+
+      setTimeout(() => {
+        setActionStateA('idle');
+
+        // Beat 2: Player 1 Retaliates if alive
+        if (turnResult.combatState.playerHp > 0) {
+          setActionStateA('attacking');
+          playSkillAudio();
+
+          if (turnResult.isSuperEffective) {
+            audio.playParryClang();
+            addFloatingTextA('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
+          } else if (turnResult.isResisted) {
+            addFloatingTextA('🛡️ RESISTED (0.5x)', '#94a3b8', 'boss');
+          }
+
+          if (turnResult.damageDealtByPlayer > 0) {
+            addFloatingTextA(`-${turnResult.damageDealtByPlayer} DMG`, '#f43f5e', 'boss');
+          }
+
+          setBossA((prev) => ({
+            ...prev,
+            currentHp: Math.max(0, prev.currentHp - turnResult.damageDealtByPlayer),
+          }));
+
+          setTimeout(() => setActionStateA('idle'), 350);
+        }
+      }, 450);
     }
 
-    setCombatA(turnResult.combatState);
-    setBossA(turnResult.bossState);
-    setArenaA(turnResult.arena);
-
+    // Final Sync: Apply authoritative states & trigger opponent turn
     setTimeout(() => {
-      setActionStateA('idle');
+      setCombatA(turnResult.combatState);
+      setBossA(turnResult.bossState);
+      setArenaA(turnResult.arena);
       setIsTurnResolvingA(false);
-    }, 500);
 
-    // Opponent AI responds with a turn
-    triggerOpponentTurn();
+      // Opponent AI responds with a turn
+      triggerOpponentTurn();
+    }, 850);
   };
 
   // Counter action for Player 1
