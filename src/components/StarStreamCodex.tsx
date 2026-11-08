@@ -92,17 +92,17 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
                   Strict 30-Point Fair Play Cap
                 </h3>
                 <p className="text-xs text-slate-300">
-                  Every Challenger enters scenarios with a strict, non-negotiable budget of 30
+                  Every Challenger enters scenarios with a standardized, non-negotiable budget of 30
                   attribute points distributed across three core pillars:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3 text-xs font-mono">
                   <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30">
                     <span className="font-bold text-rose-400 block">STRENGTH (STR)</span>
-                    <span className="text-[11px] text-slate-400">+1.5% Physical & Melee damage</span>
+                    <span className="text-[11px] text-slate-400">+1.5% Strike & Physical damage</span>
                   </div>
                   <div className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
                     <span className="font-bold text-cyan-400 block">AGILITY (AGI)</span>
-                    <span className="text-[11px] text-slate-400">+1.2% Critical rate & Sabotage gain</span>
+                    <span className="text-[11px] text-slate-400">Speed Initiative (Move First) & Crit</span>
                   </div>
                   <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30">
                     <span className="font-bold text-amber-400 block">RESONANCE (RES)</span>
@@ -111,41 +111,90 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
+              {/* 4-Move Tactical Battle Console */}
               <div className="bg-slate-950/60 border border-slate-800 p-4 rounded-xl">
                 <h3 className="text-base font-bold text-slate-100 flex items-center gap-2 mb-2">
-                  <Zap className="w-4 h-4 text-amber-400" />
-                  Dynamic 3-Card Hand & Energy
+                  <Swords className="w-4 h-4 text-cyan-400" />
+                  Pokémon-Inspired 4-Move Tactical Console
                 </h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  You equip 5 skills into your Combat Deck. Each turn, 3 skills are randomly drawn
-                  into your active hand. You have 3 Combat Energy (⚡) each turn to spend on attacks,
-                  parries, and elemental arts. Unused cards cycle back into your deck upon ending the
-                  turn.
+                <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+                  Every Challenger commands 4 dedicated tactical moves mapped to keys <strong className="text-cyan-300">[1]</strong>, <strong className="text-cyan-300">[2]</strong>, <strong className="text-cyan-300">[3]</strong>, and <strong className="text-cyan-300">[4]</strong>:
                 </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                  <div className="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-500/40">
+                    <span className="font-bold text-cyan-300">[1] STRIKE</span>
+                    <span className="text-[11px] text-slate-400 block mt-0.5">High-damage primary attack with critical multiplier.</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-purple-950/40 border border-purple-500/40">
+                    <span className="font-bold text-purple-300">[2] SETUP / BUFF</span>
+                    <span className="text-[11px] text-slate-400 block mt-0.5">Stat preparation (+60% ATK for 2 turns, Pure Steel shield, or Decoy).</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/40">
+                    <span className="font-bold text-emerald-300">[3] PRIORITY / DISRUPT</span>
+                    <span className="text-[11px] text-slate-400 block mt-0.5">⚡ +1 Priority strike to bypass enemy speed, or -1 Counter stance.</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-500/40">
+                    <span className="font-bold text-amber-300">[4] STIGMA ULTIMATE</span>
+                    <span className="text-[11px] text-slate-400 block mt-0.5">Devastating Constellation Fable unlocked at 100% Stigma Meter.</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="bg-slate-950/60 border border-slate-800 p-4 rounded-xl">
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2 mb-2">
-                  <Flame className="w-4 h-4 text-purple-400" />
-                  Overheat Gauge (System Load)
-                </h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  In the Star Stream, heavy elemental arts and divine Stigmas generate <strong>Overheat (0-100%)</strong>.
-                  If Overheat reaches 100%, your suit suffers a <strong>System Recoil</strong>, dealing 20
-                  damage back to you and scrambling your active hand cards!
-                </p>
+              {/* Speed Initiative & Elemental Matchups */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl">
+                  <h4 className="font-bold text-amber-400 flex items-center gap-1.5 mb-1.5 font-mono">
+                    <Zap className="w-3.5 h-3.5" /> Speed & Priority Initiative
+                  </h4>
+                  <p className="text-slate-300 leading-relaxed text-[11px]">
+                    Actions resolve by priority bracket (+1, 0, -1). At equal priority, your <strong>Agility</strong> stat vs <strong>Boss Speed</strong> determines who strikes first each round!
+                  </p>
+                </div>
+
+                <div className="bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl">
+                  <h4 className="font-bold text-emerald-400 flex items-center gap-1.5 mb-1.5 font-mono">
+                    <Sparkles className="w-3.5 h-3.5" /> Type Matchup Matrix
+                  </h4>
+                  <p className="text-slate-300 leading-relaxed text-[11px]">
+                    Exploiting boss elemental weaknesses inflicts <strong className="text-amber-300">2.0x SUPER EFFECTIVE</strong> damage! Resisted elements deal 0.5x damage.
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Ailments */}
+              <div className="bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl font-mono text-xs">
+                <h4 className="font-bold text-purple-300 mb-2">Tactical Status Ailments:</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                  <div className="p-2 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300">
+                    <span className="font-bold block">🔥 BURN</span>
+                    <span className="text-[10px] text-slate-400">15 DMG per turn for 2T</span>
+                  </div>
+                  <div className="p-2 rounded bg-red-950/40 border border-red-500/30 text-red-300">
+                    <span className="font-bold block">🩸 BLEED</span>
+                    <span className="text-[10px] text-slate-400">15 DMG per turn for 3T</span>
+                  </div>
+                  <div className="p-2 rounded bg-amber-950/40 border border-amber-500/30 text-amber-300">
+                    <span className="font-bold block">⚡ PARALYZE</span>
+                    <span className="text-[10px] text-slate-400">40% chance action lost</span>
+                  </div>
+                  <div className="p-2 rounded bg-purple-950/40 border border-purple-500/30 text-purple-300">
+                    <span className="font-bold block">💫 CONCUSSION</span>
+                    <span className="text-[10px] text-slate-400">Guaranteed flinch skip</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          {/* TAB 2: BOSS COUNTERS */}
+          {/* TAB 2: BOSS COUNTERS & TIME ATTACKS */}
           {activeTab === 'counters' && (
             <div className="space-y-4">
-              <p className="text-xs text-slate-300">
-                Calamity bosses prepare deadly named attacks telegraphed in the emergency warning
-                banner. You must react with the exact counter action to nullify 100% of damage and
-                gain bonus combat momentum:
-              </p>
+              <div className="bg-amber-950/30 border border-amber-500/40 p-3.5 rounded-xl font-mono text-xs text-amber-300 flex items-center gap-2">
+                <span className="text-base">⏱️</span>
+                <span>
+                  <strong>Time-Attack Reaction Window:</strong> When a Calamity Boss winds up a named attack, you have a <strong>1.5s - 2.0s real-time reaction bar</strong> to input the correct counter key before it lands!
+                </span>
+              </div>
 
               <div className="space-y-3">
                 <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 flex items-start gap-3">
@@ -154,10 +203,10 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <h4 className="font-bold text-emerald-300 text-xs font-mono">
-                      [ ⬆️ JUMP / AIR DODGE ] — Hotkey: W or Up
+                      [ ⬆️ JUMP / AIR DODGE ] — Hotkey: W or Up Arrow
                     </h4>
                     <p className="text-xs text-slate-300 mt-0.5">
-                      Counters <strong>Ground Sweeps, Tail Whips, and Quakes</strong>. Leaps completely over low sweep attacks.
+                      Counters 🔴 <strong>Ground Sweeps, Shockwaves, and Quakes</strong>. Leaps completely above low hazards.
                     </p>
                   </div>
                 </div>
@@ -168,10 +217,10 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <h4 className="font-bold text-amber-300 text-xs font-mono">
-                      [ ⬇️ SLIDE / CROUCH ] — Hotkey: S or Down
+                      [ ⬇️ SLIDE / CROUCH ] — Hotkey: S or Down Arrow
                     </h4>
                     <p className="text-xs text-slate-300 mt-0.5">
-                      Counters <strong>Overhead Slams, Crushing Bludgeons, and High Energy Beams</strong>. Duck beneath horizontal blasts.
+                      Counters 🟡 <strong>Overhead Slams, Cleaves, and High Energy Beams</strong>. Duck beneath horizontal sweeps.
                     </p>
                   </div>
                 </div>
@@ -185,16 +234,16 @@ export const StarStreamCodex: React.FC<Props> = ({ isOpen, onClose }) => {
                       [ 🛡️ PARRY / DEFLECT ] — Hotkey: Spacebar
                     </h4>
                     <p className="text-xs text-slate-300 mt-0.5">
-                      Counters <strong>Piercing Thrusts, Plasma Lasers, and Acid Projectiles</strong>. Reflects kinetic force back to shatter boss Poise.
+                      Counters 🔵 <strong>Piercing Thrusts, Plasma Lasers, and Charges</strong>. Perfectly deflects kinetic force and damages enemy poise!
                     </p>
                   </div>
                 </div>
               </div>
 
               <div className="bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl text-xs font-mono text-amber-300">
-                ⚡ <strong>Pro Tip:</strong> Depleting the boss's Stun Bar (100) causes an
+                ⚡ <strong>Poise Break & Stun:</strong> Depleting the boss Stun Bar (100) triggers an
                 ARMOR BREAK, stunning the boss for 2 full turns where all player attacks deal +50% bonus
-                damage!
+                critical damage!
               </div>
             </div>
           )}
