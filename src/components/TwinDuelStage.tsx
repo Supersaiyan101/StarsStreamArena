@@ -105,6 +105,7 @@ export const TwinDuelStage: React.FC<Props> = ({
   const [floatingTextsB, setFloatingTextsB] = useState<
     { id: string; text: string; x: number; y: number; color: string; opacity: number }[]
   >([]);
+  const [isTurnResolvingA, setIsTurnResolvingA] = useState(false);
 
   // Floating text helpers
   const addFloatingTextA = (text: string, color: string = '#38bdf8') => {
@@ -238,6 +239,8 @@ export const TwinDuelStage: React.FC<Props> = ({
 
   // Player 1 Plays a Skill (Pokémon-Style Turn Initiative & Elemental Calculation)
   const handlePlaySkillA = (skillId: string) => {
+    if (isTurnResolvingA || bossA.currentHp <= 0 || combatA.playerHp <= 0) return;
+    setIsTurnResolvingA(true);
     setActionStateA('attacking');
     const skill = combatA.activeHand.find((s) => s.id === skillId);
     if (skill) {
@@ -278,7 +281,10 @@ export const TwinDuelStage: React.FC<Props> = ({
     setBossA(turnResult.bossState);
     setArenaA(turnResult.arena);
 
-    setTimeout(() => setActionStateA('idle'), 350);
+    setTimeout(() => {
+      setActionStateA('idle');
+      setIsTurnResolvingA(false);
+    }, 500);
 
     // Opponent AI responds with a turn
     triggerOpponentTurn();
@@ -505,6 +511,7 @@ export const TwinDuelStage: React.FC<Props> = ({
             combatState={combatA}
             arena={arenaA}
             loadout={player1Loadout}
+            isTurnResolving={isTurnResolvingA}
             onPlaySkill={handlePlaySkillA}
             onCounterAction={handleCounterA}
             onEndTurn={handleEndTurnA}

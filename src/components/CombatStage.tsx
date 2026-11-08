@@ -57,6 +57,7 @@ export const CombatStage: React.FC<Props> = ({
   const [floatingTexts, setFloatingTexts] = useState<
     { id: string; text: string; x: number; y: number; color: string; opacity: number }[]
   >([]);
+  const [isTurnResolving, setIsTurnResolving] = useState(false);
   const [isRecorded, setIsRecorded] = useState(false);
   const [recordedTx, setRecordedTx] = useState<string | null>(null);
 
@@ -123,6 +124,8 @@ export const CombatStage: React.FC<Props> = ({
 
   // Play Skill Handler (Pokémon-Style Turn Initiative & Elemental Calculation)
   const handlePlaySkill = (skillId: string) => {
+    if (isTurnResolving || boss.currentHp <= 0 || combatState.playerHp <= 0) return;
+    setIsTurnResolving(true);
     setPlayerActionState('attacking');
     const skill = combatState.activeHand.find((s) => s.id === skillId);
     if (skill) {
@@ -166,7 +169,10 @@ export const CombatStage: React.FC<Props> = ({
     setBoss(turnResult.bossState);
     setArena(turnResult.arena);
 
-    setTimeout(() => setPlayerActionState('idle'), 350);
+    setTimeout(() => {
+      setPlayerActionState('idle');
+      setIsTurnResolving(false);
+    }, 500);
 
     // Check Victory
     if (turnResult.bossState.currentHp <= 0) {
@@ -283,6 +289,7 @@ export const CombatStage: React.FC<Props> = ({
             combatState={combatState}
             arena={arena}
             loadout={loadout}
+            isTurnResolving={isTurnResolving}
             onPlaySkill={handlePlaySkill}
             onCounterAction={handleCounter}
             onEndTurn={handleEndTurn}

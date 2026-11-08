@@ -26,6 +26,7 @@ interface Props {
   loadout?: PlayerLoadout;
   children?: React.ReactNode;
   extraActions?: React.ReactNode;
+  isTurnResolving?: boolean;
   onPlaySkill: (skillId: string) => void;
   onCounterAction: (action: CounterAction) => void;
   onEndTurn: () => void;
@@ -39,6 +40,7 @@ export const CombatHUD: React.FC<Props> = ({
   loadout,
   children,
   extraActions,
+  isTurnResolving = false,
   onPlaySkill,
   onCounterAction,
   onEndTurn,
@@ -72,6 +74,8 @@ export const CombatHUD: React.FC<Props> = ({
 
       // Resume audio context on first keystroke
       audio.resume();
+
+      if (isTurnResolving) return;
 
       if (e.key === '1') {
         const card = combatState.activeHand[0];
@@ -110,6 +114,7 @@ export const CombatHUD: React.FC<Props> = ({
     combatState.activeHand,
     combatState.playerEnergy,
     arena.props,
+    isTurnResolving,
     onPlaySkill,
     onCounterAction,
     onEndTurn,
@@ -444,6 +449,11 @@ export const CombatHUD: React.FC<Props> = ({
               <Swords className="w-3.5 h-3.5" />
               Tactical Combat Moves (Choose 1 per Turn)
             </span>
+            {isTurnResolving && (
+              <span className="text-[10px] font-mono font-bold text-amber-300 animate-pulse bg-amber-950/60 border border-amber-500/40 px-2 py-0.5 rounded">
+                ⚡ INITIATIVE RESOLVING...
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -474,6 +484,7 @@ export const CombatHUD: React.FC<Props> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
           {combatState.activeHand.slice(0, 4).map((skill: Skill, idx: number) => {
             const isStigmaReady = !skill.isStigma || combatState.stigmaMeter >= 100;
+            const canPlay = isStigmaReady && !isTurnResolving;
             const borderGlow = skill.isStigma
               ? 'border-amber-400 bg-amber-950/30 shadow-amber-500/20'
               : skill.priority === 1
@@ -487,12 +498,12 @@ export const CombatHUD: React.FC<Props> = ({
             return (
               <div
                 key={skill.id}
-                onClick={() => isStigmaReady && onPlaySkill(skill.id)}
-                className={`p-2.5 rounded-xl border-2 flex flex-col justify-between transition-all cursor-pointer ${borderGlow} ${
-                  isStigmaReady
-                    ? 'hover:scale-[1.02] shadow-lg opacity-100 bg-slate-900/95 hover:border-cyan-400'
+                onClick={() => canPlay && onPlaySkill(skill.id)}
+                className={`p-2.5 rounded-xl border-2 flex flex-col justify-between transition-all ${
+                  canPlay
+                    ? 'hover:scale-[1.02] shadow-lg opacity-100 bg-slate-900/95 hover:border-cyan-400 cursor-pointer'
                     : 'opacity-40 cursor-not-allowed bg-slate-950/60'
-                }`}
+                } ${borderGlow}`}
               >
                 <div className="flex items-start justify-between gap-1">
                   <div className="flex items-center gap-1.5 truncate">
