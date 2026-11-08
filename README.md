@@ -4,6 +4,7 @@
 > *Inspired by The Manhwa Omniscient Reader’s Viewpoint (ORV).*
 
 [![Solana Devnet](https://img.shields.io/badge/Solana-Devnet-14F195?logo=solana&style=for-the-badge)](https://api.devnet.solana.com)
+[![Render](https://img.shields.io/badge/Render-Live%20Demo-46E3B7?logo=render&style=for-the-badge)](https://starsstreamarena.onrender.com)
 [![React 19](https://img.shields.io/badge/React-19.0.0-61DAFB?logo=react&style=for-the-badge)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&style=for-the-badge)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-8.3.6-646CFF?logo=vite&style=for-the-badge)](https://vitejs.dev)
@@ -11,6 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **Target Hackathon:** MLH Solana Hackathon (Nov 6–8, 2026)  
+**🌐 Live Demo:** [https://starsstreamarena.onrender.com](https://starsstreamarena.onrender.com)  
 **Official Repository:** [https://github.com/Supersaiyan101/StarsStreamArena](https://github.com/Supersaiyan101/StarsStreamArena)
 
 ---
@@ -185,7 +187,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173` to enter the Star Stream!
+Visit `http://localhost:5173` to enter the Star Stream locally, or launch the live production deployment directly at [https://starsstreamarena.onrender.com](https://starsstreamarena.onrender.com)!
 
 ### Testing the Experience (Judge Evaluation Guide)
 1. **Armory & Customization:**
