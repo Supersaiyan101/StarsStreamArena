@@ -256,6 +256,11 @@ starstream-arena/
 39. **`58255c2`** — *Move Slot Matchup Indicators:* Added dynamic `💥 2.0x WEAK` and `🛡️ 0.5x RESIST` badges directly on move cards to communicate target vulnerabilities at a glance.
 40. **`2df3080`** — *Twin Duel Opponent AI Alignment:* Modernized Channel B opponent AI in `aiOpponent.ts` to execute tactical Pokémon turns with weakness targeting and priority awareness.
 41. **`77b64f2`** — *Dedicated Audio Synthesizers:* Added procedural Web Audio API synthesizers for super-effective crunch thuds, resisted clinks, and status ticks, staggered with attack animation beats.
+42. **`9437e49`** — *Star Stream Survival Codex Overhaul:* Overhauled `StarStreamCodex.tsx` to document 4-move tactical taxonomy, Speed initiative, type effectiveness matrix, status conditions, and time-attack counters.
+43. **`d4e43dd`** — *Workbench 4-Move Alignment:* Updated `SkillDeckBuilder.tsx`, `ChallengerSelect.tsx`, `AttributeAllocator.tsx`, and `archetypes.ts` to 4 tactical move slots (`[1]` Strike, `[2]` Setup, `[3]` Priority, `[4]` Stigma) and Agility Speed Initiative preview.
+44. **`c546324`** — *Technical Architecture Alignment:* Synchronized `README.md` diagrams and feature sections with the Pokémon-style tactical battler.
+45. **`1b0caf3`** — *Boss Time-Attack Reaction Window:* Implemented a real-time 1.8s time-attack reaction countdown with depleting fuse progress bar, rewarding quick reflexes (`W` Jump, `S` Slide, `Space` Parry) and penalizing missed reaction windows.
+46. **`1bcb384`** — *Engine & Flash Bounty Synchronization:* Synchronized consecutive combo streak damage amplification (+15% per consecutive hit, max +60%) and Dokkaebi Flash Bounties with Pokémon-style tactical turns.
 
 ---
 
