@@ -419,6 +419,24 @@ export const TwinDuelStage: React.FC<Props> = ({
     setActionStateB('attacking');
     const oppResult = executeOpponentAITurn(combatB, bossB, arenaB, opponentLoadout);
 
+    if (oppResult.isSuperEffective) {
+      addFloatingTextB('💥 SUPER EFFECTIVE! (2.0x)', '#fbbf24', 'boss');
+    }
+
+    if (oppResult.damageDealtByOpponent > 0) {
+      addFloatingTextB(`-${oppResult.damageDealtByOpponent} DMG`, '#f43f5e', 'boss');
+      setShakeB(true);
+      setTimeout(() => setShakeB(false), 200);
+    }
+
+    if (oppResult.damageDealtByBoss > 0) {
+      setTimeout(() => {
+        addFloatingTextB(`-${oppResult.damageDealtByBoss} HP`, '#ef4444', 'player');
+        setActionStateB('hurt');
+        setTimeout(() => setActionStateB('idle'), 300);
+      }, 350);
+    }
+
     setCombatB(oppResult.combatState);
     setBossB(oppResult.bossState);
     setArenaB(oppResult.arena);
@@ -437,7 +455,7 @@ export const TwinDuelStage: React.FC<Props> = ({
       }));
     }
 
-    setTimeout(() => setActionStateB('idle'), 400);
+    setTimeout(() => setActionStateB('idle'), 450);
   };
 
   // Trigger Prop in Channel A
