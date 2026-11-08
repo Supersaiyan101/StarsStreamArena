@@ -282,6 +282,40 @@ export const CombatStage: React.FC<Props> = ({
     setTimeout(() => setPlayerActionState('idle'), 450);
   };
 
+  // Time-Attack: Boss Telegraph reaction window expired without player counter
+  const handleTelegraphTimeout = () => {
+    if (!boss.activeTelegraph || isTurnResolving || boss.currentHp <= 0 || combatState.playerHp <= 0) return;
+
+    const attack = boss.activeTelegraph;
+    const damage = attack.damage;
+
+    audio.playExplosionThud();
+    setPlayerActionState('hurt');
+    setScreenShake(true);
+    setTimeout(() => setScreenShake(false), 300);
+    setTimeout(() => setPlayerActionState('idle'), 450);
+
+    addFloatingText(`💥 TIME OVER! -${damage} HP`, '#ef4444', true, 'player');
+
+    setCombatState((prev) => ({
+      ...prev,
+      playerHp: Math.max(0, prev.playerHp - damage),
+      comboCount: 0,
+      combatLogs: [
+        ...prev.combatLogs,
+        `[TIME OVER: Failed to react in time! ${boss.name}'s ${attack.name} landed for ${damage} damage!]`,
+      ],
+      narrativeDialogue: [
+        `[TIME OVER] ${boss.name}'s ${attack.name} landed for ${damage} damage!`,
+      ],
+    }));
+
+    setBoss((prev) => ({
+      ...prev,
+      activeTelegraph: null,
+    }));
+  };
+
   // End Turn Cycle
   const handleEndTurn = () => {
     const result = resolveTurnCycle(combatState, boss, arena);
@@ -359,6 +393,7 @@ export const CombatStage: React.FC<Props> = ({
             isTurnResolving={isTurnResolving}
             onPlaySkill={handlePlaySkill}
             onCounterAction={handleCounter}
+            onTelegraphTimeout={handleTelegraphTimeout}
             onEndTurn={handleEndTurn}
             onTriggerProp={handleTriggerProp}
           >

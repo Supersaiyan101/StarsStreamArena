@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Sparkles,
   AlertTriangle,
+  Clock,
 } from 'lucide-react';
 import type {
   Boss,
@@ -29,6 +30,7 @@ interface Props {
   isTurnResolving?: boolean;
   onPlaySkill: (skillId: string) => void;
   onCounterAction: (action: CounterAction) => void;
+  onTelegraphTimeout?: () => void;
   onEndTurn: () => void;
   onTriggerProp: (propId: string) => void;
 }
@@ -43,11 +45,44 @@ export const CombatHUD: React.FC<Props> = ({
   isTurnResolving = false,
   onPlaySkill,
   onCounterAction,
+  onTelegraphTimeout,
   onEndTurn,
   onTriggerProp,
 }) => {
   const hpPercent = Math.max(0, (boss.currentHp / boss.maxHp) * 100);
   const playerHpPercent = Math.max(0, (combatState.playerHp / combatState.maxPlayerHp) * 100);
+
+  // Real-Time Time-Attack Reaction Timer (1.8s fuse for boss telegraphs)
+  const TOTAL_REACTION_MS = 1800;
+  const [reactionTimeLeft, setReactionTimeLeft] = React.useState<number>(TOTAL_REACTION_MS);
+  const telegraphKeyRef = React.useRef<string | null>(null);
+
+  React.useEffect(() => {
+    if (!boss.activeTelegraph || isTurnResolving) {
+      telegraphKeyRef.current = null;
+      setReactionTimeLeft(TOTAL_REACTION_MS);
+      return;
+    }
+
+    const currentKey = `${boss.activeTelegraph.name}_${combatState.turnCount}`;
+    if (telegraphKeyRef.current !== currentKey) {
+      telegraphKeyRef.current = currentKey;
+      setReactionTimeLeft(TOTAL_REACTION_MS);
+    }
+
+    const interval = setInterval(() => {
+      setReactionTimeLeft((prev) => {
+        if (prev <= 50) {
+          clearInterval(interval);
+          onTelegraphTimeout?.();
+          return 0;
+        }
+        return prev - 50;
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [boss.activeTelegraph?.name, combatState.turnCount, isTurnResolving, onTelegraphTimeout]);
 
   // Overheat Color
   const heat = combatState.probabilityHeat;
@@ -361,21 +396,39 @@ export const CombatHUD: React.FC<Props> = ({
       {children}
 
       {/* ========================================== */}
-      {/* 4. ACTIVE TELEGRAPH REACTION (THREAT POPUP)*/}
+      {/* 4. ACTIVE TELEGRAPH REACTION (TIME ATTACK) */}
       {/* ========================================== */}
       {boss.activeTelegraph && (
-        <div className="bg-rose-950/60 border-2 border-rose-500 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2 shadow-xl shadow-rose-950/60 animate-pulse">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-            <span className="text-xs font-mono font-black text-rose-200 uppercase tracking-wide">
-              ⚠️ INCOMING ATTACK: {boss.activeTelegraph.name} ({boss.activeTelegraph.damage} DMG)
-            </span>
+        <div className="bg-rose-950/70 border-2 border-rose-500 rounded-xl p-3 flex flex-col gap-2 shadow-2xl shadow-rose-950/80">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 animate-bounce" />
+              <span className="text-xs font-mono font-black text-rose-200 uppercase tracking-wide">
+                ⚠️ TIME ATTACK: {boss.activeTelegraph.name} ({boss.activeTelegraph.damage} DMG)
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-amber-300">
+              <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+              <span>{(reactionTimeLeft / 1000).toFixed(1)}s REMAINING</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          {/* Depleting Reaction Fuse Bar */}
+          <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-rose-500/40">
+            <div
+              className={`h-full rounded-full transition-all duration-75 ${
+                reactionTimeLeft < 600
+                  ? 'bg-rose-500 animate-pulse'
+                  : 'bg-gradient-to-r from-amber-400 via-rose-500 to-rose-600'
+              }`}
+              style={{ width: `${Math.max(0, (reactionTimeLeft / TOTAL_REACTION_MS) * 100)}%` }}
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-1.5 pt-0.5">
             <button
               onClick={() => onCounterAction('jump')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer ${
                 boss.activeTelegraph.counterAction === 'jump'
                   ? 'bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-md shadow-emerald-500/40 scale-105'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -386,7 +439,7 @@ export const CombatHUD: React.FC<Props> = ({
             </button>
             <button
               onClick={() => onCounterAction('crouch')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer ${
                 boss.activeTelegraph.counterAction === 'crouch'
                   ? 'bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-md shadow-amber-500/40 scale-105'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -397,7 +450,7 @@ export const CombatHUD: React.FC<Props> = ({
             </button>
             <button
               onClick={() => onCounterAction('parry')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer ${
                 boss.activeTelegraph.counterAction === 'parry'
                   ? 'bg-cyan-400 text-slate-950 hover:bg-cyan-300 shadow-md shadow-cyan-400/40 scale-105'
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'

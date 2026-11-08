@@ -398,6 +398,40 @@ export const TwinDuelStage: React.FC<Props> = ({
     setTimeout(() => setActionStateA('idle'), 400);
   };
 
+  // Time-Attack: Boss Telegraph reaction window expired for Channel A
+  const handleTelegraphTimeoutA = () => {
+    if (!bossA.activeTelegraph || isTurnResolvingA || bossA.currentHp <= 0 || combatA.playerHp <= 0) return;
+
+    const attack = bossA.activeTelegraph;
+    const damage = attack.damage;
+
+    audio.playExplosionThud();
+    setActionStateA('hurt');
+    setShakeA(true);
+    setTimeout(() => setShakeA(false), 300);
+    setTimeout(() => setActionStateA('idle'), 450);
+
+    addFloatingTextA(`💥 TIME OVER! -${damage} HP`, '#ef4444', 'player');
+
+    setCombatA((prev) => ({
+      ...prev,
+      playerHp: Math.max(0, prev.playerHp - damage),
+      comboCount: 0,
+      combatLogs: [
+        ...prev.combatLogs,
+        `[TIME OVER: Failed to react in time! ${bossA.name}'s ${attack.name} landed for ${damage} damage!]`,
+      ],
+      narrativeDialogue: [
+        `[TIME OVER] ${bossA.name}'s ${attack.name} landed for ${damage} damage!`,
+      ],
+    }));
+
+    setBossA((prev) => ({
+      ...prev,
+      activeTelegraph: null,
+    }));
+  };
+
   // Player 1 Ends Turn
   const handleEndTurnA = () => {
     const turnResultA = resolveTurnCycle(combatA, bossA, arenaA);
@@ -613,6 +647,7 @@ export const TwinDuelStage: React.FC<Props> = ({
             isTurnResolving={isTurnResolvingA}
             onPlaySkill={handlePlaySkillA}
             onCounterAction={handleCounterA}
+            onTelegraphTimeout={handleTelegraphTimeoutA}
             onEndTurn={handleEndTurnA}
             onTriggerProp={handleTriggerPropA}
             extraActions={
