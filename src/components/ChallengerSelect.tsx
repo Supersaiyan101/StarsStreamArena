@@ -59,19 +59,19 @@ export const ChallengerSelect: React.FC<Props> = ({
     setSelectedWeapon(weapon);
   };
 
-  // Toggle skills in customizer
+  // Toggle skills in customizer (4 Tactical Moves)
   const handleToggleSkill = (skillId: string) => {
     if (equippedSkills.includes(skillId)) {
       setEquippedSkills(equippedSkills.filter((id) => id !== skillId));
     } else {
-      if (equippedSkills.length >= 5) return;
+      if (equippedSkills.length >= 4) return;
       setEquippedSkills([...equippedSkills, skillId]);
     }
   };
 
   // Validation
   const totalPoints = attributes.strength + attributes.agility + attributes.resonance;
-  const isReady = totalPoints === 30 && equippedSkills.length === 5;
+  const isReady = totalPoints === 30 && equippedSkills.length === 4;
 
   const handleLaunch = () => {
     if (!isReady) return;

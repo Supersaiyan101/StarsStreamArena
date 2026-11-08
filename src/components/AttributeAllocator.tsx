@@ -154,7 +154,7 @@ export const AttributeAllocator: React.FC<Props> = ({
               </div>
               <div>
                 <span className="text-sm font-semibold text-slate-200">Agility</span>
-                <span className="text-[11px] text-slate-400 block">Dodge Window & Sabotage Rate</span>
+                <span className="text-[11px] text-slate-400 block">Speed Initiative (Move First) & Crit</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -247,6 +247,10 @@ export const AttributeAllocator: React.FC<Props> = ({
         <div>
           <span className="text-slate-500 block">SABOTAGE RATE</span>
           <span className="font-bold text-amber-400">+{sabotageGainBonus}%</span>
+        </div>
+        <div>
+          <span className="text-slate-500 block">SPEED INITIATIVE</span>
+          <span className="font-bold text-cyan-300">{attributes.agility} SPEED</span>
         </div>
       </div>
 

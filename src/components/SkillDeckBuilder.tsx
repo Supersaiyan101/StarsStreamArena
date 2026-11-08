@@ -32,35 +32,40 @@ export const SkillDeckBuilder: React.FC<Props> = ({
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-cyan-400" />
-            Combat Deck (5 Skills)
+            Tactical Moveset (4 Moves)
           </h3>
           <p className="text-xs text-slate-400">
-            {equippedSkillIds.length}/5 Skills Equipped • 3 Drawn Randomly Per Turn
+            {equippedSkillIds.length}/4 Moves Equipped • 1 Tactical Action Per Turn [Keys 1-4]
           </p>
         </div>
         <span
           className={`px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wide border ${
-            equippedSkillIds.length === 5
+            equippedSkillIds.length === 4
               ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40'
               : 'bg-amber-950/60 text-amber-400 border-amber-500/40'
           }`}
         >
-          {equippedSkillIds.length === 5 ? 'DECK READY' : `${5 - equippedSkillIds.length} SLOTS OPEN`}
+          {equippedSkillIds.length === 4 ? 'MOVESET READY' : `${4 - equippedSkillIds.length} SLOTS OPEN`}
         </span>
       </div>
 
-      {/* Equipped 5-Card Tray */}
-      <div className="grid grid-cols-5 gap-2 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
-        {[0, 1, 2, 3, 4].map((index) => {
+      {/* Equipped 4-Move Tray */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+        {[
+          { role: 'STRIKE', icon: '1' },
+          { role: 'SETUP', icon: '2' },
+          { role: 'PRIORITY', icon: '3' },
+          { role: 'STIGMA', icon: '4' },
+        ].map((slot, index) => {
           const skill = equippedSkills[index];
           if (!skill) {
             return (
               <div
                 key={index}
-                className="h-24 border border-dashed border-slate-800 rounded-lg flex flex-col items-center justify-center text-slate-600 text-xs p-1 text-center"
+                className="h-24 border border-dashed border-slate-800 rounded-lg flex flex-col items-center justify-center text-slate-600 text-xs p-1 text-center font-mono"
               >
                 <Plus className="w-4 h-4 mb-1 text-slate-700" />
-                <span>Slot {index + 1}</span>
+                <span className="font-bold">[{slot.icon}] {slot.role}</span>
               </div>
             );
           }
