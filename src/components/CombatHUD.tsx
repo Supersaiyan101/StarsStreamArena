@@ -141,6 +141,18 @@ export const CombatHUD: React.FC<Props> = ({
                     ? loadout.avatarArchetype.replace('_', ' ').toUpperCase()
                     : 'FIGHTER'}
                 </span>
+                {combatState.setupBuff && (
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-purple-950 text-purple-300 border border-purple-500/40 font-bold flex items-center gap-0.5 animate-pulse shrink-0">
+                    <span>🗡️</span>
+                    <span>+{Math.round((combatState.setupBuff.attackMultiplier - 1) * 100)}% ATK ({combatState.setupBuff.turnsRemaining}T)</span>
+                  </span>
+                )}
+                {combatState.avatarDecoyActive && (
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-950 text-indigo-300 border border-indigo-500/40 font-bold flex items-center gap-0.5 shrink-0">
+                    <span>👤</span>
+                    <span>DECOY</span>
+                  </span>
+                )}
               </div>
               <span className="text-emerald-400 font-bold font-mono text-xs sm:text-sm shrink-0">
                 {combatState.playerHp} / {combatState.maxPlayerHp} HP
@@ -222,6 +234,32 @@ export const CombatHUD: React.FC<Props> = ({
                 {boss.currentHp} / {boss.maxHp} HP
               </span>
               <div className="flex items-center gap-1.5 truncate">
+                {boss.activeStatus && (
+                  <span
+                    className={`px-1.5 py-0.2 rounded text-[9px] font-bold font-mono border flex items-center gap-1 animate-pulse shrink-0 ${
+                      boss.activeStatus.type === 'burn'
+                        ? 'bg-rose-950/80 text-rose-300 border-rose-500/50'
+                        : boss.activeStatus.type === 'bleed'
+                        ? 'bg-red-950/80 text-red-300 border-red-500/50'
+                        : boss.activeStatus.type === 'paralyze'
+                        ? 'bg-amber-950/80 text-amber-300 border-amber-500/50'
+                        : 'bg-purple-950/80 text-purple-300 border-purple-500/50'
+                    }`}
+                  >
+                    <span>
+                      {boss.activeStatus.type === 'burn'
+                        ? '🔥'
+                        : boss.activeStatus.type === 'bleed'
+                        ? '🩸'
+                        : boss.activeStatus.type === 'paralyze'
+                        ? '⚡'
+                        : '💫'}
+                    </span>
+                    <span className="uppercase">
+                      {boss.activeStatus.type} ({boss.activeStatus.durationTurns}T)
+                    </span>
+                  </span>
+                )}
                 {boss.enraged && (
                   <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 px-1.5 py-0.2 rounded text-[9px] font-bold animate-pulse">
                     ENRAGED
